@@ -138,8 +138,11 @@ const fetchAllDeals = unstable_cache(
             }
             if (items.length < 10) break;
           } catch (err) {
+            const message = (err as Error).message;
+            // Auth/eligibility rejections apply to every request; stop instead of repeating them.
+            if (/ failed: (401|403)\b/.test(message)) throw new Error(`Amazon rejected the account: ${message}`);
             failures++;
-            console.error(`[deals] ${brand.slug} "${keywords}" (${searchIndex}) page ${itemPage}:`, (err as Error).message);
+            console.error(`[deals] ${brand.slug} "${keywords}" (${searchIndex}) page ${itemPage}:`, message);
             break;
           }
         }
@@ -156,6 +159,11 @@ const fetchAllDeals = unstable_cache(
 
 let warnedUnconfigured = false;
 let lastLoggedFetch: string | null = null;
+// Failures are not written to the shared cache, so remember them in-process
+// briefly: otherwise every page render would re-run the full set of API calls.
+const FAILURE_BACKOFF_MS = 10 * 60 * 1000;
+let failedUntil = 0;
+let inflight: Promise<{ deals: Deal[]; fetchedAt: string }> | null = null;
 
 export async function getAllDeals(): Promise<DealsResult> {
   if (!getConfig()) {
@@ -166,15 +174,20 @@ export async function getAllDeals(): Promise<DealsResult> {
     }
     return { deals: [], configured: false, ok: false, fetchedAt: null };
   }
+  if (Date.now() < failedUntil) return { deals: [], configured: true, ok: false, fetchedAt: null };
   try {
-    const { deals, fetchedAt } = await fetchAllDeals();
+    inflight ??= fetchAllDeals().finally(() => {
+      inflight = null;
+    });
+    const { deals, fetchedAt } = await inflight;
     if (fetchedAt !== lastLoggedFetch) {
       lastLoggedFetch = fetchedAt;
       console.info(`[deals] ${deals.length} deals loaded from Amazon (fetched ${fetchedAt})`);
     }
     return { deals, configured: true, ok: true, fetchedAt };
   } catch (err) {
-    console.error("[deals] unavailable:", (err as Error).message);
+    failedUntil = Date.now() + FAILURE_BACKOFF_MS;
+    console.error("[deals] unavailable, retrying in 10 minutes:", (err as Error).message);
     return { deals: [], configured: true, ok: false, fetchedAt: null };
   }
 }
@@ -204,7 +217,7 @@ export async function getDeal(asin: string): Promise<Deal | null> {
   const { deals } = await getAllDeals();
   const listed = deals.find((d) => d.asin === asin);
   if (listed) return listed;
-  if (!getConfig()) return null;
+  if (!getConfig() || Date.now() < failedUntil) return null;
   try {
     return await fetchItem(asin);
   } catch (err) {
