@@ -154,10 +154,24 @@ const fetchAllDeals = unstable_cache(
   { revalidate: SITE.revalidate, tags: ["deals"] },
 );
 
+let warnedUnconfigured = false;
+let lastLoggedFetch: string | null = null;
+
 export async function getAllDeals(): Promise<DealsResult> {
-  if (!getConfig()) return { deals: [], configured: false, ok: false, fetchedAt: null };
+  if (!getConfig()) {
+    if (!warnedUnconfigured) {
+      warnedUnconfigured = true;
+      const missing = ["AMAZON_CREDENTIAL_ID", "AMAZON_CREDENTIAL_SECRET"].filter((k) => !process.env[k]?.trim());
+      console.warn(`[deals] Amazon Creators API not configured; missing env: ${missing.join(", ")}. No deals will be shown.`);
+    }
+    return { deals: [], configured: false, ok: false, fetchedAt: null };
+  }
   try {
     const { deals, fetchedAt } = await fetchAllDeals();
+    if (fetchedAt !== lastLoggedFetch) {
+      lastLoggedFetch = fetchedAt;
+      console.info(`[deals] ${deals.length} deals loaded from Amazon (fetched ${fetchedAt})`);
+    }
     return { deals, configured: true, ok: true, fetchedAt };
   } catch (err) {
     console.error("[deals] unavailable:", (err as Error).message);
