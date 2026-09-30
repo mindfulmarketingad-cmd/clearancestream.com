@@ -1,0 +1,228 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound, permanentRedirect } from "next/navigation";
+import { DealGrid } from "@/components/DealCard";
+import { ArrowRight, CheckIcon, ClockIcon, ExternalIcon, ShieldIcon } from "@/components/Icons";
+import { JsonLd } from "@/components/JsonLd";
+import { PageHeader } from "@/components/PageHeader";
+import { getBrand } from "@/lib/brands";
+import { getAllDeals, getDeal, relatedDeals, type Deal } from "@/lib/deals";
+import { formatChecked } from "@/lib/format";
+import { pageMetadata } from "@/lib/seo";
+import { AFFILIATE_DISCLOSURE, absoluteUrl } from "@/lib/site";
+import { asinFromSlug } from "@/lib/slug";
+
+export const revalidate = 3600;
+export const dynamicParams = true;
+
+type Props = { params: Promise<{ brand: string; product: string }> };
+
+export async function generateStaticParams() {
+  const { deals } = await getAllDeals();
+  return deals.map((d) => ({ brand: d.brandSlug, product: d.slug }));
+}
+
+async function resolve({ params }: Props): Promise<Deal> {
+  const { brand, product } = await params;
+  const asin = asinFromSlug(product);
+  if (!asin || !getBrand(brand)) notFound();
+  const deal = await getDeal(asin);
+  if (!deal) notFound();
+  // Canonicalise if the title (and therefore slug) or brand segment changed.
+  if (deal.brandSlug !== brand || deal.slug !== product) permanentRedirect(deal.path);
+  return deal;
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const deal = await resolve(props);
+  const saving = deal.savingsPercent ? ` (${deal.savingsPercent}% off)` : "";
+  return pageMetadata({
+    title: `${deal.name} Deal: ${deal.priceDisplay}${saving}`,
+    description: `${deal.name} is ${deal.priceDisplay} on Amazon${
+      deal.savingsDisplay ? `, ${deal.savingsDisplay} below the ${deal.listPriceLabel?.toLowerCase() ?? "reference price"}` : ""
+    }. Live ${deal.brandName} gaming PC deal tracked hourly by ClearanceStream.`,
+    path: deal.path,
+    image: deal.image ? { url: deal.image.url, width: deal.image.width, height: deal.image.height, alt: deal.name } : null,
+  });
+}
+
+function productLd(deal: Deal) {
+  const validUntil = new Date(new Date(deal.fetchedAt).getTime() + 24 * 3600 * 1000).toISOString().slice(0, 10);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: deal.title,
+    sku: deal.asin,
+    brand: { "@type": "Brand", name: deal.brandName },
+    image: deal.gallery.map((g) => g.url),
+    description: deal.features[0] ?? `${deal.brandName} gaming PC`,
+    url: absoluteUrl(deal.path),
+    offers: {
+      "@type": "Offer",
+      url: absoluteUrl(deal.path),
+      price: deal.price.toFixed(2),
+      priceCurrency: deal.currency,
+      priceValidUntil: validUntil,
+      availability: deal.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      itemCondition: /used|refurb|renewed/i.test(deal.condition ?? "")
+        ? "https://schema.org/RefurbishedCondition"
+        : "https://schema.org/NewCondition",
+      seller: { "@type": "Organization", name: deal.merchant ?? "Amazon.com" },
+    },
+    ...(deal.rating && deal.reviewCount
+      ? { aggregateRating: { "@type": "AggregateRating", ratingValue: deal.rating, reviewCount: deal.reviewCount } }
+      : {}),
+  };
+}
+
+export default async function ProductPage(props: Props) {
+  const deal = await resolve(props);
+  const brand = getBrand(deal.brandSlug)!;
+  const { deals } = await getAllDeals();
+  const related = relatedDeals(deal, deals);
+
+  const rows: [string, string][] = [
+    ["Brand", deal.brandName],
+    ["Amazon price", deal.priceDisplay],
+    ...(deal.listPriceDisplay ? ([[deal.listPriceLabel ?? "Reference price", deal.listPriceDisplay]] as [string, string][]) : []),
+    ...(deal.savingsDisplay ? ([["You save", `${deal.savingsDisplay} (${deal.savingsPercent}%)`]] as [string, string][]) : []),
+    ...(deal.availability ? ([["Availability", deal.availability]] as [string, string][]) : []),
+    ...(deal.condition ? ([["Condition", deal.condition]] as [string, string][]) : []),
+    ...(deal.merchant ? ([["Sold by", deal.merchant]] as [string, string][]) : []),
+    ["ASIN", deal.asin],
+  ];
+
+  return (
+    <>
+      <PageHeader
+        crumbs={[
+          { name: "Deals", path: "/deals" },
+          { name: brand.name, path: `/brands/${brand.slug}` },
+          { name: deal.name, path: deal.path },
+        ]}
+      />
+      <section className="section-tight">
+        <div className="container product">
+          <div className="product-gallery">
+            {deal.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={deal.image.url}
+                alt={deal.name}
+                width={deal.image.width}
+                height={deal.image.height}
+                fetchPriority="high"
+                referrerPolicy="no-referrer"
+              />
+            ) : null}
+          </div>
+
+          <div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <Link href={`/brands/${brand.slug}`} className="badge badge-soft">
+                {brand.name}
+              </Link>
+              {deal.savingsPercent ? <span className="badge badge-discount">{deal.savingsPercent}% off</span> : null}
+              {deal.dealBadge ? <span className="badge badge-neutral">{deal.dealBadge}</span> : null}
+            </div>
+            <h1>{deal.name}</h1>
+
+            <div className="buy-box">
+              <div className="price-row">
+                <span className="price">{deal.priceDisplay}</span>
+                {deal.listPriceDisplay ? (
+                  <s className="price" aria-label={`${deal.listPriceLabel}: ${deal.listPriceDisplay}`}>
+                    {deal.listPriceDisplay}
+                  </s>
+                ) : null}
+              </div>
+              {deal.savingsDisplay ? (
+                <p className="deal-save" style={{ marginTop: 6, fontSize: 15 }}>
+                  You save {deal.savingsDisplay} ({deal.savingsPercent}%) vs. {deal.listPriceLabel?.toLowerCase()}
+                </p>
+              ) : null}
+              <a
+                href={deal.amazonUrl}
+                className="btn btn-primary btn-block"
+                style={{ marginTop: 20, height: 50, fontSize: 16 }}
+                target="_blank"
+                rel="sponsored nofollow noopener"
+              >
+                Check price on Amazon <ExternalIcon />
+              </a>
+              <p className="fine">
+                <ClockIcon style={{ width: 12, height: 12, display: "inline", verticalAlign: "-1px" }} /> Price checked{" "}
+                <time dateTime={deal.fetchedAt}>{formatChecked(deal.fetchedAt)}</time>. Product prices and availability
+                are accurate as of the date/time indicated and are subject to change. Any price and availability
+                information displayed on Amazon at the time of purchase will apply to the purchase of this product.
+              </p>
+            </div>
+
+            <table className="spec-table">
+              <caption className="sr-only">Deal details</caption>
+              <tbody>
+                {rows.map(([k, v]) => (
+                  <tr key={k}>
+                    <th scope="row">{k}</th>
+                    <td>{v}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {deal.features.length > 0 ? (
+              <>
+                <h2 className="sub-head">Key features</h2>
+                <ul className="feature-list">
+                  {deal.features.map((f) => (
+                    <li key={f}>
+                      <CheckIcon />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
+
+            <h2 className="sub-head">Is this a good deal?</h2>
+            <div className="prose" style={{ fontSize: 15.5, marginTop: 12 }}>
+              <p>
+                {deal.savingsPercent
+                  ? `Amazon currently lists this ${brand.name} system ${deal.savingsPercent}% below its ${deal.listPriceLabel?.toLowerCase()}. `
+                  : `This ${brand.name} system is currently at its regular Amazon price, with no discount against a reference price. `}
+                Before buying, price the graphics card on its own and compare it with the full system price. When a
+                prebuilt costs close to its parts total, you are effectively getting assembly, Windows, and the warranty
+                for free.
+              </p>
+              <p>
+                Read our <Link href="/blog/gaming-pc-deals-guide">guide to judging gaming PC deals</Link> or compare
+                every <Link href={`/brands/${brand.slug}`}>{brand.name} gaming PC deal</Link> before you decide.
+              </p>
+            </div>
+
+            <p className="muted" style={{ fontSize: 13, marginTop: 24, display: "flex", gap: 6 }}>
+              <ShieldIcon style={{ width: 14, height: 14, flexShrink: 0, marginTop: 3 }} />
+              {AFFILIATE_DISCLOSURE}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {related.length > 0 ? (
+        <section className="section-tight">
+          <div className="container">
+            <div className="section-head">
+              <h2>More gaming PC deals</h2>
+              <Link href={`/brands/${brand.slug}`} className="text-link">
+                All {brand.name} deals <ArrowRight />
+              </Link>
+            </div>
+            <DealGrid deals={related} />
+          </div>
+        </section>
+      ) : null}
+
+      <JsonLd data={productLd(deal)} />
+    </>
+  );
+}
