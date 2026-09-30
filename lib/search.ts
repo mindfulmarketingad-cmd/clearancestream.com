@@ -66,7 +66,9 @@ function buildIndex(deals: Deal[]): SearchDoc[] {
       title: deal.name,
       description: `${deal.priceDisplay}${deal.savingsPercent ? `, ${deal.savingsPercent}% off` : ""}`,
       path: deal.path,
-      haystack: `${deal.title} ${deal.brandName} ${deal.features.join(" ")} gaming pc desktop`.toLowerCase(),
+      haystack: `${deal.title} ${deal.brandName} ${deal.category ?? ""} ${deal.features.join(" ")}${
+        deal.isGamingPc ? " gaming pc desktop" : ""
+      }`.toLowerCase(),
       deal,
     });
   }
@@ -112,7 +114,10 @@ export function runSearch(query: string, deals: Deal[]) {
       const titleHits = terms.filter((t) => doc.title.toLowerCase().includes(t)).length;
       return { doc, matched: matched.length, score: matched.length * 2 + titleHits };
     })
-    .filter((r) => (terms.length === 0 ? maxPrice !== null : r.matched > 0))
+    // Deals must match every term; pages and guides may match partially.
+    .filter((r) =>
+      terms.length === 0 ? maxPrice !== null : r.doc.type === "deal" ? r.matched === terms.length : r.matched > 0,
+    )
     // Documents matching every term rank above partial matches.
     .sort(
       (a, b) =>

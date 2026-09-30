@@ -1,19 +1,20 @@
 import Link from "next/link";
 import type { Deal } from "@/lib/deals";
 import { formatChecked } from "@/lib/format";
-import { ClockIcon, ShieldIcon } from "./Icons";
+import { ArrowRight, ClockIcon, ShieldIcon } from "./Icons";
 
-export function DealCard({ deal, priority = false, headingLevel = 3 }: { deal: Deal; priority?: boolean; headingLevel?: 2 | 3 }) {
-  const Heading = headingLevel === 2 ? "h2" : "h3";
+type Props = { deal: Deal; priority?: boolean; hidden?: boolean };
+
+export function DealCard({ deal, priority = false, hidden = false }: Props) {
   return (
-    <article className="deal-card">
-      <div className="deal-media">
+    <article className="deal-card" hidden={hidden}>
+      <Link href={deal.path} className="deal-media" tabIndex={-1} aria-hidden="true">
         {deal.image ? (
           // Amazon's image terms require serving images from Amazon's own URLs.
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={deal.image.url}
-            alt={deal.name}
+            alt=""
             width={deal.image.width}
             height={deal.image.height}
             loading={priority ? "eager" : "lazy"}
@@ -21,29 +22,38 @@ export function DealCard({ deal, priority = false, headingLevel = 3 }: { deal: D
             referrerPolicy="no-referrer"
           />
         ) : null}
-        {deal.savingsPercent ? <span className="badge badge-discount">{deal.savingsPercent}% off</span> : null}
+        {deal.savingsPercent ? <span className="badge badge-discount">{deal.savingsPercent}% OFF</span> : null}
         {deal.dealBadge ? <span className="badge badge-soft">{deal.dealBadge}</span> : null}
-      </div>
+      </Link>
       <div className="deal-body">
         <span className="deal-brand">{deal.brandName}</span>
-        <Heading className="deal-title">
+        <h3 className="deal-title">
           <Link href={deal.path}>{deal.name}</Link>
-        </Heading>
+        </h3>
         <div className="deal-price">
           <span className="price">{deal.priceDisplay}</span>
-          {deal.listPriceDisplay ? <s className="price">{deal.listPriceDisplay}</s> : null}
+          {deal.listPriceDisplay ? (
+            <s className="price" aria-label={`Was ${deal.listPriceDisplay}`}>
+              {deal.listPriceDisplay}
+            </s>
+          ) : null}
         </div>
-        {deal.savingsDisplay ? <span className="deal-save">Save {deal.savingsDisplay}</span> : null}
-        <div className="deal-meta">
-          <span>
-            <ClockIcon />
-            <time dateTime={deal.fetchedAt}>{formatChecked(deal.fetchedAt)}</time>
+        {deal.savingsDisplay ? (
+          <span className="deal-save">
+            Save {deal.savingsDisplay} ({deal.savingsPercent}%)
           </span>
-          <span>
-            <ShieldIcon />
-            Amazon
-          </span>
-        </div>
+        ) : null}
+        <span className="deal-time">
+          <ClockIcon />
+          Checked <time dateTime={deal.fetchedAt}>{formatChecked(deal.fetchedAt)}</time>
+        </span>
+        <Link href={deal.path} className="btn btn-primary btn-block btn-sm deal-cta" aria-label={`View deal: ${deal.name}`}>
+          View Deal <ArrowRight />
+        </Link>
+      </div>
+      <div className="deal-foot">
+        <ShieldIcon />
+        Secure &amp; verified Amazon listing
       </div>
     </article>
   );

@@ -5,20 +5,17 @@ import { Faq } from "@/components/Faq";
 import {
   ArrowRight,
   BookIcon,
-  CartIcon,
   CheckIcon,
   FilterIcon,
   RadarIcon,
-  RefreshIcon,
   SearchIcon,
-  ShieldIcon,
   TagIcon,
-  TrendDownIcon,
 } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
+import { ValueBar } from "@/components/ValueBar";
 import { POSTS } from "@/lib/blog";
 import { BRANDS } from "@/lib/brands";
-import { getAllDeals } from "@/lib/deals";
+import { gamingPcsFirst, getAllDeals } from "@/lib/deals";
 import { formatChecked } from "@/lib/format";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
@@ -55,8 +52,9 @@ const HOME_FAQ = [
 
 export default async function HomePage() {
   const { deals, fetchedAt } = await getAllDeals();
-  const featured = deals.slice(0, 3);
-  const trending = deals.slice(0, 8);
+  const ordered = gamingPcsFirst(deals);
+  const featured = ordered.slice(0, 3);
+  const trending = ordered.slice(0, 8);
   const biggest = deals.reduce((m, d) => Math.max(m, d.savingsPercent ?? 0), 0);
   const withSavings = deals.filter((d) => d.savingsPercent).length;
 
@@ -176,7 +174,7 @@ export default async function HomePage() {
           <div className="section-head">
             <div>
               <h2>Trending gaming PC deals</h2>
-              <p>The biggest live discounts on gaming desktops right now, ranked by percentage off.</p>
+              <p>Gaming PCs and gear marked down 20 to 50% on Amazon right now, gaming desktops first.</p>
             </div>
             {trending.length > 0 ? (
               <Link href="/deals" className="text-link">
@@ -336,36 +334,7 @@ export default async function HomePage() {
 
       <section className="section-tight">
         <div className="container">
-          <div className="value-bar">
-            <div>
-              <ShieldIcon />
-              <p>
-                <b>Verified listings</b>
-                <span>Prices pulled directly from Amazon</span>
-              </p>
-            </div>
-            <div>
-              <TrendDownIcon />
-              <p>
-                <b>Real savings</b>
-                <span>Measured against Amazon reference prices</span>
-              </p>
-            </div>
-            <div>
-              <RefreshIcon />
-              <p>
-                <b>Updated hourly</b>
-                <span>Every price shows when it was checked</span>
-              </p>
-            </div>
-            <div>
-              <CartIcon />
-              <p>
-                <b>No extra cost</b>
-                <span>You pay Amazon&apos;s price, nothing more</span>
-              </p>
-            </div>
-          </div>
+          <ValueBar />
         </div>
       </section>
 

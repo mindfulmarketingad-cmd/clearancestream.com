@@ -40,7 +40,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     title: `${deal.name} Deal: ${deal.priceDisplay}${saving}`,
     description: `${deal.name} is ${deal.priceDisplay} on Amazon${
       deal.savingsDisplay ? `, ${deal.savingsDisplay} below the ${deal.listPriceLabel?.toLowerCase() ?? "reference price"}` : ""
-    }. Live ${deal.brandName} gaming PC deal tracked hourly by ClearanceStream.`,
+    }. Live ${deal.brandName} ${deal.isGamingPc ? "gaming PC " : ""}deal tracked hourly by ClearanceStream.`,
     path: deal.path,
     image: deal.image ? { url: deal.image.url, width: deal.image.width, height: deal.image.height, alt: deal.name } : null,
   });
@@ -55,7 +55,7 @@ function productLd(deal: Deal) {
     sku: deal.asin,
     brand: { "@type": "Brand", name: deal.brandName },
     image: deal.gallery.map((g) => g.url),
-    description: deal.features[0] ?? `${deal.brandName} gaming PC`,
+    description: deal.features[0] ?? deal.title,
     url: absoluteUrl(deal.path),
     offers: {
       "@type": "Offer",
@@ -187,16 +187,15 @@ export default async function ProductPage(props: Props) {
             <h2 className="sub-head">Is this a good deal?</h2>
             <div className="prose" style={{ fontSize: 15.5, marginTop: 12 }}>
               <p>
-                {deal.savingsPercent
-                  ? `Amazon currently lists this ${brand.name} system ${deal.savingsPercent}% below its ${deal.listPriceLabel?.toLowerCase()}. `
-                  : `This ${brand.name} system is currently at its regular Amazon price, with no discount against a reference price. `}
-                Before buying, price the graphics card on its own and compare it with the full system price. When a
-                prebuilt costs close to its parts total, you are effectively getting assembly, Windows, and the warranty
-                for free.
+                Amazon currently lists this {brand.name} {deal.isGamingPc ? "system" : "product"} {deal.savingsPercent}%
+                below its {deal.listPriceLabel?.toLowerCase()}.{" "}
+                {deal.isGamingPc
+                  ? "Before buying, price the graphics card on its own and compare it with the full system price. When a prebuilt costs close to its parts total, you are effectively getting assembly, Windows, and the warranty for free."
+                  : "Check whether the reference is a list price or a recent typical price, and compare against similar models before buying. Discounts tied to a limited-time deal can end without notice."}
               </p>
               <p>
                 Read our <Link href="/blog/gaming-pc-deals-guide">guide to judging gaming PC deals</Link> or compare
-                every <Link href={`/brands/${brand.slug}`}>{brand.name} gaming PC deal</Link> before you decide.
+                every <Link href={`/brands/${brand.slug}`}>{brand.name} deal</Link> before you decide.
               </p>
             </div>
 

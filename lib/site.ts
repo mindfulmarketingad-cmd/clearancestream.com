@@ -8,6 +8,9 @@ export const SITE = {
   locale: "en_US",
   // Refresh cadence for live Amazon data, in seconds.
   revalidate: 3600,
+  // Only listings discounted within this band (vs. Amazon's reference price) are shown.
+  minDiscount: 20,
+  maxDiscount: 50,
   social: {
     instagram: "https://www.instagram.com/clearancestream",
     twitter: "https://x.com/clearancestream",

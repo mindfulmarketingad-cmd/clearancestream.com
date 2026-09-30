@@ -13,6 +13,10 @@ export type Deal = {
   path: string;
   brandSlug: string;
   brandName: string;
+  /** True for desktop gaming PCs; false for peripherals, laptops, components, etc. */
+  isGamingPc: boolean;
+  /** Amazon's product group, e.g. "Personal Computer". */
+  category: string | null;
   amazonUrl: string;
   image: { url: string; width: number; height: number } | null;
   gallery: { url: string; width: number; height: number }[];
@@ -44,7 +48,10 @@ const money = (amount: number, currency = "USD") =>
 function normalize(item: ApiItem, brand: Brand, fetchedAt: string): Deal | null {
   const title = item.itemInfo?.title?.displayValue?.trim();
   if (!title || !item.detailPageURL) return null;
-  if (!brand.include.test(title) || brand.exclude.test(title)) return null;
+  // Guard against third-party items that merely mention the brand ("compatible with ...").
+  const byline = item.itemInfo?.byLineInfo?.brand?.displayValue;
+  const ownBrand = byline ? brandFromAmazon(byline) === brand : title.toLowerCase().startsWith(brand.name.toLowerCase());
+  if (!ownBrand) return null;
 
   const listings = item.offersV2?.listings ?? [];
   const listing = listings.find((l) => l.isBuyBoxWinner) ?? listings[0];
@@ -58,6 +65,9 @@ function normalize(item: ApiItem, brand: Brand, fetchedAt: string): Deal | null 
     listing.price?.savings?.money?.amount ?? (listPrice ? Math.round((listPrice - priceMoney.amount) * 100) / 100 : null);
   const savingsPercent =
     listing.price?.savings?.percentage ?? (listPrice ? Math.round(((listPrice - priceMoney.amount) / listPrice) * 100) : null);
+
+  // Only genuine markdowns inside the configured band are listed.
+  if (!listPrice || !savingsPercent || savingsPercent < SITE.minDiscount || savingsPercent > SITE.maxDiscount) return null;
 
   const availabilityType = listing.availability?.type ?? "";
   const images = [item.images?.primary?.large, ...(item.images?.variants ?? []).map((v) => v.large)].filter(
@@ -73,6 +83,8 @@ function normalize(item: ApiItem, brand: Brand, fetchedAt: string): Deal | null 
     path: `/deals/${brand.slug}/${slug}`,
     brandSlug: brand.slug,
     brandName: brand.name,
+    isGamingPc: brand.include.test(title) && !brand.exclude.test(title),
+    category: item.itemInfo?.classifications?.productGroup?.displayValue ?? null,
     amazonUrl: item.detailPageURL,
     image: images[0] ?? null,
     gallery: images.slice(0, 6),
@@ -109,11 +121,17 @@ const fetchAllDeals = unstable_cache(
     let attempts = 0;
 
     for (const brand of BRANDS) {
-      for (const keywords of brand.queries) {
-        for (const itemPage of [1, 2]) {
+      for (const { keywords, searchIndex } of brand.searches) {
+        for (let itemPage = 1; itemPage <= 5; itemPage++) {
           attempts++;
           try {
-            const items = await searchItems({ keywords, brand: brand.apiBrand, itemPage });
+            const items = await searchItems({
+              keywords,
+              searchIndex,
+              brand: brand.apiBrand,
+              itemPage,
+              minSavingPercent: SITE.minDiscount,
+            });
             for (const item of items) {
               const deal = normalize(item, brand, fetchedAt);
               if (deal && !byAsin.has(deal.asin)) byAsin.set(deal.asin, deal);
@@ -121,7 +139,7 @@ const fetchAllDeals = unstable_cache(
             if (items.length < 10) break;
           } catch (err) {
             failures++;
-            console.error(`[deals] ${brand.slug} "${keywords}" page ${itemPage}:`, (err as Error).message);
+            console.error(`[deals] ${brand.slug} "${keywords}" (${searchIndex}) page ${itemPage}:`, (err as Error).message);
             break;
           }
         }
@@ -132,7 +150,7 @@ const fetchAllDeals = unstable_cache(
     if (failures === attempts) throw new Error("All Creators API searches failed");
     return { deals: [...byAsin.values()].sort(rank), fetchedAt };
   },
-  ["all-deals-v1"],
+  ["all-deals-v2"],
   { revalidate: SITE.revalidate, tags: ["deals"] },
 );
 
@@ -147,6 +165,11 @@ export async function getAllDeals(): Promise<DealsResult> {
   }
 }
 
+/** Gaming PCs first, then everything else, each group ordered by discount. */
+export function gamingPcsFirst(deals: Deal[]): Deal[] {
+  return [...deals.filter((d) => d.isGamingPc), ...deals.filter((d) => !d.isGamingPc)];
+}
+
 export async function getBrandDeals(slug: string): Promise<DealsResult> {
   const result = await getAllDeals();
   return { ...result, deals: result.deals.filter((d) => d.brandSlug === slug) };
@@ -159,7 +182,7 @@ const fetchItem = unstable_cache(
     const brand = brandFromAmazon(item.itemInfo?.byLineInfo?.brand?.displayValue ?? item.itemInfo?.title?.displayValue);
     return brand ? normalize(item, brand, new Date().toISOString()) : null;
   },
-  ["deal-by-asin-v1"],
+  ["deal-by-asin-v2"],
   { revalidate: SITE.revalidate, tags: ["deals"] },
 );
 

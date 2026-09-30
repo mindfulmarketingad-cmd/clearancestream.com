@@ -7,6 +7,7 @@ import "server-only";
  */
 
 const API_HOST = "https://creatorsapi.amazon";
+const DEFAULT_PARTNER_TAG = "mindfulmar026-20";
 
 const TOKEN_ENDPOINTS: Record<string, string> = {
   "2.1": "https://creatorsapi.auth.us-east-1.amazoncognito.com/oauth2/token",
@@ -48,8 +49,9 @@ type Config = {
 export function getConfig(): Config | null {
   const credentialId = process.env.AMAZON_CREDENTIAL_ID?.trim();
   const credentialSecret = process.env.AMAZON_CREDENTIAL_SECRET?.trim();
-  const partnerTag = process.env.AMAZON_PARTNER_TAG?.trim();
-  if (!credentialId || !credentialSecret || !partnerTag) return null;
+  // Associates tracking ID. Public by nature (it appears in every affiliate link).
+  const partnerTag = process.env.AMAZON_PARTNER_TAG?.trim() || DEFAULT_PARTNER_TAG;
+  if (!credentialId || !credentialSecret) return null;
   return {
     credentialId,
     credentialSecret,

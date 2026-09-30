@@ -683,11 +683,11 @@ p {
 .deal-media .badge {
   position: absolute;
   top: 12px;
-  right: 12px;
+  left: 12px;
 }
 .deal-media .badge-soft {
-  left: 12px;
-  right: auto;
+  left: auto;
+  right: 12px;
 }
 .deal-body {
   display: flex;
@@ -697,11 +697,16 @@ p {
   flex: 1;
 }
 .deal-brand {
-  font-size: 12px;
+  align-self: flex-start;
+  font-size: 11.5px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--blue-ink);
+  background: var(--blue-50);
+  border: 1px solid var(--blue-100);
+  border-radius: 6px;
+  padding: 2px 8px;
 }
 .deal-title {
   font-size: 15px;
@@ -714,10 +719,8 @@ p {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.deal-title a::after {
-  content: "";
-  position: absolute;
-  inset: 0;
+.deal-title a:hover {
+  color: var(--blue);
 }
 .deal-price {
   display: flex;
@@ -739,24 +742,6 @@ p {
   font-size: 13px;
   color: var(--blue-ink);
   font-weight: 500;
-}
-.deal-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  color: var(--faint);
-  padding-top: 10px;
-  border-top: 1px solid var(--line);
-}
-.deal-meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-.deal-meta svg {
-  width: 13px;
-  height: 13px;
 }
 
 /* ---------- Stats band ---------- */
@@ -1586,4 +1571,151 @@ a.card:hover {
 }
 .buy-box s.price {
   font-size: 18px;
+}
+
+.deal-card[hidden] {
+  display: none;
+}
+.deal-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  color: var(--faint);
+}
+.deal-time svg {
+  width: 13px;
+  height: 13px;
+}
+.deal-cta {
+  margin-top: 6px;
+}
+.deal-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--faint);
+}
+.deal-foot svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ---------- Brand hero + deal browser ---------- */
+
+.brand-hero {
+  margin-top: 24px;
+  border: 1px solid var(--blue-100);
+  background:
+    radial-gradient(circle at 1px 1px, var(--blue-100) 1px, transparent 0) 0 0 / 22px 22px,
+    var(--blue-50);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+}
+.brand-hero .eyebrow {
+  background: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 12px;
+}
+.brand-hero h1 {
+  font-size: clamp(30px, 4.4vw, 48px);
+  letter-spacing: -0.035em;
+  margin-top: 16px;
+}
+.brand-hero h1 span {
+  color: var(--blue);
+}
+.brand-hero .lede {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 17px;
+  max-width: 640px;
+}
+.brand-hero .page-meta {
+  margin-top: 16px;
+}
+.browser-toolbar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.browser-search {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+}
+.browser-search svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  color: var(--faint);
+  pointer-events: none;
+}
+.browser-search input,
+.browser-toolbar select {
+  height: 44px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14.5px;
+  color: var(--ink);
+  background: var(--white);
+}
+.browser-search input {
+  width: 100%;
+  padding: 0 14px 0 40px;
+}
+.browser-toolbar select {
+  padding: 0 36px 0 12px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a93a3' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+.browser-search input:focus,
+.browser-toolbar select:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-100);
+}
+.browser-count {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.where-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 40px;
+  margin-top: 16px;
+}
+.where-grid h3 {
+  font-size: 16px;
+  margin: 0 0 4px;
+}
+.where-grid p {
+  font-size: 15px;
+  color: var(--muted);
+  margin: 0;
+}
+@media (max-width: 720px) {
+  .brand-hero {
+    padding: 28px 20px;
+  }
+  .where-grid {
+    grid-template-columns: 1fr;
+  }
+  .browser-toolbar select {
+    flex: 1;
+  }
 }
