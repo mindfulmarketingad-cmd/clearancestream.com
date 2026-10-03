@@ -45,6 +45,16 @@ export type DealsResult = { deals: Deal[]; configured: boolean; ok: boolean; fet
 const money = (amount: number, currency = "USD") =>
   new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
 
+// Prebuilt titles often list bundled parts ("liquid cooler", "RGB fans"), so an
+// explicit "gaming PC/desktop" wins over the peripheral exclusions, except for cases.
+const EXPLICIT_PC = /\bgaming (pc|desktop|computer)\b/i;
+const CASE = /\b(case|chassis)\b/i;
+
+function isGamingPcTitle(title: string, brand: Brand) {
+  if (CASE.test(title)) return false;
+  return EXPLICIT_PC.test(title) || (brand.include.test(title) && !brand.exclude.test(title));
+}
+
 function normalize(item: ApiItem, brand: Brand, fetchedAt: string): Deal | null {
   const title = item.itemInfo?.title?.displayValue?.trim();
   if (!title || !item.detailPageURL) return null;
@@ -83,7 +93,7 @@ function normalize(item: ApiItem, brand: Brand, fetchedAt: string): Deal | null 
     path: `/deals/${brand.slug}/${slug}`,
     brandSlug: brand.slug,
     brandName: brand.name,
-    isGamingPc: brand.include.test(title) && !brand.exclude.test(title),
+    isGamingPc: isGamingPcTitle(title, brand),
     category: item.itemInfo?.classifications?.productGroup?.displayValue ?? null,
     amazonUrl: item.detailPageURL,
     image: images[0] ?? null,
@@ -157,7 +167,7 @@ const fetchAllDeals = unstable_cache(
     if (failures === attempts) throw new Error("All Creators API searches failed");
     return { deals: [...byAsin.values()].sort(rank), fetchedAt };
   },
-  ["all-deals-v3"],
+  ["all-deals-v4"],
   { revalidate: SITE.revalidate, tags: ["deals"] },
 );
 
@@ -213,7 +223,7 @@ const fetchItem = unstable_cache(
     const brand = brandFromAmazon(item.itemInfo?.byLineInfo?.brand?.displayValue ?? item.itemInfo?.title?.displayValue);
     return brand ? normalize(item, brand, new Date().toISOString()) : null;
   },
-  ["deal-by-asin-v2"],
+  ["deal-by-asin-v3"],
   { revalidate: SITE.revalidate, tags: ["deals"] },
 );
 
