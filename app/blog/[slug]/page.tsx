@@ -13,7 +13,7 @@ import { formatDate } from "@/lib/format";
 import { ORGANIZATION_ID, pageMetadata } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 export const dynamicParams = false;
 
 type Props = { params: Promise<{ slug: string }> };
@@ -119,7 +119,7 @@ export default async function PostPage({ params }: Props) {
               <ul>
                 {BRANDS.map((b) => (
                   <li key={b.slug}>
-                    <Link href={`/brands/${b.slug}`}>{b.name} gaming PC deals</Link>
+                    <Link href={`/brands/${b.slug}`}>{b.name} deals</Link>
                   </li>
                 ))}
                 <li>

@@ -44,7 +44,7 @@ export default function SearchPage() {
               <ul>
                 {BRANDS.map((b) => (
                   <li key={b.slug}>
-                    <Link href={`/brands/${b.slug}`}>{b.name} gaming PC deals</Link>
+                    <Link href={`/brands/${b.slug}`}>{b.name} deals</Link>
                   </li>
                 ))}
                 <li>

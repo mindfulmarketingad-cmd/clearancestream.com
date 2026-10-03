@@ -1,6 +1,7 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
 import { BRANDS, brandFromAmazon, type Brand } from "./brands";
+import { categorize } from "./categories";
 import { getConfig, getItems, searchItems, type ApiItem } from "./amazon/creators-api";
 import { productSlug, shortTitle } from "./slug";
 import { SITE } from "./site";
@@ -17,6 +18,8 @@ export type Deal = {
   isGamingPc: boolean;
   /** Amazon's product group, e.g. "Personal Computer". */
   category: string | null;
+  /** Our category slug (see lib/categories.ts), e.g. "mice". */
+  categorySlug: string;
   amazonUrl: string;
   image: { url: string; width: number; height: number } | null;
   gallery: { url: string; width: number; height: number }[];
@@ -62,6 +65,7 @@ function normalize(item: ApiItem, brand: Brand, fetchedAt: string): Deal | null 
   const byline = item.itemInfo?.byLineInfo?.brand?.displayValue;
   const ownBrand = byline ? brandFromAmazon(byline) === brand : title.toLowerCase().startsWith(brand.name.toLowerCase());
   if (!ownBrand) return null;
+  if (brand.require && !brand.require.test(title)) return null;
 
   const listings = item.offersV2?.listings ?? [];
   const listing = listings.find((l) => l.isBuyBoxWinner) ?? listings[0];
@@ -84,6 +88,7 @@ function normalize(item: ApiItem, brand: Brand, fetchedAt: string): Deal | null 
     (i): i is { url: string; width: number; height: number } => Boolean(i?.url),
   );
   const slug = productSlug(title, item.asin);
+  const isGamingPc = isGamingPcTitle(title, brand);
 
   return {
     asin: item.asin,
@@ -93,8 +98,9 @@ function normalize(item: ApiItem, brand: Brand, fetchedAt: string): Deal | null 
     path: `/deals/${brand.slug}/${slug}`,
     brandSlug: brand.slug,
     brandName: brand.name,
-    isGamingPc: isGamingPcTitle(title, brand),
+    isGamingPc,
     category: item.itemInfo?.classifications?.productGroup?.displayValue ?? null,
+    categorySlug: categorize(title, isGamingPc),
     amazonUrl: item.detailPageURL,
     image: images[0] ?? null,
     gallery: images.slice(0, 6),
@@ -123,8 +129,8 @@ function rank(a: Deal, b: Deal) {
   return (b.savingsPercent ?? 0) - (a.savingsPercent ?? 0) || (b.savings ?? 0) - (a.savings ?? 0) || a.price - b.price;
 }
 
-// Pages of 10 results per search. Keeps a full refresh near 24 calls, about
-// 30 seconds at Amazon's starting limit of one request per second.
+// Pages of 10 results per search. With 13 searches a full refresh is at most
+// 39 calls, under a minute at Amazon's starting limit of one request per second.
 const MAX_PAGES = 3;
 
 const fetchAllDeals = unstable_cache(
@@ -167,7 +173,7 @@ const fetchAllDeals = unstable_cache(
     if (failures === attempts) throw new Error("All Creators API searches failed");
     return { deals: [...byAsin.values()].sort(rank), fetchedAt };
   },
-  ["all-deals-v4"],
+  ["all-deals-v5"],
   { revalidate: SITE.revalidate, tags: ["deals"] },
 );
 
@@ -223,7 +229,7 @@ const fetchItem = unstable_cache(
     const brand = brandFromAmazon(item.itemInfo?.byLineInfo?.brand?.displayValue ?? item.itemInfo?.title?.displayValue);
     return brand ? normalize(item, brand, new Date().toISOString()) : null;
   },
-  ["deal-by-asin-v3"],
+  ["deal-by-asin-v4"],
   { revalidate: SITE.revalidate, tags: ["deals"] },
 );
 
@@ -242,7 +248,10 @@ export async function getDeal(asin: string): Promise<Deal | null> {
 
 export function relatedDeals(deal: Deal, all: Deal[], limit = 4): Deal[] {
   const others = all.filter((d) => d.asin !== deal.asin);
-  const sameBrand = others.filter((d) => d.brandSlug === deal.brandSlug);
-  const rest = others.filter((d) => d.brandSlug !== deal.brandSlug);
-  return [...sameBrand, ...rest].slice(0, limit);
+  const score = (d: Deal) => (d.brandSlug === deal.brandSlug ? 2 : 0) + (d.categorySlug === deal.categorySlug ? 1 : 0);
+  return others
+    .map((d, i) => ({ d, i }))
+    .sort((a, b) => score(b.d) - score(a.d) || a.i - b.i)
+    .slice(0, limit)
+    .map(({ d }) => d);
 }

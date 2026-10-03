@@ -1,7 +1,7 @@
 # ClearanceStream.com
 
 Gaming PC hidden deals and clearances, powered by live Amazon data. Built with
-Next.js 16 (App Router), statically rendered with hourly incremental
+Next.js 16 (App Router), statically rendered with daily incremental
 regeneration.
 
 ## Setup
@@ -35,6 +35,17 @@ On Vercel, add these under Project Settings, Environment Variables.
 - Product URLs end in the lowercase ASIN (`/deals/corsair/<title>-b0xxxxxxxx`), so they keep
   resolving if Amazon edits a title. A stale slug 308-redirects to the current one.
 
+## Categories
+
+`lib/categories.ts` defines the categories (Gaming PCs, Laptops, Keyboards, Mice, Headsets,
+Monitors, Controllers & Racing Wheels, Streaming Gear, PC Components, Accessories). Each
+product is assigned one by title; order in the list decides ties.
+
+## Refresh cadence
+
+Prices refresh every 24 hours (`SITE.revalidate`), the longest Amazon's API terms allow
+product data to be cached. Each refresh is at most ~39 API calls at 1 request/second.
+
 ## Adding a brand
 
 Add an entry to `lib/brands.ts` (queries, include/exclude filters, editorial copy, FAQs).
@@ -50,10 +61,11 @@ Authors live in `lib/blog/authors.ts`.
 ```
 /                               Home: links to every hub, brands, guides, popular searches
 ├── /deals                      Deals hub (all live deals)
-│   └── /deals/[brand]/[slug]   Product: breadcrumb Home > Deals > Brand > Product
+│   └── /deals/[brand]/[slug]   Product: breadcrumb Home > Brands > Brand > Category > Product
 │       (/deals/[brand] 308-redirects to /brands/[brand])
 ├── /brands                     Brands hub
-│   └── /brands/[brand]         Brand: deals + guide, links to products, guides, searches
+│   ├── /brands/[brand]         Brand: deals + guide, category links, guides, searches
+│   └── /brands/[brand]/[cat]   Brand category (e.g. /brands/razer/mice); empty ones are noindex
 ├── /blog                       Blog hub
 │   ├── /blog/[slug]            Post: links to brands, deals, other post, author
 │   └── /author/[author]        Author profile (/author redirects to /blog)

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SearchBox } from "@/components/SearchBox";
 
-export const metadata = { title: "Page not found", robots: { index: false, follow: true } };
+export const metadata = { title: "Page not found" };
 
 export default function NotFound() {
   return (

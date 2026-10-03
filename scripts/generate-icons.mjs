@@ -41,7 +41,7 @@ const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"
   <g transform="translate(96 120) scale(3)">${markSvg.replace(/<\/?svg[^>]*>/g, "")}</g>
   <text x="96" y="330" font-family="Geist" font-weight="600" font-size="76" letter-spacing="-2.5" fill="${INK}">Gaming PC Hidden Deals</text>
   <text x="96" y="420" font-family="Geist" font-weight="600" font-size="76" letter-spacing="-2.5" fill="${BLUE}">&amp; Clearances</text>
-  <text x="96" y="520" font-family="Geist" font-weight="400" font-size="30" fill="#5b6576">Live Amazon prices on Corsair, Alienware, and more. Refreshed hourly.</text>
+  <text x="96" y="520" font-family="Geist" font-weight="400" font-size="30" fill="#5b6576">Live Amazon deals on Corsair, Alienware, Razer, Logitech G, and more.</text>
   <text x="1104" y="580" text-anchor="end" font-family="Geist" font-weight="600" font-size="28" fill="${INK}">ClearanceStream<tspan fill="${BLUE}">.com</tspan></text>
 </svg>`;
 

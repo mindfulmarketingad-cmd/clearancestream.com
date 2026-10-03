@@ -179,7 +179,7 @@ function Body() {
       </p>
       <p>
         Neither brand is universally better. Compare specific configurations, and pay attention to how often each goes
-        on sale. You can track current prices on both brands&apos; pages, which refresh every hour.
+        on sale. You can track current prices on both brands&apos; pages, which refresh every day.
       </p>
 
       <h2 id="warranty-support">Warranty and support</h2>

@@ -1719,3 +1719,31 @@ a.card:hover {
     flex: 1;
   }
 }
+
+.clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.category-links {
+  margin-bottom: 20px;
+}
+.chip-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+.chip[aria-current="page"] {
+  border-color: var(--blue);
+  background: var(--blue-50);
+  color: var(--blue-ink);
+}
+.chip[aria-current="page"] .chip-count {
+  background: var(--white);
+  color: var(--blue-ink);
+}

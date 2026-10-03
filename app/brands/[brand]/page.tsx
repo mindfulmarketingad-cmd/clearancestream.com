@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { CategoryLinks } from "@/components/CategoryLinks";
 import { DealBrowser } from "@/components/DealBrowser";
 import { DealsUnavailable } from "@/components/DealsUnavailable";
 import { Faq } from "@/components/Faq";
@@ -16,7 +17,7 @@ import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 export const dynamicParams = false;
 
 type Props = { params: Promise<{ brand: string }> };
@@ -42,7 +43,7 @@ export default async function BrandPage({ params }: Props) {
   const faqs = [
     {
       q: `How often are ${brand.name} deals updated?`,
-      a: `Every hour. ClearanceStream checks Amazon for every ${brand.name} product marked down ${band} and shows the time each price was checked. Prices can change between checks, so confirm the final price on Amazon.`,
+      a: `Every day. ClearanceStream checks Amazon for every ${brand.name} product marked down ${band} and shows the time each price was checked. Prices can change between checks, so confirm the final price on Amazon.`,
     },
     {
       q: `Why do you only show ${brand.name} deals between ${SITE.minDiscount}% and ${SITE.maxDiscount}% off?`,
@@ -69,8 +70,7 @@ export default async function BrandPage({ params }: Props) {
             {brand.name} Hidden Deals <span>&amp; Clearances</span>
           </h1>
           <p className="lede">
-            Every {brand.name} product on Amazon marked down {band}, from gaming PCs to peripherals. Live prices,
-            refreshed hourly.
+            Every {brand.name} product on Amazon marked down {band}. Live prices, refreshed daily.
           </p>
           <div className="page-meta">
             <span>
@@ -82,7 +82,7 @@ export default async function BrandPage({ params }: Props) {
               </span>
             ) : (
               <span>
-                <RefreshIcon /> Refreshed hourly
+                <RefreshIcon /> Refreshed daily
               </span>
             )}
           </div>
@@ -94,7 +94,8 @@ export default async function BrandPage({ params }: Props) {
           <h2 className="sr-only">All {brand.name} deals</h2>
           {deals.length > 0 ? (
             <>
-              <DealBrowser deals={deals} label={brand.name} />
+              <CategoryLinks brand={brand} deals={deals} />
+              <DealBrowser deals={deals} label={brand.name} showCategoryFilter={false} />
               <JsonLd data={itemListLd(`${brand.name} deals`, deals.map((d) => ({ name: d.name, path: d.path })))} />
             </>
           ) : (
@@ -121,7 +122,7 @@ export default async function BrandPage({ params }: Props) {
               <p>
                 Use the search box, category filter, and sort options above to narrow the list. Every deal is at least{" "}
                 {SITE.minDiscount}% below Amazon&apos;s reference price, and new {brand.name} markdowns appear as soon as
-                our hourly check finds them.
+                our daily check finds them.
               </p>
 
               <h2>What we track from {brand.name}</h2>

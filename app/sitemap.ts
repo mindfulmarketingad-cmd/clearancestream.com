@@ -2,11 +2,12 @@ import type { MetadataRoute } from "next";
 import { LEGAL_UPDATED } from "@/components/LegalPage";
 import { AUTHORS, POSTS, authorPath } from "@/lib/blog";
 import { BRANDS } from "@/lib/brands";
+import { CATEGORIES } from "@/lib/categories";
 import { getAllDeals } from "@/lib/deals";
 import { POPULAR_SEARCHES, runSearch } from "@/lib/search";
 import { absoluteUrl } from "@/lib/site";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { deals, fetchedAt } = await getAllDeals();
@@ -21,10 +22,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   return [
-    entry("/", dealsUpdated, "hourly", 1),
-    entry("/deals", dealsUpdated, "hourly", 0.9),
+    entry("/", dealsUpdated, "daily", 1),
+    entry("/deals", dealsUpdated, "daily", 0.9),
     entry("/brands", dealsUpdated, "daily", 0.8),
-    ...BRANDS.map((b) => entry(`/brands/${b.slug}`, dealsUpdated, "hourly", 0.8)),
+    ...BRANDS.map((b) => entry(`/brands/${b.slug}`, dealsUpdated, "daily", 0.8)),
+    // Only brand/category pages that currently have deals (empty ones are noindex).
+    ...BRANDS.flatMap((b) =>
+      CATEGORIES.filter((c) => deals.some((d) => d.brandSlug === b.slug && d.categorySlug === c.slug)).map((c) =>
+        entry(`/brands/${b.slug}/${c.slug}`, dealsUpdated, "daily", 0.7),
+      ),
+    ),
     entry("/blog", latestPost, "weekly", 0.7),
     ...POSTS.map((p) => entry(`/blog/${p.slug}`, p.updated, "monthly", 0.7)),
     ...AUTHORS.map((a) => entry(authorPath(a), latestPost, "monthly", 0.4)),

@@ -2,11 +2,12 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { AUTHORS, POSTS, authorPath } from "@/lib/blog";
 import { BRANDS } from "@/lib/brands";
+import { CATEGORIES } from "@/lib/categories";
 import { getAllDeals } from "@/lib/deals";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { pageMetadata } from "@/lib/seo";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export const metadata = pageMetadata({
   title: "Sitemap",
@@ -40,7 +41,7 @@ export default async function SitemapPage() {
             <h2>Brands</h2>
             <ul>
               {BRANDS.map((b) => (
-                <li key={b.slug}><Link href={`/brands/${b.slug}`}>{b.name} gaming PC deals</Link></li>
+                <li key={b.slug}><Link href={`/brands/${b.slug}`}>{b.name} deals</Link></li>
               ))}
             </ul>
           </div>
@@ -84,9 +85,18 @@ export default async function SitemapPage() {
         {BRANDS.map((b) => {
           const brandDeals = deals.filter((d) => d.brandSlug === b.slug);
           if (brandDeals.length === 0) return null;
+          const cats = CATEGORIES.filter((c) => brandDeals.some((d) => d.categorySlug === c.slug));
           return (
             <div key={b.slug} className="container mt-lg sitemap-cols" style={{ display: "block" }}>
               <h2>{b.name} deals</h2>
+              <p style={{ marginBottom: 12, fontSize: 15 }}>
+                {cats.map((c, i) => (
+                  <span key={c.slug}>
+                    {i > 0 ? " · " : ""}
+                    <Link href={`/brands/${b.slug}/${c.slug}`}>{c.name}</Link>
+                  </span>
+                ))}
+              </p>
               <ul>
                 {brandDeals.map((d) => (
                   <li key={d.asin}><Link href={d.path}>{d.name}</Link></li>

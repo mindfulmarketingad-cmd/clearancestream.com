@@ -10,12 +10,12 @@ import { formatChecked } from "@/lib/format";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export const metadata = pageMetadata({
   title: "All Gaming PC Deals: 20-50% Off, Live from Amazon",
   description:
-    "Every hidden deal we track on Amazon, 20 to 50% off: Corsair and Alienware gaming PCs, peripherals, and components with live prices, refreshed hourly.",
+    "Every hidden deal we track on Amazon, 20 to 50% off: gaming PCs, mice, keyboards, headsets, and components from Corsair, Alienware, Razer, Logitech G, SteelSeries, and Origin PC with live prices, refreshed daily.",
   path: "/deals",
 });
 
@@ -27,11 +27,11 @@ export default async function DealsPage() {
       <PageHeader
         crumbs={[{ name: "All Deals", path: "/deals" }]}
         title="All gaming PC deals"
-        lede="Every product we track on Amazon marked down 20 to 50%, from complete gaming PCs to peripherals. Prices come directly from Amazon and refresh every hour."
+        lede="Every product we track on Amazon marked down 20 to 50%, from complete gaming PCs to peripherals. Prices come directly from Amazon and refresh every day."
       >
         <div className="page-meta">
           <span>
-            <RefreshIcon /> Refreshed hourly
+            <RefreshIcon /> Refreshed daily
           </span>
           {fetchedAt ? (
             <span>

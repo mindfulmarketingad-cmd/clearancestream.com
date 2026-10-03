@@ -6,20 +6,22 @@ import { ArrowRight, CheckIcon, ClockIcon, ExternalIcon, ShieldIcon } from "@/co
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
 import { getBrand } from "@/lib/brands";
+import { getCategory } from "@/lib/categories";
 import { getAllDeals, getDeal, relatedDeals, type Deal } from "@/lib/deals";
 import { formatChecked } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo";
 import { AFFILIATE_DISCLOSURE, absoluteUrl } from "@/lib/site";
 import { asinFromSlug } from "@/lib/slug";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 export const dynamicParams = true;
 
 type Props = { params: Promise<{ brand: string; product: string }> };
 
-export async function generateStaticParams() {
-  const { deals } = await getAllDeals();
-  return deals.map((d) => ({ brand: d.brandSlug, product: d.slug }));
+// Product pages render on first request (then cache for a day). Prerendering
+// them would need a second full Amazon fetch during every build.
+export function generateStaticParams() {
+  return [];
 }
 
 async function resolve({ params }: Props): Promise<Deal> {
@@ -40,7 +42,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     title: `${deal.name} Deal: ${deal.priceDisplay}${saving}`,
     description: `${deal.name} is ${deal.priceDisplay} on Amazon${
       deal.savingsDisplay ? `, ${deal.savingsDisplay} below the ${deal.listPriceLabel?.toLowerCase() ?? "reference price"}` : ""
-    }. Live ${deal.brandName} ${deal.isGamingPc ? "gaming PC " : ""}deal tracked hourly by ClearanceStream.`,
+    }. Live ${deal.brandName} ${deal.isGamingPc ? "gaming PC " : ""}deal tracked daily by ClearanceStream.`,
     path: deal.path,
     image: deal.image ? { url: deal.image.url, width: deal.image.width, height: deal.image.height, alt: deal.name } : null,
   });
@@ -78,6 +80,7 @@ function productLd(deal: Deal) {
 export default async function ProductPage(props: Props) {
   const deal = await resolve(props);
   const brand = getBrand(deal.brandSlug)!;
+  const category = getCategory(deal.categorySlug);
   const { deals } = await getAllDeals();
   const related = relatedDeals(deal, deals);
 
@@ -96,8 +99,9 @@ export default async function ProductPage(props: Props) {
     <>
       <PageHeader
         crumbs={[
-          { name: "Deals", path: "/deals" },
+          { name: "Brands", path: "/brands" },
           { name: brand.name, path: `/brands/${brand.slug}` },
+          ...(category ? [{ name: category.name, path: `/brands/${brand.slug}/${category.slug}` }] : []),
           { name: deal.name, path: deal.path },
         ]}
       />
@@ -122,6 +126,11 @@ export default async function ProductPage(props: Props) {
               <Link href={`/brands/${brand.slug}`} className="badge badge-soft">
                 {brand.name}
               </Link>
+              {category ? (
+                <Link href={`/brands/${brand.slug}/${category.slug}`} className="badge badge-neutral">
+                  {category.name}
+                </Link>
+              ) : null}
               {deal.savingsPercent ? <span className="badge badge-discount">{deal.savingsPercent}% off</span> : null}
               {deal.dealBadge ? <span className="badge badge-neutral">{deal.dealBadge}</span> : null}
             </div>
@@ -195,7 +204,13 @@ export default async function ProductPage(props: Props) {
               </p>
               <p>
                 Read our <Link href="/blog/gaming-pc-deals-guide">guide to judging gaming PC deals</Link> or compare
-                every <Link href={`/brands/${brand.slug}`}>{brand.name} deal</Link> before you decide.
+                every {category ? (
+                  <Link href={`/brands/${brand.slug}/${category.slug}`}>
+                    {brand.name} {category.name.toLowerCase()} deal
+                  </Link>
+                ) : (
+                  <Link href={`/brands/${brand.slug}`}>{brand.name} deal</Link>
+                )} before you decide.
               </p>
             </div>
 

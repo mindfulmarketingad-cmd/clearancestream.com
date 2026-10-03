@@ -41,7 +41,7 @@ export default function DisclaimerPage() {
       </p>
       <p>
         Prices on {SITE.name} are retrieved from Amazon through Amazon&apos;s official product API and refreshed about
-        once an hour. Each deal shows the time its price was last checked. Amazon may change a price, end a promotion,
+        once a day. Each deal shows the time its price was last checked. Amazon may change a price, end a promotion,
         or sell out of an item at any time, including between our checks. Always confirm the final price and details on
         Amazon before you buy.
       </p>

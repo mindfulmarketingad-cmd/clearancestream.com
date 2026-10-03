@@ -1,5 +1,6 @@
 import "server-only";
 import { BRANDS } from "./brands";
+import { CATEGORIES } from "./categories";
 import { POSTS } from "./blog";
 import type { Deal } from "./deals";
 import { searchSlug } from "./slug";
@@ -31,6 +32,11 @@ export const POPULAR_SEARCHES = [
   "Gaming PC under 1000",
   "Gaming PC under 1500",
   "Gaming PC under 2000",
+  "Razer mouse",
+  "Logitech G mouse",
+  "SteelSeries headset",
+  "Razer keyboard",
+  "Origin PC",
 ].map((label) => ({ label, slug: searchSlug(label), path: `/search/${searchSlug(label)}` }));
 
 export function popularSearch(slug: string) {
@@ -75,11 +81,24 @@ function buildIndex(deals: Deal[]): SearchDoc[] {
   for (const b of BRANDS) {
     docs.push({
       type: "brand",
-      title: `${b.name} gaming PC deals`,
+      title: `${b.name} deals`,
       description: b.metaDescription,
       path: `/brands/${b.slug}`,
       haystack: `${b.name} ${b.lines.map((l) => l.name).join(" ")} gaming pc desktop ${b.intro}`.toLowerCase(),
     });
+  }
+  for (const b of BRANDS) {
+    for (const c of CATEGORIES) {
+      const count = deals.filter((d) => d.brandSlug === b.slug && d.categorySlug === c.slug).length;
+      if (count === 0) continue;
+      docs.push({
+        type: "brand",
+        title: `${b.name} ${c.name} deals`,
+        description: `${count} ${b.name} ${c.noun} ${count === 1 ? "deal" : "deals"} on Amazon right now.`,
+        path: `/brands/${b.slug}/${c.slug}`,
+        haystack: `${b.name} ${c.name} ${c.noun} ${c.slug.replace("-", " ")}`.toLowerCase(),
+      });
+    }
   }
   for (const p of POSTS) {
     docs.push({

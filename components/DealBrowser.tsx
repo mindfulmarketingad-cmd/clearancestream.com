@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CATEGORIES } from "@/lib/categories";
 import type { Deal } from "@/lib/deals";
 import { DealCard } from "./DealCard";
 import { SearchIcon } from "./Icons";
@@ -15,29 +16,35 @@ const SORTS = {
 } as const;
 type SortKey = keyof typeof SORTS;
 
-const GAMING_PCS = "__gaming_pcs__";
 
 /**
  * Client-side search, sort, category filter, and "load more" for a deal list.
  * Every card is rendered into the HTML (extra ones use the `hidden` attribute)
  * so crawlers see all product links without running JavaScript.
  */
-export function DealBrowser({ deals, label }: { deals: Deal[]; label: string }) {
+export function DealBrowser({
+  deals,
+  label,
+  showCategoryFilter = true,
+}: {
+  deals: Deal[];
+  label: string;
+  showCategoryFilter?: boolean;
+}) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("discount");
   const [category, setCategory] = useState("");
   const [visible, setVisible] = useState(PAGE);
 
   const categories = useMemo(() => {
-    const set = new Set(deals.map((d) => d.category).filter((c): c is string => Boolean(c)));
-    return [...set].sort();
+    const present = new Set(deals.map((d) => d.categorySlug));
+    return CATEGORIES.filter((c) => present.has(c.slug));
   }, [deals]);
-  const hasGamingPcs = deals.some((d) => d.isGamingPc);
 
   const results = useMemo(() => {
     const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
     return deals
-      .filter((d) => (category === GAMING_PCS ? d.isGamingPc : !category || d.category === category))
+      .filter((d) => !category || d.categorySlug === category)
       .filter((d) => terms.every((t) => d.title.toLowerCase().includes(t)))
       .sort(SORTS[sort].fn);
   }, [deals, query, sort, category]);
@@ -64,7 +71,7 @@ export function DealBrowser({ deals, label }: { deals: Deal[]; label: string }) 
             }}
           />
         </div>
-        {categories.length > 1 || hasGamingPcs ? (
+        {showCategoryFilter && categories.length > 1 ? (
           <select
             aria-label="Filter by category"
             value={category}
@@ -74,10 +81,9 @@ export function DealBrowser({ deals, label }: { deals: Deal[]; label: string }) 
             }}
           >
             <option value="">All categories</option>
-            {hasGamingPcs ? <option value={GAMING_PCS}>Gaming PCs</option> : null}
             {categories.map((c) => (
-              <option key={c} value={c}>
-                {c}
+              <option key={c.slug} value={c.slug}>
+                {c.name}
               </option>
             ))}
           </select>
@@ -92,7 +98,7 @@ export function DealBrowser({ deals, label }: { deals: Deal[]; label: string }) 
       </div>
 
       <p className="browser-count" aria-live="polite">
-        Showing {shown} of {results.length} deals
+        Showing {shown} of {results.length} {results.length === 1 ? "deal" : "deals"}
       </p>
 
       {results.length > 0 ? (

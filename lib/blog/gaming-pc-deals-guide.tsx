@@ -185,8 +185,8 @@ function Body() {
       <h3>Short-term and limited-time deals</h3>
       <p>
         Amazon runs time-limited deals that can last hours or days. They sometimes carry the deepest discounts but
-        disappear quickly. ClearanceStream refreshes prices every hour and flags listings Amazon marks as a limited-time
-        deal.
+        disappear quickly. ClearanceStream refreshes prices every day and flags listings Amazon marks as a limited-time
+        deal, but short deals can end between checks, so always confirm the price on Amazon.
       </p>
       <h3>Renewed and open-box stock</h3>
       <p>
@@ -295,7 +295,7 @@ function Body() {
 
       <h2 id="using-clearancestream">How to use ClearanceStream</h2>
       <p>
-        ClearanceStream tracks gaming PC listings from supported brands on Amazon and refreshes prices every hour. Every
+        ClearanceStream tracks gaming PC listings from supported brands on Amazon and refreshes prices every day. Every
         deal shows the current price, the reference price Amazon uses, the saving in dollars and percent, and the time
         the price was checked.
       </p>

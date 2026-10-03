@@ -38,7 +38,7 @@ export default function AboutPage() {
 
             <h2>How we find deals</h2>
             <p>
-              Every hour, ClearanceStream requests current listings for the gaming PC brands we track through
+              Every day, ClearanceStream requests current listings for the gaming PC brands we track through
               Amazon&apos;s official product API. We filter out accessories and non-gaming systems, read Amazon&apos;s
               current price and reference price for each listing, and rank the results by the size of the discount.
             </p>
@@ -95,7 +95,7 @@ export default function AboutPage() {
                 </li>
                 <li style={{ display: "flex", gap: 10 }}>
                   <RadarIcon style={{ width: 18, height: 18, color: "var(--blue)", flexShrink: 0, marginTop: 3 }} />
-                  <span>Checked every hour, timestamped on every deal</span>
+                  <span>Checked every day, timestamped on every deal</span>
                 </li>
                 <li style={{ display: "flex", gap: 10 }}>
                   <FilterIcon style={{ width: 18, height: 18, color: "var(--blue)", flexShrink: 0, marginTop: 3 }} />

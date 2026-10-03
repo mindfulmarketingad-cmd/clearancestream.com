@@ -21,20 +21,20 @@ import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export const metadata = pageMetadata({
   title: "Gaming PC Hidden Deals & Clearances | ClearanceStream.com",
   absoluteTitle: true,
   description:
-    "We help gaming PC enthusiasts track hidden deals, price drops, and clearances on their favorite brands. Live Amazon prices on Corsair and Alienware, refreshed hourly.",
+    "We help gaming PC enthusiasts track hidden deals, price drops, and clearances on their favorite brands. Live Amazon prices on Corsair, Alienware, Razer, Logitech G, SteelSeries, and Origin PC.",
   path: "/",
 });
 
 const HOME_FAQ = [
   {
     q: "What is a hidden gaming PC deal?",
-    a: "A hidden deal is a discount that is not promoted on a retailer's homepage or in a sale banner. It is often a single configuration marked down to clear stock, or a quiet price cut when a new hardware generation launches. ClearanceStream finds these by checking live Amazon prices every hour.",
+    a: "A hidden deal is a discount that is not promoted on a retailer's homepage or in a sale banner. It is often a single configuration marked down to clear stock, or a quiet price cut when a new hardware generation launches. ClearanceStream finds these by checking live Amazon prices every day.",
   },
   {
     q: "Where do ClearanceStream prices come from?",
@@ -65,7 +65,7 @@ export default async function HomePage() {
           <div>
             <span className="eyebrow">
               <span className="live-dot" aria-hidden="true" />
-              Live Amazon prices, refreshed hourly
+              Live Amazon prices, refreshed daily
             </span>
             <h1>
               Gaming PC Hidden Deals <span>&amp; Clearances</span>
@@ -131,8 +131,8 @@ export default async function HomePage() {
                 <li>
                   <span className="step-num">1</span>
                   <span>
-                    <b>Scan Amazon every hour</b>
-                    Live prices on every tracked Corsair and Alienware gaming desktop.
+                    <b>Scan Amazon every day</b>
+                    Live prices on gaming PCs and gear from every brand we track.
                   </span>
                 </li>
                 <li>
@@ -205,7 +205,7 @@ export default async function HomePage() {
               <dt>Brands covered</dt>
             </div>
             <div>
-              <dd>Hourly</dd>
+              <dd>Daily</dd>
               <dt>Price refresh</dt>
             </div>
             <div>
@@ -232,7 +232,7 @@ export default async function HomePage() {
               <span className="step-label">Step 1</span>
               <h3>We scan</h3>
               <p>
-                Every hour we check live Amazon prices on gaming desktops from the brands we track, including
+                Every day we check live Amazon prices on gaming desktops from the brands we track, including
                 configurations that never appear in a sale banner.
               </p>
             </div>
@@ -266,20 +266,20 @@ export default async function HomePage() {
         <div className="container">
           <div className="section-head">
             <div>
-              <h2>Browse gaming PC deals by brand</h2>
-              <p>Every brand page lists live discounts plus buying advice specific to that manufacturer.</p>
+              <h2>Browse deals by brand</h2>
+              <p>Gaming PCs and gear from the brands PC gamers buy most, with buying advice for each.</p>
             </div>
             <Link href="/brands" className="text-link">
               All brands <ArrowRight />
             </Link>
           </div>
-          <div className="card-grid card-grid-2">
+          <div className="card-grid">
             {BRANDS.map((b) => {
               const count = deals.filter((d) => d.brandSlug === b.slug).length;
               return (
                 <Link key={b.slug} href={`/brands/${b.slug}`} className="card">
-                  <h3>{b.name} gaming PC deals</h3>
-                  <p>{b.intro}</p>
+                  <h3>{b.name} deals</h3>
+                  <p className="clamp-3">{b.intro}</p>
                   <span className="text-link">
                     {count > 0 ? `View ${count} live ${b.name} deals` : `View ${b.name} deals`} <ArrowRight />
                   </span>

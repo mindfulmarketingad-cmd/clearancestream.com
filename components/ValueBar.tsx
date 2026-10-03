@@ -20,7 +20,7 @@ export function ValueBar() {
       <div>
         <RefreshIcon />
         <p>
-          <b>Updated hourly</b>
+          <b>Updated daily</b>
           <span>Every price shows when it was checked</span>
         </p>
       </div>
