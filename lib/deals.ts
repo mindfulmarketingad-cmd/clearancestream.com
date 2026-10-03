@@ -156,10 +156,11 @@ function rank(a: Deal, b: Deal) {
   );
 }
 
-// Up to 50 results per request, 2 pages per search. Brands are fetched and
-// cached separately, so a cold refresh of all brands is ~70 calls at one
-// request per second, and a warm site refreshes each brand in the background.
-const PAGES_PER_SEARCH = 2;
+// The live API returns 10 results per request even when more are asked for,
+// so catalog size comes from paging: 5 pages per search, ~285 calls for a cold
+// refresh of every brand (about 6 minutes at one request per second). Brands
+// are cached separately and refresh in the background as their cache expires.
+const PAGES_PER_SEARCH = 5;
 const ITEMS_PER_PAGE = 50;
 
 type BrandFetch = { deals: Deal[]; fetchedAt: string };
@@ -213,7 +214,7 @@ const fetchBrandDeals = unstable_cache(
     if (failures === attempts) throw new Error(`All searches failed for ${slug}`);
     return { deals: [...byAsin.values()].sort(rank), fetchedAt };
   },
-  ["brand-deals-v2"],
+  ["brand-deals-v3"],
   { revalidate: SITE.revalidate, tags: ["deals"] },
 );
 
