@@ -1,6 +1,7 @@
 import "server-only";
 import { BRANDS, brandDescription, brandTitle } from "./brands";
 import { CATEGORIES, getCategory } from "./categories";
+import { liveLists } from "./lists";
 import { POSTS } from "./blog";
 import type { Deal } from "./deals";
 import { searchSlug } from "./slug";
@@ -104,6 +105,24 @@ function buildIndex(deals: Deal[]): SearchDoc[] {
         haystack: `${b.name} ${c.name} ${c.noun} ${c.slug.replace("-", " ")}`.toLowerCase(),
       });
     }
+  }
+  for (const c of CATEGORIES) {
+    docs.push({
+      type: "page",
+      title: c.hubTitle,
+      description: c.blurb,
+      path: `/categories/${c.slug}`,
+      haystack: `${c.hubTitle} ${c.plural} ${c.noun} ${c.blurb}`.toLowerCase(),
+    });
+  }
+  for (const l of liveLists(deals).filter((x) => x.indexable)) {
+    docs.push({
+      type: "guide",
+      title: l.title,
+      description: `Ranked list, updated daily.`,
+      path: `/lists/${l.def.slug}`,
+      haystack: `${l.title} ${l.def.category.noun} ${l.def.qualifier}`.toLowerCase(),
+    });
   }
   for (const p of POSTS) {
     docs.push({

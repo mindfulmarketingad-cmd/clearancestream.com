@@ -214,14 +214,28 @@ export type SearchParams = {
   sortBy?: "Relevance" | "Featured" | "NewestArrivals" | "AvgCustomerReviews";
 };
 
+// The API documents itemCount up to 100. If an account is limited to the older
+// maximum of 10, fall back once and remember it for this process.
+let maxItemCount = 100;
+
 export async function searchItems(params: SearchParams): Promise<ApiItem[]> {
-  const data = await call<{ searchResult?: { items?: ApiItem[] } }>("searchItems", {
-    searchIndex: "Computers",
-    itemCount: 10,
-    ...params,
-    resources: ITEM_RESOURCES,
-  });
-  return data.searchResult?.items ?? [];
+  const itemCount = Math.min(params.itemCount ?? 10, maxItemCount);
+  try {
+    const data = await call<{ searchResult?: { items?: ApiItem[] } }>("searchItems", {
+      searchIndex: "Computers",
+      ...params,
+      itemCount,
+      resources: ITEM_RESOURCES,
+    });
+    return data.searchResult?.items ?? [];
+  } catch (err) {
+    if (err instanceof CreatorsApiError && err.status === 400 && itemCount > 10 && /itemcount/i.test(err.message)) {
+      console.warn(`[creators-api] itemCount ${itemCount} rejected; falling back to 10`);
+      maxItemCount = 10;
+      return searchItems({ ...params, itemCount: 10 });
+    }
+    throw err;
+  }
 }
 
 export async function getItems(asins: string[]): Promise<ApiItem[]> {

@@ -37,7 +37,7 @@ const nextConfig: NextConfig = {
   // Amazon allows one API request per second per account. Prerender on a single
   // worker so the whole build shares one throttled request queue, and give pages
   // time for a full refresh (~24 calls) plus 429 backoff.
-  staticPageGenerationTimeout: 300,
+  staticPageGenerationTimeout: 900,
   experimental: {
     cpus: 1,
     staticGenerationMinPagesPerWorker: 1000,
@@ -50,6 +50,9 @@ const nextConfig: NextConfig = {
       // /deals/[brand] has no page of its own; the brand page is the canonical listing.
       { source: "/deals/:brand", destination: "/brands/:brand", permanent: true },
       { source: "/author", destination: "/blog", permanent: true },
+      { source: "/category", destination: "/categories", permanent: true },
+      { source: "/category/:slug", destination: "/categories/:slug", permanent: true },
+      { source: "/list", destination: "/lists", permanent: true },
       { source: "/home", destination: "/", permanent: true },
       { source: "/index", destination: "/", permanent: true },
     ];

@@ -3,6 +3,12 @@ export type Category = {
   name: string;
   /** Lowercase noun used in sentences, e.g. "gaming mouse deals". */
   noun: string;
+  /** Plural used in list titles, e.g. "Gaming Mice". */
+  plural: string;
+  /** H1 and title for the category hub page. */
+  hubTitle: string;
+  /** One-line description for the category hub. */
+  blurb: string;
   /** Title test, checked in order; the first matching category wins. */
   match?: RegExp;
   tips: string[];
@@ -18,6 +24,9 @@ export const CATEGORIES: Category[] = [
     slug: "gaming-pcs",
     name: "Gaming PCs",
     noun: "gaming PC",
+    plural: "Gaming PCs",
+    hubTitle: "Gaming PC Deals",
+    blurb: "Prebuilt gaming desktops from the biggest PC builders, from budget 1080p machines to RTX flagship towers.",
     tips: [
       "Price the graphics card on its own first. It is usually a third to a half of the system's value, and a deal is only as good as the GPU inside it.",
       "Check the CPU generation and memory configuration. 32GB in two sticks (dual-channel) is the comfortable standard.",
@@ -28,6 +37,9 @@ export const CATEGORIES: Category[] = [
     slug: "laptops",
     name: "Gaming Laptops",
     noun: "gaming laptop",
+    plural: "Gaming Laptops",
+    hubTitle: "Gaming Laptop Deals",
+    blurb: "Gaming laptops from Alienware, ASUS ROG, Lenovo Legion, MSI, HP OMEN, Acer Predator, and Razer.",
     match: /\b(laptop|notebook)\b/i,
     tips: [
       "Check the GPU's power limit (TGP), not just its name. The same laptop GPU can perform very differently depending on how much power it is allowed.",
@@ -39,6 +51,9 @@ export const CATEGORIES: Category[] = [
     slug: "keyboards",
     name: "Keyboards",
     noun: "gaming keyboard",
+    plural: "Gaming Keyboards",
+    hubTitle: "Gaming Keyboard Deals",
+    blurb: "Mechanical, optical, and compact gaming keyboards from every major peripheral brand.",
     match: /\bkeyboards?\b/i,
     tips: [
       "Decide on switch type first: linear for gaming speed, tactile for typing feel, or adjustable/analog switches if you want both.",
@@ -50,6 +65,9 @@ export const CATEGORIES: Category[] = [
     slug: "mice",
     name: "Mice",
     noun: "gaming mouse",
+    plural: "Gaming Mice",
+    hubTitle: "Gaming Mouse Deals",
+    blurb: "Wired and wireless gaming mice, from ultralight esports shapes to ergonomic and MMO designs.",
     match: /\b(mouse|mice)\b(?!\s?pad)/i,
     tips: [
       "Shape and weight matter more than headline DPI. Every current flagship sensor is accurate enough for competitive play.",
@@ -61,6 +79,9 @@ export const CATEGORIES: Category[] = [
     slug: "headsets",
     name: "Headsets",
     noun: "gaming headset",
+    plural: "Gaming Headsets",
+    hubTitle: "Gaming Headset Deals",
+    blurb: "Wired and wireless gaming headsets for PC, PlayStation, Xbox, and Switch.",
     match: /\b(headsets?|headphones?|earbuds?|earphones?)\b/i,
     tips: [
       "Check platform support. Some wireless headsets work on PC and PlayStation but need a different version for Xbox.",
@@ -72,6 +93,9 @@ export const CATEGORIES: Category[] = [
     slug: "monitors",
     name: "Monitors",
     noun: "gaming monitor",
+    plural: "Gaming Monitors",
+    hubTitle: "Gaming Monitor Deals",
+    blurb: "High-refresh gaming monitors, including OLED, 1440p, and 4K panels.",
     match: /\bmonitors?\b/i,
     tips: [
       "Match resolution and refresh rate to your GPU. A 240Hz 1440p panel needs a strong graphics card to use fully.",
@@ -83,6 +107,9 @@ export const CATEGORIES: Category[] = [
     slug: "controllers",
     name: "Controllers & Racing Wheels",
     noun: "controller and racing wheel",
+    plural: "Controllers and Racing Wheels",
+    hubTitle: "Controller & Racing Wheel Deals",
+    blurb: "Gamepads, pro controllers, racing wheels, and flight sticks for PC and console.",
     match: /\b(controllers?|gamepads?|joysticks?|racing wheels?|wheel and pedals?|pedals|shifter|flight)\b/i,
     tips: [
       "Confirm platform compatibility (PC, Xbox, PlayStation) before buying. Wheels in particular are often platform-specific.",
@@ -94,6 +121,9 @@ export const CATEGORIES: Category[] = [
     slug: "streaming",
     name: "Streaming Gear",
     noun: "streaming gear",
+    plural: "Streaming Accessories",
+    hubTitle: "Streaming Gear Deals",
+    blurb: "Microphones, webcams, and capture gear for streamers and content creators.",
     match: /\b(microphones?|mic|webcams?|stream|streaming|capture card|camera|key light|audio interface)\b/i,
     tips: [
       "For microphones, dynamic mics reject room noise better; condenser mics capture more detail in quiet rooms.",
@@ -105,6 +135,9 @@ export const CATEGORIES: Category[] = [
     slug: "components",
     name: "PC Components",
     noun: "PC component",
+    plural: "PC Components",
+    hubTitle: "PC Component Deals",
+    blurb: "Power supplies, coolers, fans, cases, and memory for building or upgrading a gaming PC.",
     match:
       /\b(power supply|psu|fans?|cooler|cooling|aio|liquid|case|chassis|memory|ram|ddr[45]|ssd|nvme|motherboard|graphics card|thermal|radiator|pump)\b/i,
     tips: [
@@ -117,6 +150,9 @@ export const CATEGORIES: Category[] = [
     slug: "accessories",
     name: "Accessories",
     noun: "gaming accessory",
+    plural: "Gaming Accessories",
+    hubTitle: "Gaming Accessory Deals",
+    blurb: "Mouse pads, wrist rests, cables, stands, and other gaming accessories.",
     tips: [
       "Mouse pads affect glide and control as much as the mouse does: cloth for control, hard or hybrid surfaces for speed.",
       "Check what is included and what is sold separately, such as cables, receivers, or replacement parts.",

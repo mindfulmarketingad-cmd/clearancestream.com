@@ -45,6 +45,15 @@ export default function PrivacyPage() {
         recorded in server logs as described above. Please do not enter personal information into the search box.
       </p>
 
+      <h3>Deal alert emails</h3>
+      <p>
+        If you sign up for deal alerts, we collect your email address and use it only to send you deal and discount
+        emails from {SITE.name}. Every email includes an unsubscribe link, and you can also ask us to delete your
+        address through our <Link href="/contact">contact form</Link>. Our email provider stores your address on our
+        behalf. We remember in your browser whether you have signed up or closed the sign-up window, so we do not keep
+        asking you.
+      </p>
+
       <h2>Cookies</h2>
       <p>
         {SITE.name} does not set its own advertising or analytics cookies. If we add analytics in the future, we will

@@ -845,7 +845,7 @@ export function brandFromByline(value: string | undefined | null): Brand | undef
 export const brandTitle = (b: Brand) => `${b.name} Discounts and Promos`;
 
 export const brandDescription = (b: Brand) =>
-  `${b.name} discounts and promos on ${b.sells}, 20 to 50% off. Live prices checked daily, with buying advice from ClearanceStream.`;
+  `${b.name} discounts and promos on ${b.sells}. Live prices checked daily, with buying advice from ClearanceStream.`;
 
 export function brandsInGroup(group: BrandGroup) {
   return BRANDS.filter((b) => b.group === group);

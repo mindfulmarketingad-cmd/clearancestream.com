@@ -23,7 +23,7 @@ export default async function BrandsPage() {
       <PageHeader
         crumbs={[{ name: "Brands", path: "/brands" }]}
         title="Discounts and promos by brand"
-        lede="Each brand page tracks every product from that manufacturer discounted 20 to 50%, split into categories, with the product lines and buying tips that matter when you buy on sale."
+        lede="Each brand page tracks every product we follow from that manufacturer, split into categories, with the product lines and buying tips that matter when you buy on sale."
       />
       <section className="section-tight">
         <div className="container">

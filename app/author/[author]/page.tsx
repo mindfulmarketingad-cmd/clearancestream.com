@@ -5,7 +5,7 @@ import { ArrowRight } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
 import { AUTHORS, authorPath, getAuthor, postsBy } from "@/lib/blog";
-import { formatDate } from "@/lib/format";
+import { formatDate, lowerName } from "@/lib/format";
 import { ORGANIZATION_ID, pageMetadata } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!author) return {};
   return pageMetadata({
     title: `${author.name}, ${author.role}`,
-    description: `${author.name} is ${author.role} at ClearanceStream, writing about ${author.focus.join(", ").toLowerCase()}. Read ${author.name}'s gaming PC guides.`,
+    description: `${author.name} is ${author.role} at ClearanceStream, writing about ${lowerName(author.focus.join(", "))}. Read ${author.name}'s gaming PC guides.`,
     path: authorPath(author),
   });
 }

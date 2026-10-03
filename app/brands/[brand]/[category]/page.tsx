@@ -12,7 +12,7 @@ import { ValueBar } from "@/components/ValueBar";
 import { BRANDS, getBrand } from "@/lib/brands";
 import { getCategory } from "@/lib/categories";
 import { getAllDeals } from "@/lib/deals";
-import { formatChecked } from "@/lib/format";
+import { formatChecked, lowerName } from "@/lib/format";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
@@ -45,8 +45,8 @@ async function load(params: Props["params"]) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { brand, category, deals } = await load(params);
   return pageMetadata({
-    title: `${brand.name} ${category.name} Deals: ${SITE.minDiscount}-${SITE.maxDiscount}% Off`,
-    description: `${deals.length > 0 ? `${deals.length} ` : ""}${brand.name} ${category.noun} discounts and promos, ${SITE.minDiscount} to ${SITE.maxDiscount} percent off, with live prices refreshed daily by ClearanceStream.`,
+    title: `${brand.name} ${category.name} Discounts and Promos`,
+    description: `${deals.length > 0 ? `${deals.length} ` : ""}${brand.name} ${category.noun} discounts and promos with live prices, refreshed daily by ClearanceStream.`,
     path: `/brands/${brand.slug}/${category.slug}`,
     // Empty category pages stay out of the index until they have deals.
     noindex: deals.length === 0,
@@ -55,16 +55,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BrandCategoryPage({ params }: Props) {
   const { brand, category, deals, brandDeals, otherBrands, fetchedAt } = await load(params);
-  const band = `${SITE.minDiscount} to ${SITE.maxDiscount}%`;
   const path = `/brands/${brand.slug}/${category.slug}`;
 
   const faqs = [
     {
-      q: `Are these ${brand.name} ${category.noun} deals real discounts?`,
-      a: `Every listing is ${band} below its reference price, which may be a list price or a recent typical price. We show which one on each product page so you can judge the saving.`,
+      q: `Are these ${brand.name} ${category.noun} discounts real?`,
+      a: `Discounts are only shown when there is a genuine reference price, which may be a list price or a recent typical price. We show which one on each product page so you can judge the saving.`,
     },
     {
-      q: `How often do ${brand.name} ${category.name.toLowerCase()} prices change?`,
+      q: `How often do ${brand.name} ${lowerName(category.name)} prices change?`,
       a: `Prices can change at any time. We check every day and show the time each price was checked, so always confirm the final price at checkout.`,
     },
   ];
@@ -88,7 +87,7 @@ export default async function BrandCategoryPage({ params }: Props) {
             {brand.name} {category.name} <span>Deals</span>
           </h1>
           <p className="lede">
-            Every {brand.name} {category.noun} discount and promo we track, {band} off. Live prices, refreshed daily.
+            Live prices on every {brand.name} {category.noun} we track, with current discounts first. Refreshed daily.
           </p>
           <div className="page-meta">
             <span>
@@ -115,7 +114,7 @@ export default async function BrandCategoryPage({ params }: Props) {
           <CategoryLinks brand={brand} deals={brandDeals} current={category.slug} />
           {deals.length > 0 ? (
             <>
-              <DealBrowser deals={deals} label={`${brand.name} ${category.noun}`} showCategoryFilter={false} />
+              <DealBrowser deals={deals.slice(0, 150)} label={`${brand.name} ${category.noun}`} showCategoryFilter={false} />
               <JsonLd
                 data={itemListLd(
                   `${brand.name} ${category.name} deals`,
@@ -139,7 +138,7 @@ export default async function BrandCategoryPage({ params }: Props) {
         <div className="container" style={{ maxWidth: 880 }}>
           <div className="prose">
             <h2 className="mt-0">
-              How to buy {brand.name} {category.name.toLowerCase()} on sale
+              How to buy {brand.name} {lowerName(category.name)} on sale
             </h2>
             <ul>
               {category.tips.map((t) => (
@@ -165,7 +164,7 @@ export default async function BrandCategoryPage({ params }: Props) {
                 {otherBrands.map((b) => (
                   <li key={b.slug}>
                     <Link href={`/brands/${b.slug}/${category.slug}`} className="chip">
-                      {b.name} {category.name.toLowerCase()}
+                      {b.name} {lowerName(category.name)}
                     </Link>
                   </li>
                 ))}

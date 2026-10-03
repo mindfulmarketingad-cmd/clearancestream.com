@@ -3,6 +3,7 @@ import { GeistSans } from "geist/font/sans";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { JsonLd } from "@/components/JsonLd";
+import { SignupPopup } from "@/components/SignupPopup";
 import { organizationLd } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 import "./globals.css";
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main id="main">{children}</main>
         <Footer />
+        <SignupPopup />
         <JsonLd data={organizationLd()} />
       </body>
     </html>

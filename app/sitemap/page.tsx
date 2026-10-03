@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { AUTHORS, POSTS, authorPath } from "@/lib/blog";
 import { BRANDS } from "@/lib/brands";
 import { CATEGORIES } from "@/lib/categories";
+import { liveLists } from "@/lib/lists";
 import { getAllDeals } from "@/lib/deals";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { pageMetadata } from "@/lib/seo";
@@ -50,6 +51,24 @@ export default async function SitemapPage() {
             <ul>
               {POSTS.map((p) => (
                 <li key={p.slug}><Link href={`/blog/${p.slug}`}>{p.title}</Link></li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2>Categories</h2>
+            <ul>
+              <li><Link href="/categories">All categories</Link></li>
+              {CATEGORIES.map((c) => (
+                <li key={c.slug}><Link href={`/categories/${c.slug}`}>{c.hubTitle}</Link></li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2>Top 10 lists</h2>
+            <ul>
+              <li><Link href="/lists">All lists</Link></li>
+              {liveLists(deals).filter((l) => l.indexable).map((l) => (
+                <li key={l.def.slug}><Link href={`/lists/${l.def.slug}`}>{l.shortTitle}</Link></li>
               ))}
             </ul>
           </div>

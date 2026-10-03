@@ -19,6 +19,7 @@ npm run dev
 | `AMAZON_PARTNER_TAG` | Associates tracking ID. Defaults to `mindfulmar026-20` |
 | `AMAZON_MARKETPLACE` | `www.amazon.com` |
 | `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` | Contact form delivery via Resend |
+| `RESEND_AUDIENCE_ID` | Resend Audience that stores deal-alert email subscribers |
 
 On Vercel, add these under Project Settings, Environment Variables.
 
@@ -54,6 +55,19 @@ The site does not name the retailer, except the Associates disclosure required b
 Associates Operating Agreement (`AFFILIATE_DISCLOSURE` in `lib/site.ts`), shown in the footer
 and on /disclaimer. Product text is cleaned of retailer terms in `lib/deals.ts`.
 
+## Lists
+
+`lib/lists.ts` generates list definitions from price caps, attributes (`lib/attributes.ts`:
+wireless, platform, GPU, OLED, etc.), and fixed lists. Add a cap or attribute and the pages,
+hub, sitemap, and product "Featured in" links update automatically.
+
+## Pricing display
+
+All tracked products are listed, not only discounted ones. A strikethrough and discount are
+shown only when the retailer reports a genuine reference price (savings of 1-80%). Never
+display invented reference prices: it violates FTC rules on former-price comparisons and the
+retailer's program terms.
+
 ## Adding a brand
 
 Add an entry to `lib/brands.ts` (queries, include/exclude filters, editorial copy, FAQs).
@@ -74,6 +88,11 @@ Authors live in `lib/blog/authors.ts`.
 ├── /brands                     Brands hub
 │   ├── /brands/[brand]         Brand: deals + guide, category links, guides, searches
 │   └── /brands/[brand]/[cat]   Brand category (e.g. /brands/razer/mice); empty ones are noindex
+├── /categories                Category hub
+│   └── /categories/[category]  Category across all brands (top 96), links to brand categories and lists
+├── /lists                      Top 10 list hub
+│   └── /lists/[slug]           e.g. /lists/10-best-gaming-pcs-under-1500 (generated in lib/lists.ts;
+│                               indexed only with 10 products; canonical twins defer to the original)
 ├── /blog                       Blog hub
 │   ├── /blog/[slug]            Post: links to brands, deals, other post, author
 │   └── /author/[author]        Author profile (/author redirects to /blog)

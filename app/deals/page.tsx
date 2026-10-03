@@ -13,9 +13,9 @@ import { itemListLd, pageMetadata } from "@/lib/seo";
 export const revalidate = 86400;
 
 export const metadata = pageMetadata({
-  title: "All Gaming PC Deals: 20-50% Off Gaming PCs & Gear",
+  title: "All Gaming PC Deals: Live Prices on Gaming PCs & Gear",
   description:
-    "Every hidden deal we track, 20 to 50% off: gaming PCs, laptops, mice, keyboards, headsets, and controllers from the biggest gaming brands, with live prices refreshed daily.",
+    "Every gaming PC and gaming gear deal we track: gaming PCs, laptops, mice, keyboards, headsets, and controllers from the biggest gaming brands, with live prices refreshed daily.",
   path: "/deals",
 });
 
@@ -27,7 +27,7 @@ export default async function DealsPage() {
       <PageHeader
         crumbs={[{ name: "All Deals", path: "/deals" }]}
         title="All gaming PC deals"
-        lede="Every product we track marked down 20 to 50%, from complete gaming PCs to mice and controllers. Live prices, refreshed every day."
+        lede="The biggest live discounts across every brand we track, from complete gaming PCs to mice and controllers. Live prices, refreshed every day."
       >
         <div className="page-meta">
           <span>
@@ -57,7 +57,7 @@ export default async function DealsPage() {
           </div>
           {deals.length > 0 ? (
             <>
-              <DealBrowser deals={gamingPcsFirst(deals)} label="gaming PC" />
+              <DealBrowser deals={gamingPcsFirst(deals.filter((d) => d.savingsPercent)).slice(0, 96)} label="gaming PC" />
               <JsonLd data={itemListLd("Gaming PC deals", deals.map((d) => ({ name: d.name, path: d.path })))} />
             </>
           ) : (

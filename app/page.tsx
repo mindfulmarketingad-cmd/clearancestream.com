@@ -11,6 +11,7 @@ import {
   SearchIcon,
   TagIcon,
 } from "@/components/Icons";
+import { EmailSignup } from "@/components/EmailSignup";
 import { JsonLd } from "@/components/JsonLd";
 import { ValueBar } from "@/components/ValueBar";
 import { POSTS } from "@/lib/blog";
@@ -71,7 +72,7 @@ export default async function HomePage() {
               Live prices, refreshed daily
             </span>
             <h1>
-              Gaming PC Hidden Deals <span>&amp; Clearances</span>
+              Hidden Deals &amp; Clearances <span>From Your Favorite Tech Brands</span>
             </h1>
             <p className="hero-lede">
               We help gaming PC enthusiasts track deals and clearances on their favorite brands, so you catch the price
@@ -177,7 +178,7 @@ export default async function HomePage() {
           <div className="section-head">
             <div>
               <h2>Trending gaming PC deals</h2>
-              <p>Gaming PCs and gear marked down 20 to 50% right now, gaming desktops first.</p>
+              <p>The biggest live discounts on gaming PCs and gear right now, gaming desktops first.</p>
             </div>
             {trending.length > 0 ? (
               <Link href="/deals" className="text-link">
@@ -319,6 +320,18 @@ export default async function HomePage() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      <section className="section-tight">
+        <div className="container">
+          <div className="signup-band">
+            <div>
+              <h2>Get gaming deal alerts</h2>
+              <p>The biggest discounts on gaming PCs and gear, sent to your inbox. Free, and unsubscribe anytime.</p>
+            </div>
+            <EmailSignup id="home" />
+          </div>
         </div>
       </section>
 

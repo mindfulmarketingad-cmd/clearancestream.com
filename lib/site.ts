@@ -9,9 +9,6 @@ export const SITE = {
   // Refresh cadence for live Amazon data, in seconds. 24 hours is the longest
   // Amazon's API terms allow product data (prices especially) to be cached.
   revalidate: 86400,
-  // Only listings discounted within this band (vs. Amazon's reference price) are shown.
-  minDiscount: 20,
-  maxDiscount: 50,
   social: {
     instagram: "https://www.instagram.com/clearancestream",
     twitter: "https://x.com/clearancestream",
@@ -24,6 +21,8 @@ export const MAIN_NAV = [
   { href: "/blog", label: "Blog" },
   { href: "/deals", label: "All Deals" },
   { href: "/brands", label: "Brands" },
+  { href: "/categories", label: "Categories" },
+  { href: "/lists", label: "Lists" },
   { href: "/about", label: "About" },
   { href: "/search", label: "Search" },
 ] as const;

@@ -14,7 +14,7 @@ export function ValueBar() {
         <TrendDownIcon />
         <p>
           <b>Real savings</b>
-          <span>20 to 50% below the reference price</span>
+          <span>Only genuine reference prices, never inflated</span>
         </p>
       </div>
       <div>

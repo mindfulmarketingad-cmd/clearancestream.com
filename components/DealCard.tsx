@@ -31,7 +31,7 @@ export function DealCard({ deal, priority = false, hidden = false }: Props) {
           <Link href={deal.path}>{deal.name}</Link>
         </h3>
         <div className="deal-price">
-          <span className="price">{deal.priceDisplay}</span>
+          <span className={deal.savingsPercent ? "price price-deal" : "price"}>{deal.priceDisplay}</span>
           {deal.listPriceDisplay ? (
             <s className="price" aria-label={`Was ${deal.listPriceDisplay}`}>
               {deal.listPriceDisplay}

@@ -7,8 +7,9 @@ import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
 import { getBrand } from "@/lib/brands";
 import { getCategory } from "@/lib/categories";
+import { liveLists } from "@/lib/lists";
 import { getAllDeals, getDeal, relatedDeals, type Deal } from "@/lib/deals";
-import { formatChecked } from "@/lib/format";
+import { formatChecked, lowerName } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import { asinFromSlug } from "@/lib/slug";
@@ -82,6 +83,7 @@ export default async function ProductPage(props: Props) {
   const category = getCategory(deal.categorySlug);
   const { deals } = await getAllDeals();
   const related = relatedDeals(deal, deals);
+  const featuredIn = liveLists(deals).filter((l) => l.indexable && l.items.some((d) => d.asin === deal.asin));
 
   const rows: [string, string][] = [
     ["Brand", deal.brandName],
@@ -136,12 +138,13 @@ export default async function ProductPage(props: Props) {
 
             <div className="buy-box">
               <div className="price-row">
-                <span className="price">{deal.priceDisplay}</span>
+                <span className={deal.savingsPercent ? "price price-deal" : "price"}>{deal.priceDisplay}</span>
                 {deal.listPriceDisplay ? (
                   <s className="price" aria-label={`${deal.listPriceLabel}: ${deal.listPriceDisplay}`}>
                     {deal.listPriceDisplay}
                   </s>
                 ) : null}
+                {deal.savingsPercent ? <span className="pill-off">{deal.savingsPercent}% OFF</span> : null}
               </div>
               {deal.savingsDisplay ? (
                 <p className="deal-save" style={{ marginTop: 6, fontSize: 15 }}>
@@ -204,7 +207,7 @@ export default async function ProductPage(props: Props) {
                 Read our <Link href="/blog/gaming-pc-deals-guide">guide to judging gaming PC deals</Link> or compare
                 every {category ? (
                   <Link href={`/brands/${brand.slug}/${category.slug}`}>
-                    {brand.name} {category.name.toLowerCase()} deal
+                    {brand.name} {lowerName(category.name)} deal
                   </Link>
                 ) : (
                   <Link href={`/brands/${brand.slug}`}>{brand.name} deal</Link>
@@ -219,6 +222,26 @@ export default async function ProductPage(props: Props) {
           </div>
         </div>
       </section>
+
+      {featuredIn.length > 0 ? (
+        <section className="section-tight">
+          <div className="container">
+            <h2 style={{ fontSize: 22, marginBottom: 16 }}>Featured in these lists</h2>
+            <ul className="chip-list">
+              {featuredIn.map((l) => {
+                const rank = l.items.findIndex((d) => d.asin === deal.asin) + 1;
+                return (
+                  <li key={l.def.slug}>
+                    <Link href={`/lists/${l.def.slug}`} className="chip">
+                      #{rank} in {l.shortTitle}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
+      ) : null}
 
       {related.length > 0 ? (
         <section className="section-tight">

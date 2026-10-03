@@ -14,3 +14,15 @@ export function formatDate(iso: string) {
     new Date(iso),
   );
 }
+
+/** Lowercase a product name for mid-sentence use, keeping acronyms intact ("gaming PCs", "PS5"). */
+export function lowerName(s: string) {
+  return s
+    .toLowerCase()
+    .replace(/\bpc(s?)\b/g, "PC$1")
+    .replace(/\bps5\b/g, "PS5")
+    .replace(/\bxbox\b/g, "Xbox")
+    .replace(/\boled\b/g, "OLED")
+    .replace(/\brtx\b/g, "RTX")
+    .replace(/\bnintendo switch\b/g, "Nintendo Switch");
+}
