@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { brand, category, deals } = await load(params);
   return pageMetadata({
     title: `${brand.name} ${category.name} Deals: ${SITE.minDiscount}-${SITE.maxDiscount}% Off`,
-    description: `${deals.length > 0 ? `${deals.length} ` : ""}${brand.name} ${category.noun} deals on Amazon marked down ${SITE.minDiscount} to ${SITE.maxDiscount} percent, with live prices refreshed daily by ClearanceStream.`,
+    description: `${deals.length > 0 ? `${deals.length} ` : ""}${brand.name} ${category.noun} discounts and promos, ${SITE.minDiscount} to ${SITE.maxDiscount} percent off, with live prices refreshed daily by ClearanceStream.`,
     path: `/brands/${brand.slug}/${category.slug}`,
     // Empty category pages stay out of the index until they have deals.
     noindex: deals.length === 0,
@@ -61,11 +61,11 @@ export default async function BrandCategoryPage({ params }: Props) {
   const faqs = [
     {
       q: `Are these ${brand.name} ${category.noun} deals real discounts?`,
-      a: `Every listing is ${band} below the reference price Amazon reports for it, which may be a list price or a recent typical price. We show which one on each product page so you can judge the saving.`,
+      a: `Every listing is ${band} below its reference price, which may be a list price or a recent typical price. We show which one on each product page so you can judge the saving.`,
     },
     {
       q: `How often do ${brand.name} ${category.name.toLowerCase()} prices change?`,
-      a: `Amazon prices can change at any time. We check every day and show the time each price was checked, so always confirm the final price on Amazon before buying.`,
+      a: `Prices can change at any time. We check every day and show the time each price was checked, so always confirm the final price at checkout.`,
     },
   ];
 
@@ -88,7 +88,7 @@ export default async function BrandCategoryPage({ params }: Props) {
             {brand.name} {category.name} <span>Deals</span>
           </h1>
           <p className="lede">
-            Every {brand.name} {category.noun} on Amazon marked down {band}. Live prices, refreshed daily.
+            Every {brand.name} {category.noun} discount and promo we track, {band} off. Live prices, refreshed daily.
           </p>
           <div className="page-meta">
             <span>

@@ -7,14 +7,14 @@ export function ValueBar() {
         <ShieldIcon />
         <p>
           <b>Verified listings</b>
-          <span>Prices pulled directly from Amazon</span>
+          <span>Live prices, checked every day</span>
         </p>
       </div>
       <div>
         <TrendDownIcon />
         <p>
           <b>Real savings</b>
-          <span>20 to 50% below Amazon reference prices</span>
+          <span>20 to 50% below the reference price</span>
         </p>
       </div>
       <div>
@@ -28,7 +28,7 @@ export function ValueBar() {
         <CartIcon />
         <p>
           <b>No extra cost</b>
-          <span>You pay Amazon&apos;s price, nothing more</span>
+          <span>You pay the listed price, nothing more</span>
         </p>
       </div>
     </div>

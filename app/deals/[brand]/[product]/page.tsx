@@ -10,7 +10,7 @@ import { getCategory } from "@/lib/categories";
 import { getAllDeals, getDeal, relatedDeals, type Deal } from "@/lib/deals";
 import { formatChecked } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo";
-import { AFFILIATE_DISCLOSURE, absoluteUrl } from "@/lib/site";
+import { absoluteUrl } from "@/lib/site";
 import { asinFromSlug } from "@/lib/slug";
 
 export const revalidate = 86400;
@@ -19,7 +19,7 @@ export const dynamicParams = true;
 type Props = { params: Promise<{ brand: string; product: string }> };
 
 // Product pages render on first request (then cache for a day). Prerendering
-// them would need a second full Amazon fetch during every build.
+// them would need a second full price fetch during every build.
 export function generateStaticParams() {
   return [];
 }
@@ -40,7 +40,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const saving = deal.savingsPercent ? ` (${deal.savingsPercent}% off)` : "";
   return pageMetadata({
     title: `${deal.name} Deal: ${deal.priceDisplay}${saving}`,
-    description: `${deal.name} is ${deal.priceDisplay} on Amazon${
+    description: `${deal.name} is ${deal.priceDisplay}${
       deal.savingsDisplay ? `, ${deal.savingsDisplay} below the ${deal.listPriceLabel?.toLowerCase() ?? "reference price"}` : ""
     }. Live ${deal.brandName} ${deal.isGamingPc ? "gaming PC " : ""}deal tracked daily by ClearanceStream.`,
     path: deal.path,
@@ -69,7 +69,6 @@ function productLd(deal: Deal) {
       itemCondition: /used|refurb|renewed/i.test(deal.condition ?? "")
         ? "https://schema.org/RefurbishedCondition"
         : "https://schema.org/NewCondition",
-      seller: { "@type": "Organization", name: deal.merchant ?? "Amazon.com" },
     },
     ...(deal.rating && deal.reviewCount
       ? { aggregateRating: { "@type": "AggregateRating", ratingValue: deal.rating, reviewCount: deal.reviewCount } }
@@ -86,12 +85,11 @@ export default async function ProductPage(props: Props) {
 
   const rows: [string, string][] = [
     ["Brand", deal.brandName],
-    ["Amazon price", deal.priceDisplay],
+    ["Current price", deal.priceDisplay],
     ...(deal.listPriceDisplay ? ([[deal.listPriceLabel ?? "Reference price", deal.listPriceDisplay]] as [string, string][]) : []),
     ...(deal.savingsDisplay ? ([["You save", `${deal.savingsDisplay} (${deal.savingsPercent}%)`]] as [string, string][]) : []),
     ...(deal.availability ? ([["Availability", deal.availability]] as [string, string][]) : []),
     ...(deal.condition ? ([["Condition", deal.condition]] as [string, string][]) : []),
-    ...(deal.merchant ? ([["Sold by", deal.merchant]] as [string, string][]) : []),
     ["ASIN", deal.asin],
   ];
 
@@ -151,19 +149,19 @@ export default async function ProductPage(props: Props) {
                 </p>
               ) : null}
               <a
-                href={deal.amazonUrl}
+                href={deal.buyUrl}
                 className="btn btn-primary btn-block"
                 style={{ marginTop: 20, height: 50, fontSize: 16 }}
                 target="_blank"
                 rel="sponsored nofollow noopener"
               >
-                Check price on Amazon <ExternalIcon />
+                Check price <ExternalIcon />
               </a>
               <p className="fine">
                 <ClockIcon style={{ width: 12, height: 12, display: "inline", verticalAlign: "-1px" }} /> Price checked{" "}
                 <time dateTime={deal.fetchedAt}>{formatChecked(deal.fetchedAt)}</time>. Product prices and availability
                 are accurate as of the date/time indicated and are subject to change. Any price and availability
-                information displayed on Amazon at the time of purchase will apply to the purchase of this product.
+                information displayed on the retailer&apos;s site at the time of purchase will apply to the purchase of this product.
               </p>
             </div>
 
@@ -196,8 +194,8 @@ export default async function ProductPage(props: Props) {
             <h2 className="sub-head">Is this a good deal?</h2>
             <div className="prose" style={{ fontSize: 15.5, marginTop: 12 }}>
               <p>
-                Amazon currently lists this {brand.name} {deal.isGamingPc ? "system" : "product"} {deal.savingsPercent}%
-                below its {deal.listPriceLabel?.toLowerCase()}.{" "}
+                This {brand.name} {deal.isGamingPc ? "system" : "product"} is currently {deal.savingsPercent}% below its{" "}
+                {deal.listPriceLabel?.toLowerCase()}.{" "}
                 {deal.isGamingPc
                   ? "Before buying, price the graphics card on its own and compare it with the full system price. When a prebuilt costs close to its parts total, you are effectively getting assembly, Windows, and the warranty for free."
                   : "Check whether the reference is a list price or a recent typical price, and compare against similar models before buying. Discounts tied to a limited-time deal can end without notice."}
@@ -216,7 +214,7 @@ export default async function ProductPage(props: Props) {
 
             <p className="muted" style={{ fontSize: 13, marginTop: 24, display: "flex", gap: 6 }}>
               <ShieldIcon style={{ width: 14, height: 14, flexShrink: 0, marginTop: 3 }} />
-              {AFFILIATE_DISCLOSURE}
+              We may earn a commission when you buy through links on this page, at no extra cost to you.
             </p>
           </div>
         </div>
@@ -226,7 +224,7 @@ export default async function ProductPage(props: Props) {
         <section className="section-tight">
           <div className="container">
             <div className="section-head">
-              <h2>More gaming PC deals</h2>
+              <h2>More {brand.name} discounts</h2>
               <Link href={`/brands/${brand.slug}`} className="text-link">
                 All {brand.name} deals <ArrowRight />
               </Link>

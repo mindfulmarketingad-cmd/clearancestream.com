@@ -28,7 +28,7 @@ export default function ContactPage() {
               <h2>Before you write</h2>
               <ul>
                 <li>
-                  Questions about an order, shipping, or returns go to Amazon, since purchases are completed there.
+                  Questions about an order, shipping, or returns go to the retailer you bought from, since purchases are completed there.
                 </li>
                 <li>
                   Prices can change after the time shown on a deal. See our <Link href="/disclaimer">disclaimer</Link>.

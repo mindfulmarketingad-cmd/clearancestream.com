@@ -13,9 +13,9 @@ import { itemListLd, pageMetadata } from "@/lib/seo";
 export const revalidate = 86400;
 
 export const metadata = pageMetadata({
-  title: "All Gaming PC Deals: 20-50% Off, Live from Amazon",
+  title: "All Gaming PC Deals: 20-50% Off Gaming PCs & Gear",
   description:
-    "Every hidden deal we track on Amazon, 20 to 50% off: gaming PCs, mice, keyboards, headsets, and components from Corsair, Alienware, Razer, Logitech G, SteelSeries, and Origin PC with live prices, refreshed daily.",
+    "Every hidden deal we track, 20 to 50% off: gaming PCs, laptops, mice, keyboards, headsets, and controllers from the biggest gaming brands, with live prices refreshed daily.",
   path: "/deals",
 });
 
@@ -27,7 +27,7 @@ export default async function DealsPage() {
       <PageHeader
         crumbs={[{ name: "All Deals", path: "/deals" }]}
         title="All gaming PC deals"
-        lede="Every product we track on Amazon marked down 20 to 50%, from complete gaming PCs to peripherals. Prices come directly from Amazon and refresh every day."
+        lede="Every product we track marked down 20 to 50%, from complete gaming PCs to mice and controllers. Live prices, refreshed every day."
       >
         <div className="page-meta">
           <span>
@@ -71,7 +71,7 @@ export default async function DealsPage() {
           <div className="card">
             <h2 style={{ fontSize: 20, marginBottom: 8 }}>How to read these deals</h2>
             <p>
-              Each listing shows Amazon&apos;s current price and the reference price Amazon uses to calculate the
+              Each listing shows the current price and the reference price used to calculate the
               saving. A reference can be a list price or a recent typical price, so large percentages are worth a
               second look. Our guide explains how to judge a discount on what is inside the case.
             </p>

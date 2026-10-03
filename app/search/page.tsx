@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { SearchIcon } from "@/components/Icons";
+import { BrandDirectory } from "@/components/BrandDirectory";
 import { PageHeader } from "@/components/PageHeader";
 import { SearchBox } from "@/components/SearchBox";
 import { POSTS } from "@/lib/blog";
-import { BRANDS } from "@/lib/brands";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { pageMetadata } from "@/lib/seo";
 
@@ -38,20 +38,12 @@ export default function SearchPage() {
             ))}
           </ul>
 
+          <h2 className="mt-lg" style={{ fontSize: 20, marginBottom: 16 }}>
+            Browse by brand
+          </h2>
+          <BrandDirectory />
+
           <div className="card-grid card-grid-2 mt-lg">
-            <div className="aside-box">
-              <h2>Browse by brand</h2>
-              <ul>
-                {BRANDS.map((b) => (
-                  <li key={b.slug}>
-                    <Link href={`/brands/${b.slug}`}>{b.name} deals</Link>
-                  </li>
-                ))}
-                <li>
-                  <Link href="/deals">All gaming PC deals</Link>
-                </li>
-              </ul>
-            </div>
             <div className="aside-box">
               <h2>Buying guides</h2>
               <ul>

@@ -115,15 +115,15 @@ export default async function PostPage({ params }: Props) {
               </ol>
             </nav>
             <div className="aside-box">
-              <h2>Deals by brand</h2>
+              <h2>Gaming PC brands</h2>
               <ul>
-                {BRANDS.map((b) => (
+                {BRANDS.filter((b) => b.group === "pcs").slice(0, 8).map((b) => (
                   <li key={b.slug}>
-                    <Link href={`/brands/${b.slug}`}>{b.name} deals</Link>
+                    <Link href={`/brands/${b.slug}`}>{b.name} discounts</Link>
                   </li>
                 ))}
                 <li>
-                  <Link href="/deals">All gaming PC deals</Link>
+                  <Link href="/brands">All brands</Link>
                 </li>
               </ul>
             </div>

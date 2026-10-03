@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return pageMetadata({
     title: `${label} Deals`,
     description: count
-      ? `${count} live ${label} deals from Amazon, ranked by discount and refreshed daily on ClearanceStream.`
+      ? `${count} live ${label} deals, ranked by discount and refreshed daily on ClearanceStream.`
       : `Search results for ${label} on ClearanceStream: gaming PC deals, brands, and buying guides.`,
     path: `/search/${slug}`,
     // Only curated searches with live results are indexable; everything else

@@ -10,7 +10,7 @@ import { SITE, absoluteUrl } from "@/lib/site";
 export const metadata = pageMetadata({
   title: "About ClearanceStream: How We Find Gaming PC Deals",
   description:
-    "ClearanceStream tracks live Amazon prices on gaming PCs to surface hidden deals and clearances. Learn how we find deals, where prices come from, and how we make money.",
+    "ClearanceStream tracks live prices on gaming PCs and gear to surface hidden discounts and promos. Learn how we find deals, where prices come from, and how we make money.",
   path: "/about",
 });
 
@@ -38,26 +38,20 @@ export default function AboutPage() {
 
             <h2>How we find deals</h2>
             <p>
-              Every day, ClearanceStream requests current listings for the gaming PC brands we track through
-              Amazon&apos;s official product API. We filter out accessories and non-gaming systems, read Amazon&apos;s
-              current price and reference price for each listing, and rank the results by the size of the discount.
+              Every day, ClearanceStream requests current listings for the brands we track through an official
+              retail product feed. We filter out unrelated products, read the current price and reference price for
+              each listing, and rank the results by the size of the discount.
             </p>
             <p>
-              We never invent, estimate, or edit prices. If Amazon does not return a price for a system, we do not show
-              it. Every deal displays the exact time its price was checked, and prices can change after that time, so
-              always confirm the final price on Amazon before buying.
+              We never invent, estimate, or edit prices. If the feed does not return a price for a product, we do not
+              show it. Every deal displays the exact time its price was checked, and prices can change after that time, so
+              always confirm the final price at checkout.
             </p>
 
             <h2>What we cover</h2>
             <p>
-              We currently track{" "}
-              {BRANDS.map((b, i) => (
-                <span key={b.slug}>
-                  {i > 0 ? " and " : ""}
-                  <Link href={`/brands/${b.slug}`}>{b.name}</Link>
-                </span>
-              ))}{" "}
-              gaming desktops, and we are adding brands over time. Alongside live deals, we publish{" "}
+              We track {BRANDS.length} of the biggest gaming brands across gaming PCs and laptops, mice, keyboards and
+              headsets, and controllers and racing gear. See them all on our <Link href="/brands">brands page</Link>. Alongside live deals, we publish{" "}
               <Link href="/blog">buying guides</Link> that explain how to judge a gaming PC discount on the value of
               the components inside, not just the percentage on the tag.
             </p>
@@ -73,10 +67,9 @@ export default function AboutPage() {
 
             <h2>How we make money</h2>
             <p>
-              ClearanceStream is free to use. As an Amazon Associate, we earn from qualifying purchases made through
-              links on this site. That commission comes from Amazon and does not change the price you pay. Commissions
-              have no influence on which deals appear or how they are ranked: listings are ordered by discount, using
-              Amazon&apos;s own data. Read our full <Link href="/disclaimer">affiliate disclaimer</Link>.
+              ClearanceStream is free to use. We may earn a commission from qualifying purchases made through links on
+              this site. That commission does not change the price you pay, and it has no influence on which deals
+              appear or how they are ranked: listings are ordered by discount. Read our full <Link href="/disclaimer">affiliate disclaimer</Link>.
             </p>
 
             <h2>Get in touch</h2>
@@ -91,7 +84,7 @@ export default function AboutPage() {
               <ul style={{ gap: 16 }}>
                 <li style={{ display: "flex", gap: 10 }}>
                   <ShieldIcon style={{ width: 18, height: 18, color: "var(--blue)", flexShrink: 0, marginTop: 3 }} />
-                  <span>Real prices only, straight from Amazon</span>
+                  <span>Real, live prices only</span>
                 </li>
                 <li style={{ display: "flex", gap: 10 }}>
                   <RadarIcon style={{ width: 18, height: 18, color: "var(--blue)", flexShrink: 0, marginTop: 3 }} />

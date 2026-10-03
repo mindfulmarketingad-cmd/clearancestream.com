@@ -10,7 +10,7 @@ export default function NotFound() {
         <p className="eyebrow">404</p>
         <h1 style={{ fontSize: 40, marginTop: 16 }}>This page is not available</h1>
         <p className="muted" style={{ marginTop: 12, fontSize: 17 }}>
-          The page may have moved, or the deal may have ended. Deals come and go as Amazon prices change, so try a
+          The page may have moved, or the deal may have ended. Deals come and go as prices change, so try a
           search or browse the current list.
         </p>
         <SearchBox />

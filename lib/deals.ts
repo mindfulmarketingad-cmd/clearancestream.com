@@ -1,6 +1,6 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
-import { BRANDS, brandFromAmazon, type Brand } from "./brands";
+import { BRANDS, brandFromByline, getBrand, type Brand } from "./brands";
 import { categorize } from "./categories";
 import { getConfig, getItems, searchItems, type ApiItem } from "./amazon/creators-api";
 import { productSlug, shortTitle } from "./slug";
@@ -20,7 +20,7 @@ export type Deal = {
   category: string | null;
   /** Our category slug (see lib/categories.ts), e.g. "mice". */
   categorySlug: string;
-  amazonUrl: string;
+  buyUrl: string;
   image: { url: string; width: number; height: number } | null;
   gallery: { url: string; width: number; height: number }[];
   price: number;
@@ -53,17 +53,30 @@ const money = (amount: number, currency = "USD") =>
 const EXPLICIT_PC = /\bgaming (pc|desktop|computer)\b/i;
 const CASE = /\b(case|chassis)\b/i;
 
+const LAPTOP = /\b(laptop|notebook|handheld)\b/i;
+
 function isGamingPcTitle(title: string, brand: Brand) {
-  if (CASE.test(title)) return false;
+  if (CASE.test(title) || LAPTOP.test(title)) return false;
   return EXPLICIT_PC.test(title) || (brand.include.test(title) && !brand.exclude.test(title));
 }
 
+// Retailer-specific phrases are stripped from product text before display.
+const RETAILER_TERMS = /\b(amazon|prime|alexa|kindle|fire tv)\b/i;
+
+function cleanTitle(title: string) {
+  return title
+    .replace(/\s*[-–—|,(]?\s*amazon exclusive\)?/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function normalize(item: ApiItem, brand: Brand, fetchedAt: string): Deal | null {
-  const title = item.itemInfo?.title?.displayValue?.trim();
+  const rawTitle = item.itemInfo?.title?.displayValue?.trim();
+  const title = rawTitle ? cleanTitle(rawTitle) : undefined;
   if (!title || !item.detailPageURL) return null;
   // Guard against third-party items that merely mention the brand ("compatible with ...").
   const byline = item.itemInfo?.byLineInfo?.brand?.displayValue;
-  const ownBrand = byline ? brandFromAmazon(byline) === brand : title.toLowerCase().startsWith(brand.name.toLowerCase());
+  const ownBrand = byline ? brandFromByline(byline) === brand : title.toLowerCase().startsWith(brand.name.toLowerCase());
   if (!ownBrand) return null;
   if (brand.require && !brand.require.test(title)) return null;
 
@@ -101,7 +114,7 @@ function normalize(item: ApiItem, brand: Brand, fetchedAt: string): Deal | null 
     isGamingPc,
     category: item.itemInfo?.classifications?.productGroup?.displayValue ?? null,
     categorySlug: categorize(title, isGamingPc),
-    amazonUrl: item.detailPageURL,
+    buyUrl: item.detailPageURL,
     image: images[0] ?? null,
     gallery: images.slice(0, 6),
     price: priceMoney.amount,
@@ -117,10 +130,14 @@ function normalize(item: ApiItem, brand: Brand, fetchedAt: string): Deal | null 
     inStock: !/out_?of_?stock|unavailable/i.test(availabilityType),
     condition: listing.condition?.value ?? null,
     merchant: listing.merchantInfo?.name ?? null,
-    dealBadge: listing.dealDetails?.badge ?? (listing.dealDetails ? "Limited time deal" : null),
+    dealBadge: listing.dealDetails
+      ? listing.dealDetails.badge && !RETAILER_TERMS.test(listing.dealDetails.badge)
+        ? listing.dealDetails.badge
+        : "Limited time deal"
+      : null,
     rating: item.customerReviews?.starRating?.value ?? null,
     reviewCount: item.customerReviews?.count ?? null,
-    features: (item.itemInfo?.features?.displayValues ?? []).slice(0, 8),
+    features: (item.itemInfo?.features?.displayValues ?? []).filter((f) => !RETAILER_TERMS.test(f)).slice(0, 8),
     fetchedAt,
   };
 }
@@ -129,87 +146,115 @@ function rank(a: Deal, b: Deal) {
   return (b.savingsPercent ?? 0) - (a.savingsPercent ?? 0) || (b.savings ?? 0) - (a.savings ?? 0) || a.price - b.price;
 }
 
-// Pages of 10 results per search. With 13 searches a full refresh is at most
-// 39 calls, under a minute at Amazon's starting limit of one request per second.
-const MAX_PAGES = 3;
+// Pages of 10 results per search. Brands are fetched and cached separately, so
+// a cold refresh of all brands is ~70 calls at one request per second, and a
+// warm site refreshes each brand in the background as its cache expires.
+const PAGES_PER_SEARCH = 2;
 
-const fetchAllDeals = unstable_cache(
-  async (): Promise<{ deals: Deal[]; fetchedAt: string }> => {
+type BrandFetch = { deals: Deal[]; fetchedAt: string };
+
+const fetchBrandDeals = unstable_cache(
+  async (slug: string): Promise<BrandFetch> => {
+    const brand = getBrand(slug);
+    if (!brand) return { deals: [], fetchedAt: new Date().toISOString() };
     const fetchedAt = new Date().toISOString();
     const byAsin = new Map<string, Deal>();
     let failures = 0;
     let attempts = 0;
 
-    for (const brand of BRANDS) {
-      for (const { keywords, searchIndex } of brand.searches) {
-        for (let itemPage = 1; itemPage <= MAX_PAGES; itemPage++) {
-          attempts++;
-          try {
-            const items = await searchItems({
-              keywords,
-              searchIndex,
-              brand: brand.apiBrand,
-              itemPage,
-              minSavingPercent: SITE.minDiscount,
-            });
-            for (const item of items) {
-              const deal = normalize(item, brand, fetchedAt);
-              if (deal && !byAsin.has(deal.asin)) byAsin.set(deal.asin, deal);
-            }
-            if (items.length < 10) break;
-          } catch (err) {
-            const message = (err as Error).message;
-            // Auth/eligibility rejections apply to every request; stop instead of repeating them.
-            if (/ failed: (401|403)\b/.test(message)) throw new Error(`Amazon rejected the account: ${message}`);
-            failures++;
-            console.error(`[deals] ${brand.slug} "${keywords}" (${searchIndex}) page ${itemPage}:`, message);
-            break;
+    for (const { keywords, searchIndex } of brand.searches) {
+      for (let itemPage = 1; itemPage <= PAGES_PER_SEARCH; itemPage++) {
+        attempts++;
+        try {
+          const items = await searchItems({
+            keywords,
+            searchIndex,
+            brand: brand.apiBrand,
+            itemPage,
+            minSavingPercent: SITE.minDiscount,
+          });
+          for (const item of items) {
+            const deal = normalize(item, brand, fetchedAt);
+            if (deal && !byAsin.has(deal.asin)) byAsin.set(deal.asin, deal);
           }
+          if (items.length < 10) break;
+        } catch (err) {
+          const message = (err as Error).message;
+          // Auth/eligibility rejections apply to every request; stop instead of repeating them.
+          if (/ failed: (401|403)\b/.test(message)) throw new Error(`${ACCOUNT_REJECTED}: ${message}`);
+          failures++;
+          console.error(`[deals] ${brand.slug} "${keywords}" (${searchIndex}) page ${itemPage}:`, message);
+          break;
         }
       }
     }
 
-    // Throwing keeps a total outage out of the cache so the next request retries.
-    if (failures === attempts) throw new Error("All Creators API searches failed");
+    // Throwing keeps a total failure out of the cache so a later request retries.
+    if (failures === attempts) throw new Error(`All searches failed for ${slug}`);
     return { deals: [...byAsin.values()].sort(rank), fetchedAt };
   },
-  ["all-deals-v5"],
+  ["brand-deals-v1"],
   { revalidate: SITE.revalidate, tags: ["deals"] },
 );
 
+const ACCOUNT_REJECTED = "Product API rejected the account";
 let warnedUnconfigured = false;
-let lastLoggedFetch: string | null = null;
+const loggedFetches = new Set<string>();
 // Failures are not written to the shared cache, so remember them in-process
-// briefly: otherwise every page render would re-run the full set of API calls.
+// briefly; otherwise every page render would retry the failing API calls.
 const FAILURE_BACKOFF_MS = 10 * 60 * 1000;
 let failedUntil = 0;
-let inflight: Promise<{ deals: Deal[]; fetchedAt: string }> | null = null;
+const brandFailedUntil = new Map<string, number>();
+const inflight = new Map<string, Promise<BrandFetch>>();
+
+function configured() {
+  if (getConfig()) return true;
+  if (!warnedUnconfigured) {
+    warnedUnconfigured = true;
+    const missing = ["AMAZON_CREDENTIAL_ID", "AMAZON_CREDENTIAL_SECRET"].filter((k) => !process.env[k]?.trim());
+    console.warn(`[deals] Product API not configured; missing env: ${missing.join(", ")}. No deals will be shown.`);
+  }
+  return false;
+}
+
+async function loadBrand(brand: Brand): Promise<BrandFetch | null> {
+  const now = Date.now();
+  if (now < failedUntil || now < (brandFailedUntil.get(brand.slug) ?? 0)) return null;
+  let pending = inflight.get(brand.slug);
+  if (!pending) {
+    pending = fetchBrandDeals(brand.slug).finally(() => inflight.delete(brand.slug));
+    inflight.set(brand.slug, pending);
+  }
+  try {
+    const result = await pending;
+    const key = `${brand.slug}@${result.fetchedAt}`;
+    if (!loggedFetches.has(key)) {
+      loggedFetches.add(key);
+      console.info(`[deals] ${brand.slug}: ${result.deals.length} deals (fetched ${result.fetchedAt})`);
+    }
+    return result;
+  } catch (err) {
+    const message = (err as Error).message;
+    if (message.startsWith(ACCOUNT_REJECTED)) failedUntil = Date.now() + FAILURE_BACKOFF_MS;
+    else brandFailedUntil.set(brand.slug, Date.now() + FAILURE_BACKOFF_MS);
+    console.error(`[deals] ${brand.slug} unavailable, retrying in 10 minutes:`, message);
+    return null;
+  }
+}
+
+function combine(results: (BrandFetch | null)[]): DealsResult {
+  const ok = results.filter((r): r is BrandFetch => r !== null);
+  const deals = ok.flatMap((r) => r.deals).sort(rank);
+  const fetchedAt = ok.map((r) => r.fetchedAt).sort().at(-1) ?? null;
+  return { deals, configured: true, ok: ok.length > 0, fetchedAt };
+}
 
 export async function getAllDeals(): Promise<DealsResult> {
-  if (!getConfig()) {
-    if (!warnedUnconfigured) {
-      warnedUnconfigured = true;
-      const missing = ["AMAZON_CREDENTIAL_ID", "AMAZON_CREDENTIAL_SECRET"].filter((k) => !process.env[k]?.trim());
-      console.warn(`[deals] Amazon Creators API not configured; missing env: ${missing.join(", ")}. No deals will be shown.`);
-    }
-    return { deals: [], configured: false, ok: false, fetchedAt: null };
-  }
-  if (Date.now() < failedUntil) return { deals: [], configured: true, ok: false, fetchedAt: null };
-  try {
-    inflight ??= fetchAllDeals().finally(() => {
-      inflight = null;
-    });
-    const { deals, fetchedAt } = await inflight;
-    if (fetchedAt !== lastLoggedFetch) {
-      lastLoggedFetch = fetchedAt;
-      console.info(`[deals] ${deals.length} deals loaded from Amazon (fetched ${fetchedAt})`);
-    }
-    return { deals, configured: true, ok: true, fetchedAt };
-  } catch (err) {
-    failedUntil = Date.now() + FAILURE_BACKOFF_MS;
-    console.error("[deals] unavailable, retrying in 10 minutes:", (err as Error).message);
-    return { deals: [], configured: true, ok: false, fetchedAt: null };
-  }
+  if (!configured()) return { deals: [], configured: false, ok: false, fetchedAt: null };
+  // Sequential on purpose: the API allows one request per second.
+  const results: (BrandFetch | null)[] = [];
+  for (const brand of BRANDS) results.push(await loadBrand(brand));
+  return combine(results);
 }
 
 /** Gaming PCs first, then everything else, each group ordered by discount. */
@@ -218,18 +263,19 @@ export function gamingPcsFirst(deals: Deal[]): Deal[] {
 }
 
 export async function getBrandDeals(slug: string): Promise<DealsResult> {
-  const result = await getAllDeals();
-  return { ...result, deals: result.deals.filter((d) => d.brandSlug === slug) };
+  const brand = getBrand(slug);
+  if (!brand || !configured()) return { deals: [], configured: false, ok: false, fetchedAt: null };
+  return combine([await loadBrand(brand)]);
 }
 
 const fetchItem = unstable_cache(
   async (asin: string): Promise<Deal | null> => {
     const [item] = await getItems([asin]);
     if (!item) return null;
-    const brand = brandFromAmazon(item.itemInfo?.byLineInfo?.brand?.displayValue ?? item.itemInfo?.title?.displayValue);
+    const brand = brandFromByline(item.itemInfo?.byLineInfo?.brand?.displayValue ?? item.itemInfo?.title?.displayValue);
     return brand ? normalize(item, brand, new Date().toISOString()) : null;
   },
-  ["deal-by-asin-v4"],
+  ["deal-by-asin-v5"],
   { revalidate: SITE.revalidate, tags: ["deals"] },
 );
 

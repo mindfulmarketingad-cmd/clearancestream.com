@@ -26,7 +26,9 @@ On Vercel, add these under Project Settings, Environment Variables.
 
 - `lib/amazon/creators-api.ts` is the Creators API client (PA-API 5 was retired in 2026).
   It runs server-side only; credentials never reach the browser.
-- `lib/deals.ts` pulls each brand's full Amazon catalog (Computers, Electronics, Video Games),
+- Brands are grouped (Gaming PCs & Laptops, Mice/Keyboards/Headsets, Controllers & Racing) in
+  `lib/brands.ts`. Each brand is fetched and cached separately and refreshes in the background.
+- `lib/deals.ts` pulls each brand's catalog (Computers, Electronics, Video Games),
   keeps only items sold under that brand and discounted 20 to 50% below Amazon's reference
   price (`SITE.minDiscount` / `SITE.maxDiscount` in `lib/site.ts`), tags gaming PCs, and caches
   results for one hour. Total API failures are not cached.
@@ -44,7 +46,13 @@ product is assigned one by title; order in the list decides ties.
 ## Refresh cadence
 
 Prices refresh every 24 hours (`SITE.revalidate`), the longest Amazon's API terms allow
-product data to be cached. Each refresh is at most ~39 API calls at 1 request/second.
+product data to be cached. A cold refresh of all brands is ~70 API calls at 1 request/second.
+
+## Retailer naming on the site
+
+The site does not name the retailer, except the Associates disclosure required by the
+Associates Operating Agreement (`AFFILIATE_DISCLOSURE` in `lib/site.ts`), shown in the footer
+and on /disclaimer. Product text is cleaned of retailer terms in `lib/deals.ts`.
 
 ## Adding a brand
 

@@ -18,7 +18,7 @@ export const gamingPcDealsGuide: Post = {
     { id: "what-is-a-real-deal", label: "What counts as a real gaming PC deal" },
     { id: "judge-the-discount", label: "How to judge a discount" },
     { id: "worked-example", label: "A worked example" },
-    { id: "price-labels", label: "Understanding Amazon price labels" },
+    { id: "price-labels", label: "Understanding retailer price labels" },
     { id: "where-hidden-deals-come-from", label: "Where hidden deals and clearances come from" },
     { id: "when-to-buy", label: "When gaming PC prices drop" },
     { id: "spec-checklist", label: "Spec checklist for a discounted gaming PC" },
@@ -34,7 +34,7 @@ export const gamingPcDealsGuide: Post = {
     },
     {
       q: "When is the cheapest time to buy a gaming PC?",
-      a: "Prices usually drop most when a new GPU or CPU generation launches and retailers clear the outgoing configurations, and during major retail events such as Prime Day in the summer, Amazon's October sale event, and Black Friday through Cyber Monday. Unannounced price drops also happen year-round, which is why tracking live prices matters.",
+      a: "Prices usually drop most when a new GPU or CPU generation launches and retailers clear the outgoing configurations, and during major retail events such as the big mid-summer sales, the October sale events, and Black Friday through Cyber Monday. Unannounced price drops also happen year-round, which is why tracking live prices matters.",
     },
     {
       q: "Are prebuilt gaming PC deals better than building my own?",
@@ -84,10 +84,10 @@ function Body() {
       <h2 id="judge-the-discount">How to judge a discount</h2>
       <h3>1. Identify the reference price</h3>
       <p>
-        Amazon shows savings against a reference price, which may be labelled as a list price or a typical or
+        Retailers show savings against a reference price, which may be labelled as a list price or a typical or
         was-price. When the reference is the recent typical price, the saving is usually meaningful. When it is a
         manufacturer&apos;s list price set at launch, it can overstate the saving. On every{" "}
-        <Link href="/deals">ClearanceStream deal page</Link> we show which reference Amazon used, so you can weigh it
+        <Link href="/deals">ClearanceStream deal page</Link> we show which reference was used, so you can weigh it
         accordingly.
       </p>
 
@@ -139,10 +139,10 @@ function Body() {
         below the parts total, it is an excellent one.
       </p>
 
-      <h2 id="price-labels">Understanding Amazon price labels</h2>
+      <h2 id="price-labels">Understanding retailer price labels</h2>
       <p>
-        Amazon calculates the savings it displays against a reference price, and it labels that reference differently
-        depending on where it came from. The labels are worth reading because they tell you how much weight to give
+        Large retailers calculate the savings they display against a reference price, and label that reference
+        differently depending on where it came from. The labels are worth reading because they tell you how much weight to give
         the discount.
       </p>
       <ul>
@@ -155,7 +155,7 @@ function Body() {
           price is usually a genuine drop from what other buyers paid.
         </li>
         <li>
-          <strong>Was price.</strong> A recent price for the item on Amazon. Like typical price, it reflects actual
+          <strong>Was price.</strong> A recent price for the item at that retailer. Like typical price, it reflects actual
           recent selling prices rather than a suggested price.
         </li>
       </ul>
@@ -184,9 +184,9 @@ function Body() {
       </p>
       <h3>Short-term and limited-time deals</h3>
       <p>
-        Amazon runs time-limited deals that can last hours or days. They sometimes carry the deepest discounts but
-        disappear quickly. ClearanceStream refreshes prices every day and flags listings Amazon marks as a limited-time
-        deal, but short deals can end between checks, so always confirm the price on Amazon.
+        Retailers run time-limited deals that can last hours or days. They sometimes carry the deepest discounts but
+        disappear quickly. ClearanceStream refreshes prices every day and flags listings marked as a limited-time
+        deal, but short deals can end between checks, so always confirm the price at checkout.
       </p>
       <h3>Renewed and open-box stock</h3>
       <p>
@@ -204,15 +204,15 @@ function Body() {
           respond with their own discounts.
         </li>
         <li>
-          <strong>Prime Day (typically mid-summer).</strong> Amazon&apos;s largest sale event usually includes gaming
-          desktops from major brands.
+          <strong>Mid-summer sale events.</strong> The biggest summer retail sales usually include gaming desktops
+          and peripherals from major brands.
         </li>
         <li>
           <strong>Back-to-school season.</strong> Retailers push computers from late July through early September.
         </li>
         <li>
-          <strong>Amazon&apos;s October sale event.</strong> A second Prime-style event has run in October in recent
-          years and often previews holiday pricing.
+          <strong>October sale events.</strong> Several large retailers have run October sales in recent years, which
+          often preview holiday pricing.
         </li>
         <li>
           <strong>Black Friday through Cyber Monday.</strong> Still the most competitive week of the year for prebuilt
@@ -295,8 +295,8 @@ function Body() {
 
       <h2 id="using-clearancestream">How to use ClearanceStream</h2>
       <p>
-        ClearanceStream tracks gaming PC listings from supported brands on Amazon and refreshes prices every day. Every
-        deal shows the current price, the reference price Amazon uses, the saving in dollars and percent, and the time
+        ClearanceStream tracks gaming PC and gear listings from supported brands and refreshes prices every day. Every
+        deal shows the current price, the reference price, the saving in dollars and percent, and the time
         the price was checked.
       </p>
       <ul>
@@ -311,8 +311,7 @@ function Body() {
         </li>
       </ul>
       <p>
-        Prices on Amazon can change at any time. Always confirm the final price on Amazon before you complete a
-        purchase.
+        Prices can change at any time. Always confirm the final price at checkout before you complete a purchase.
       </p>
     </>
   );

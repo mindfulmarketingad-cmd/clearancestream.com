@@ -185,8 +185,8 @@ function Body() {
       <h2 id="warranty-support">Warranty and support</h2>
       <p>
         One of the biggest advantages of a prebuilt is a single warranty covering the entire system. Check how long it
-        lasts, whether it is on-site, depot, or mail-in, and who provides it. When buying from Amazon, also check
-        whether the item is sold by Amazon, by the manufacturer, or by a third-party seller, since this affects returns
+        lasts, whether it is on-site, depot, or mail-in, and who provides it. When buying online, also check
+        whether the item is sold by the retailer itself, by the manufacturer, or by a third-party seller, since this affects returns
         and warranty claims.
       </p>
 
@@ -228,7 +228,7 @@ function Body() {
       <p>
         To apply it, price the GPU first, then add a rough estimate for the CPU, motherboard, memory, storage, power
         supply, and case. If the discounted system lands at or below that total, it is a strong deal. Our{" "}
-        <Link href="/deals">live gaming PC deals</Link> list shows current prices alongside Amazon&apos;s reference
+        <Link href="/deals">live gaming PC deals</Link> list shows current prices alongside the reference
         price to make this comparison quicker.
       </p>
 

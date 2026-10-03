@@ -4,7 +4,7 @@ export const SITE = {
   url: "https://clearancestream.com",
   tagline: "Gaming PC Hidden Deals & Clearances",
   description:
-    "ClearanceStream helps gaming PC enthusiasts track hidden deals, price drops, and clearances on prebuilt gaming PCs from Corsair, Alienware, Razer, Logitech G, SteelSeries, and Origin PC.",
+    "ClearanceStream helps gaming PC enthusiasts track hidden discounts, price drops, and promos on gaming PCs, laptops, mice, keyboards, headsets, and controllers from the biggest brands in gaming.",
   locale: "en_US",
   // Refresh cadence for live Amazon data, in seconds. 24 hours is the longest
   // Amazon's API terms allow product data (prices especially) to be cached.

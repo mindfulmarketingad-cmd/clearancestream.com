@@ -10,7 +10,7 @@ export function DealCard({ deal, priority = false, hidden = false }: Props) {
     <article className="deal-card" hidden={hidden}>
       <Link href={deal.path} className="deal-media" tabIndex={-1} aria-hidden="true">
         {deal.image ? (
-          // Amazon's image terms require serving images from Amazon's own URLs.
+          // Product images must be served from the retailer's own image URLs.
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={deal.image.url}
@@ -53,7 +53,7 @@ export function DealCard({ deal, priority = false, hidden = false }: Props) {
       </div>
       <div className="deal-foot">
         <ShieldIcon />
-        Secure &amp; verified Amazon listing
+        Secure &amp; verified listing
       </div>
     </article>
   );

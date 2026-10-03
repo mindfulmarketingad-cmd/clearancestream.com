@@ -14,7 +14,8 @@ import {
 import { JsonLd } from "@/components/JsonLd";
 import { ValueBar } from "@/components/ValueBar";
 import { POSTS } from "@/lib/blog";
-import { BRANDS } from "@/lib/brands";
+import { BRANDS, getBrand } from "@/lib/brands";
+import { BrandDirectory } from "@/components/BrandDirectory";
 import { gamingPcsFirst, getAllDeals } from "@/lib/deals";
 import { formatChecked } from "@/lib/format";
 import { POPULAR_SEARCHES } from "@/lib/search";
@@ -23,30 +24,32 @@ import { SITE } from "@/lib/site";
 
 export const revalidate = 86400;
 
+const FEATURED = ["corsair", "razer", "logitech", "alienware", "asus-rog", "scuf", "steelseries", "msi"];
+
 export const metadata = pageMetadata({
   title: "Gaming PC Hidden Deals & Clearances | ClearanceStream.com",
   absoluteTitle: true,
   description:
-    "We help gaming PC enthusiasts track hidden deals, price drops, and clearances on their favorite brands. Live Amazon prices on Corsair, Alienware, Razer, Logitech G, SteelSeries, and Origin PC.",
+    "We help gaming PC enthusiasts track hidden deals, price drops, and clearances on their favorite brands. Live discounts on gaming PCs, mice, keyboards, headsets, and controllers from the biggest gaming brands.",
   path: "/",
 });
 
 const HOME_FAQ = [
   {
     q: "What is a hidden gaming PC deal?",
-    a: "A hidden deal is a discount that is not promoted on a retailer's homepage or in a sale banner. It is often a single configuration marked down to clear stock, or a quiet price cut when a new hardware generation launches. ClearanceStream finds these by checking live Amazon prices every day.",
+    a: "A hidden deal is a discount that is not promoted on a retailer's homepage or in a sale banner. It is often a single configuration marked down to clear stock, or a quiet price cut when a new hardware generation launches. ClearanceStream finds these by checking live prices every day.",
   },
   {
     q: "Where do ClearanceStream prices come from?",
-    a: "Every price comes directly from Amazon through Amazon's official product API. We show the current price, Amazon's reference price, the saving, and the time the price was checked. Prices can change after that time, so always confirm the final price on Amazon.",
+    a: "Every price comes from an official retail product feed. We show the current price, the reference price, the saving, and the time the price was checked. Prices can change after that time, so always confirm the final price at checkout.",
   },
   {
     q: "Does it cost anything to use ClearanceStream?",
-    a: "No. The site is free to use and you never need an account. We earn a commission from Amazon when you buy through our links, at no extra cost to you.",
+    a: "No. The site is free to use and you never need an account. We may earn a commission when you buy through our links, at no extra cost to you.",
   },
   {
     q: "Which gaming PC brands do you track?",
-    a: `We currently track ${BRANDS.map((b) => b.name).join(" and ")} gaming desktops, with more brands being added.`,
+    a: `We track ${BRANDS.length} of the biggest gaming brands, including ${FEATURED.slice(0, 6).map((s) => getBrand(s)!.name).join(", ")}, and SCUF Gaming, across gaming PCs, laptops, mice, keyboards, headsets, and controllers.`,
   },
 ];
 
@@ -65,7 +68,7 @@ export default async function HomePage() {
           <div>
             <span className="eyebrow">
               <span className="live-dot" aria-hidden="true" />
-              Live Amazon prices, refreshed daily
+              Live prices, refreshed daily
             </span>
             <h1>
               Gaming PC Hidden Deals <span>&amp; Clearances</span>
@@ -91,7 +94,7 @@ export default async function HomePage() {
                 <CheckIcon /> No account required
               </li>
               <li>
-                <CheckIcon /> Prices direct from Amazon
+                <CheckIcon /> Verified live prices
               </li>
             </ul>
             {deals.length > 0 ? (
@@ -131,7 +134,7 @@ export default async function HomePage() {
                 <li>
                   <span className="step-num">1</span>
                   <span>
-                    <b>Scan Amazon every day</b>
+                    <b>Scan prices every day</b>
                     Live prices on gaming PCs and gear from every brand we track.
                   </span>
                 </li>
@@ -139,7 +142,7 @@ export default async function HomePage() {
                   <span className="step-num">2</span>
                   <span>
                     <b>Compare against reference prices</b>
-                    Only real price drops below Amazon&apos;s reference price make the list.
+                    Only real price drops below the reference price make the list.
                   </span>
                 </li>
                 <li>
@@ -157,8 +160,8 @@ export default async function HomePage() {
 
       <div className="brand-strip">
         <div className="container">
-          <span>We track gaming PC deals from</span>
-          {BRANDS.map((b) => (
+          <span>Discounts and promos from</span>
+          {FEATURED.map((slug) => getBrand(slug)!).map((b) => (
             <Link key={b.slug} href={`/brands/${b.slug}`}>
               {b.name}
             </Link>
@@ -174,7 +177,7 @@ export default async function HomePage() {
           <div className="section-head">
             <div>
               <h2>Trending gaming PC deals</h2>
-              <p>Gaming PCs and gear marked down 20 to 50% on Amazon right now, gaming desktops first.</p>
+              <p>Gaming PCs and gear marked down 20 to 50% right now, gaming desktops first.</p>
             </div>
             {trending.length > 0 ? (
               <Link href="/deals" className="text-link">
@@ -198,7 +201,7 @@ export default async function HomePage() {
           <dl>
             <div>
               <dd>{deals.length > 0 ? <span className="mono">{deals.length}</span> : "Live"}</dd>
-              <dt>{deals.length > 0 ? "Gaming PCs tracked now" : "Amazon price feed"}</dt>
+              <dt>{deals.length > 0 ? "Gaming PCs tracked now" : "Live price feed"}</dt>
             </div>
             <div>
               <dd className="mono">{BRANDS.length}</dd>
@@ -221,7 +224,7 @@ export default async function HomePage() {
           <div className="section-head">
             <div>
               <h2>How ClearanceStream works</h2>
-              <p>A simple process built around one rule: every price you see comes straight from Amazon.</p>
+              <p>A simple process built around one rule: every price you see is live and verified.</p>
             </div>
           </div>
           <div className="card-grid">
@@ -232,7 +235,7 @@ export default async function HomePage() {
               <span className="step-label">Step 1</span>
               <h3>We scan</h3>
               <p>
-                Every day we check live Amazon prices on gaming desktops from the brands we track, including
+                Every day we check live prices on gaming PCs and gear from the brands we track, including
                 configurations that never appear in a sale banner.
               </p>
             </div>
@@ -243,7 +246,7 @@ export default async function HomePage() {
               <span className="step-label">Step 2</span>
               <h3>We filter</h3>
               <p>
-                Accessories and non-gaming systems are removed, and each listing is compared against Amazon&apos;s
+                Accessories and non-gaming systems are removed, and each listing is compared against its
                 reference price to measure the real saving.
               </p>
             </div>
@@ -254,7 +257,7 @@ export default async function HomePage() {
               <span className="step-label">Step 3</span>
               <h3>You save</h3>
               <p>
-                Deals are ranked by discount with the time each price was checked. Click through and buy on Amazon, at
+                Deals are ranked by discount with the time each price was checked. Click through and buy from the retailer, at
                 no extra cost.
               </p>
             </div>
@@ -266,27 +269,14 @@ export default async function HomePage() {
         <div className="container">
           <div className="section-head">
             <div>
-              <h2>Browse deals by brand</h2>
-              <p>Gaming PCs and gear from the brands PC gamers buy most, with buying advice for each.</p>
+              <h2>Discounts and promos by brand</h2>
+              <p>Gaming PCs, laptops, peripherals, and controllers from the biggest brands in gaming.</p>
             </div>
             <Link href="/brands" className="text-link">
               All brands <ArrowRight />
             </Link>
           </div>
-          <div className="card-grid">
-            {BRANDS.map((b) => {
-              const count = deals.filter((d) => d.brandSlug === b.slug).length;
-              return (
-                <Link key={b.slug} href={`/brands/${b.slug}`} className="card">
-                  <h3>{b.name} deals</h3>
-                  <p className="clamp-3">{b.intro}</p>
-                  <span className="text-link">
-                    {count > 0 ? `View ${count} live ${b.name} deals` : `View ${b.name} deals`} <ArrowRight />
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
+          <BrandDirectory deals={deals} />
         </div>
       </section>
 

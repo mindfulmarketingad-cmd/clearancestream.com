@@ -37,7 +37,6 @@ export function Footer() {
         <div className="footer-bottom">
           <p>
             {AFFILIATE_DISCLOSURE} Prices and availability are accurate as of the time shown and are subject to change.
-            Amazon and the Amazon logo are trademarks of Amazon.com, Inc. or its affiliates.
           </p>
           <p>&copy; {new Date().getFullYear()} {SITE.domain}</p>
         </div>

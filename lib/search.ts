@@ -1,6 +1,6 @@
 import "server-only";
-import { BRANDS } from "./brands";
-import { CATEGORIES } from "./categories";
+import { BRANDS, brandDescription, brandTitle } from "./brands";
+import { CATEGORIES, getCategory } from "./categories";
 import { POSTS } from "./blog";
 import type { Deal } from "./deals";
 import { searchSlug } from "./slug";
@@ -32,11 +32,16 @@ export const POPULAR_SEARCHES = [
   "Gaming PC under 1000",
   "Gaming PC under 1500",
   "Gaming PC under 2000",
+  "Gaming laptop",
+  "Wireless gaming mouse",
+  "Mechanical keyboard",
+  "Wireless gaming headset",
+  "SCUF controller",
+  "Xbox controller",
+  "DualSense controller",
+  "Racing wheel",
   "Razer mouse",
   "Logitech G mouse",
-  "SteelSeries headset",
-  "Razer keyboard",
-  "Origin PC",
 ].map((label) => ({ label, slug: searchSlug(label), path: `/search/${searchSlug(label)}` }));
 
 export function popularSearch(slug: string) {
@@ -72,7 +77,7 @@ function buildIndex(deals: Deal[]): SearchDoc[] {
       title: deal.name,
       description: `${deal.priceDisplay}${deal.savingsPercent ? `, ${deal.savingsPercent}% off` : ""}`,
       path: deal.path,
-      haystack: `${deal.title} ${deal.brandName} ${deal.category ?? ""} ${deal.features.join(" ")}${
+      haystack: `${deal.title} ${deal.brandName} ${getCategory(deal.categorySlug)?.name ?? ""} ${deal.features.join(" ")}${
         deal.isGamingPc ? " gaming pc desktop" : ""
       }`.toLowerCase(),
       deal,
@@ -81,8 +86,8 @@ function buildIndex(deals: Deal[]): SearchDoc[] {
   for (const b of BRANDS) {
     docs.push({
       type: "brand",
-      title: `${b.name} deals`,
-      description: b.metaDescription,
+      title: brandTitle(b),
+      description: brandDescription(b),
       path: `/brands/${b.slug}`,
       haystack: `${b.name} ${b.lines.map((l) => l.name).join(" ")} gaming pc desktop ${b.intro}`.toLowerCase(),
     });
@@ -94,7 +99,7 @@ function buildIndex(deals: Deal[]): SearchDoc[] {
       docs.push({
         type: "brand",
         title: `${b.name} ${c.name} deals`,
-        description: `${count} ${b.name} ${c.noun} ${count === 1 ? "deal" : "deals"} on Amazon right now.`,
+        description: `${count} ${b.name} ${c.noun} ${count === 1 ? "deal" : "deals"} right now.`,
         path: `/brands/${b.slug}/${c.slug}`,
         haystack: `${b.name} ${c.name} ${c.noun} ${c.slug.replace("-", " ")}`.toLowerCase(),
       });

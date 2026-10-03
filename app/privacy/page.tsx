@@ -6,7 +6,7 @@ import { SITE } from "@/lib/site";
 export const metadata = pageMetadata({
   title: "Privacy Policy",
   description:
-    "How ClearanceStream collects, uses, and protects information, including contact form data, server logs, and Amazon affiliate links.",
+    "How ClearanceStream collects, uses, and protects information, including contact form data, server logs, and affiliate links.",
   path: "/privacy",
 });
 
@@ -51,16 +51,16 @@ export default function PrivacyPage() {
         update this policy and, where required, ask for your consent.
       </p>
 
-      <h2>Amazon and third-party links</h2>
+      <h2>Retailer and third-party links</h2>
       <p>
-        {SITE.name} links to Amazon.com. When you click a link to Amazon, you leave our site, and Amazon may use cookies
-        and similar technologies to attribute your purchase to our affiliate account and for its own purposes. Amazon
-        handles that data under its own privacy notice. We receive commission reports from Amazon but no personal
-        information that identifies you.
+        {SITE.name} links to third-party retailers. When you click one of these links, you leave our site, and the
+        retailer may use cookies and similar technologies to attribute your purchase to our affiliate account and for
+        its own purposes. The retailer handles that data under its own privacy notice. We receive commission reports
+        but no personal information that identifies you.
       </p>
       <p>
-        Product images on our pages are loaded directly from Amazon&apos;s servers, which means Amazon receives
-        standard request information (such as your IP address) when those images load. Our links to social media
+        Product images on our pages are loaded directly from the retailer&apos;s servers, which means the retailer
+        receives standard request information (such as your IP address) when those images load. Our links to social media
         profiles are subject to those platforms&apos; own policies.
       </p>
 
@@ -73,7 +73,7 @@ export default function PrivacyPage() {
       <h2>How we protect information</h2>
       <p>
         The site is served exclusively over HTTPS with modern security headers. We do not store payment details, since
-        all purchases are completed on Amazon. Access to contact messages is restricted to the {SITE.name} team.
+        all purchases are completed on the retailer&apos;s site. Access to contact messages is restricted to the {SITE.name} team.
       </p>
 
       <h2>Your rights</h2>

@@ -1,19 +1,28 @@
+export type BrandGroup = "pcs" | "peripherals" | "controllers";
+
+export const BRAND_GROUPS: { id: BrandGroup; name: string }[] = [
+  { id: "pcs", name: "Gaming PCs & Laptops" },
+  { id: "peripherals", name: "Mice, Keyboards & Headsets" },
+  { id: "controllers", name: "Controllers & Racing" },
+];
+
 export type Brand = {
   slug: string;
   name: string;
-  /** Value sent to the Creators API `brand` filter. */
+  group: BrandGroup;
+  /** Value sent to the product API `brand` filter. */
   apiBrand: string;
-  /** Searches run against Amazon for this brand's full catalog. Results are merged. */
+  /** Lowercase brand names the feed may use in its byline (defaults to apiBrand). */
+  aliases?: string[];
+  /** Product searches for this brand. Results are merged. */
   searches: { keywords: string; searchIndex: string }[];
+  /** Optional: titles must match this to be listed (e.g. a company's gaming lines only). */
+  require?: RegExp;
   /** A title matching `include` and not `exclude` is classed as a gaming PC. */
   include: RegExp;
   exclude: RegExp;
-  /** Optional: titles must match this to be listed (e.g. gaming lines only). */
-  require?: RegExp;
-  /** Lowercase names Amazon may use in the byline brand field. */
-  aliases?: string[];
-  metaTitle: string;
-  metaDescription: string;
+  /** What the brand sells, used in meta descriptions: "gaming PCs, keyboards, and mice". */
+  sells: string;
   intro: string;
   overview: string[];
   lines: { name: string; summary: string }[];
@@ -23,75 +32,15 @@ export type Brand = {
 
 const PERIPHERALS =
   /\b(keyboard|mouse|mice|headset|headphones?|monitor|webcam|microphone|mouse ?pad|controller|chair|desk|cable|fans?|fan kit|case|chassis|power supply|psu|ram kit|memory kit|cooler|stream deck|capture card|replacement|sticker|skin)\b/i;
+const DESKTOP = /\b(gaming (pc|desktop|computer)|desktop|tower)\b/i;
+const NO_DESKTOPS = /\b(gaming (pc|desktop|computer)|desktop)\b/i;
 
 export const BRANDS: Brand[] = [
-  {
-    slug: "corsair",
-    name: "Corsair",
-    apiBrand: "Corsair",
-    searches: [
-      { keywords: "Corsair gaming PC", searchIndex: "Computers" },
-      { keywords: "Corsair", searchIndex: "Computers" },
-      { keywords: "Corsair", searchIndex: "VideoGames" },
-    ],
-    include: /\b(gaming (pc|desktop|computer)|desktop|tower)\b/i,
-    exclude: PERIPHERALS,
-    metaTitle: "Corsair Hidden Deals & Clearances: 20-50% Off",
-    metaDescription:
-      "Every Corsair product on Amazon marked down 20 to 50 percent: gaming PCs, keyboards, mice, headsets, memory, cooling, and power supplies. Live prices, refreshed daily.",
-    intro:
-      "Corsair built its name on memory, cases, cooling, and power supplies, and its prebuilt gaming PCs are assembled almost entirely from those in-house parts. That makes Corsair systems easy to upgrade and service, and it means discounts on them are worth watching closely.",
-    overview: [
-      "Corsair was founded in 1994 in California and grew from a memory maker into one of the largest PC gaming component brands in the world. Its prebuilt desktops use the same cases, AIO liquid coolers, fans, RAM, and power supplies that it sells separately to DIY builders, so the parts inside are standard ATX and mATX components rather than proprietary boards or power supplies.",
-      "That standardisation matters when you buy on sale. A discounted Corsair system can be upgraded later with any off-the-shelf GPU, SSD, or memory kit, which extends its useful life well beyond the warranty period. It also makes it straightforward to compare a Corsair deal against the cost of building the same machine yourself.",
-      "Corsair prebuilts tend to see their deepest cuts when a new GPU or CPU generation launches and retailers clear the outgoing configuration, and during major retail sale events. The tracker above shows every Corsair product currently discounted 20 to 50 percent on Amazon, from complete gaming PCs to peripherals and components.",
-    ],
-    lines: [
-      {
-        name: "Corsair Vengeance",
-        summary:
-          "Corsair's main gaming desktop line. Mid-tower systems built around Corsair cases and cooling, offered in a wide range of CPU and GPU configurations from mainstream 1440p builds to high-end 4K machines.",
-      },
-      {
-        name: "Corsair ONE",
-        summary:
-          "Compact, small-form-factor systems with custom liquid cooling for both CPU and GPU. They trade some upgradability for a much smaller footprint and quiet operation.",
-      },
-      {
-        name: "Peripherals and components",
-        summary:
-          "Keyboards, mice, headsets, memory, AIO coolers, fans, cases, and power supplies. These are the same parts Corsair uses inside its own prebuilt PCs, and they are discounted often.",
-      },
-      {
-        name: "Origin PC",
-        summary:
-          "Corsair's custom-built boutique brand. Origin systems are configured to order and sold primarily direct, so they appear on Amazon less often than Vengeance models.",
-      },
-    ],
-    buyingTips: [
-      "Compare the discounted price against the current price of the GPU on its own. On most gaming PCs the graphics card is 35 to 50 percent of the total value, so a deal is only as good as the GPU inside it.",
-      "Check the exact model suffix. Corsair reuses the Vengeance name across several generations, and an older configuration at a large percentage discount can still cost more than a current one.",
-      "Look at the power supply rating and case airflow in the listing. Corsair systems usually ship with headroom for a GPU upgrade, which adds long-term value to a sale price.",
-      "Treat very large percentage discounts with care. Some list prices are set high at launch; our deal pages show the savings against Amazon's reference price so you can judge the real saving.",
-    ],
-    faqs: [
-      {
-        q: "Are Corsair prebuilt gaming PCs worth buying on sale?",
-        a: "Usually, yes. Because Corsair uses standard components from its own retail range, a discounted Corsair PC tends to be easy to upgrade and repair. The key is to confirm the GPU and CPU generation before comparing prices.",
-      },
-      {
-        q: "When do Corsair gaming PCs go on sale?",
-        a: "The biggest drops tend to cluster around new hardware launches, when outgoing configurations are cleared, and around major retail events such as Prime Day and Black Friday. Prices can also drop without notice, which is why we refresh listings every day.",
-      },
-      {
-        q: "Can I upgrade a Corsair prebuilt later?",
-        a: "In most Corsair desktops, yes. They use standard motherboards, ATX power supplies, and regular memory and storage slots, so common upgrades like a new GPU, more RAM, or extra SSD storage work the same way as in a DIY build.",
-      },
-    ],
-  },
+  // ---------------------------------------------------------------- PCs
   {
     slug: "alienware",
     name: "Alienware",
+    group: "pcs",
     apiBrand: "Alienware",
     searches: [
       { keywords: "Alienware gaming desktop", searchIndex: "Computers" },
@@ -99,237 +48,780 @@ export const BRANDS: Brand[] = [
       { keywords: "Alienware", searchIndex: "Electronics" },
     ],
     include: /\b(desktop|gaming (pc|computer)|aurora|area[- ]?51|tower)\b/i,
-    exclude: new RegExp(`${PERIPHERALS.source}|\\b(laptop|notebook|m1[5-8]|x1[4-7])\\b`, "i"),
-    metaTitle: "Alienware Hidden Deals & Clearances: 20-50% Off",
-    metaDescription:
-      "Every Alienware product on Amazon marked down 20 to 50 percent: gaming desktops, laptops, monitors, and peripherals. Live prices, refreshed daily.",
+    exclude: PERIPHERALS,
+    sells: "gaming desktops, laptops, and monitors",
     intro:
-      "Alienware is Dell's premium gaming brand, known for distinctive industrial design and strong factory support. Its desktops rarely sell at full price for long, so tracking live prices is the most reliable way to catch a genuine discount.",
+      "Alienware is Dell's premium gaming brand, known for distinctive industrial design and strong factory support. Its desktops, laptops, and monitors rarely sell at full price for long, so tracking live prices is the most reliable way to catch a genuine discount.",
     overview: [
-      "Alienware started in 1996 as an independent boutique builder and was acquired by Dell in 2006. Today it is Dell's dedicated gaming line, and its desktops benefit from Dell's supply chain, on-site and mail-in support options, and frequent promotional pricing.",
-      "Alienware desktops use more custom parts than a typical DIY-style prebuilt, including proprietary chassis designs and, on some generations, custom motherboards and power supply form factors. That is worth weighing when you compare a deal: the headline hardware may be excellent, but future upgrades beyond GPU, memory, and storage can be more limited.",
-      "Because Dell runs its own promotions alongside Amazon, Alienware prices can swing noticeably from week to week. The listings above show every Alienware product currently discounted 20 to 50 percent on Amazon, with the saving calculated against Amazon's reference price.",
+      "Alienware started in 1996 as an independent boutique builder and was acquired by Dell in 2006. Today it is Dell's dedicated gaming line, backed by Dell's supply chain and support network, and it runs frequent promotions across desktops, laptops, and monitors.",
+      "Alienware desktops use more custom parts than a typical prebuilt, including proprietary chassis designs and, on some generations, custom motherboards and power supplies. The headline hardware can be excellent, but future upgrades beyond GPU, memory, and storage may be more limited, which is worth weighing against the discount.",
     ],
     lines: [
-      {
-        name: "Alienware Aurora",
-        summary:
-          "The core Alienware gaming desktop. Aurora systems cover the widest spread of configurations, from mainstream builds to flagship GPU options, and are the Alienware models most often discounted on Amazon.",
-      },
-      {
-        name: "Alienware Area-51",
-        summary:
-          "Alienware's flagship desktop line, aimed at buyers who want top-tier components and maximum cooling headroom. Discounts are less frequent but can be substantial in dollar terms.",
-      },
-      {
-        name: "Laptops, monitors, and peripherals",
-        summary:
-          "Alienware gaming laptops, high-refresh gaming monitors, keyboards, mice, and headsets. These appear on Amazon regularly and often share promotions with Alienware desktops.",
-      },
+      { name: "Aurora desktops", summary: "The core Alienware gaming desktop, in the widest range of configurations and the line most often discounted." },
+      { name: "Area-51", summary: "Alienware's flagship desktops for buyers who want top-tier components and maximum cooling headroom." },
+      { name: "Laptops", summary: "High-performance gaming laptops in 16- and 18-inch sizes." },
+      { name: "Monitors", summary: "High-refresh gaming monitors, including QD-OLED models that are frequently on promotion." },
     ],
     buyingTips: [
       "Confirm the generation (for example the R-number on Aurora models). Older generations are often cleared at large discounts but may use previous-generation CPUs or GPUs.",
-      "Check the power supply wattage in the listing if you plan to upgrade the GPU later. Some Alienware configurations ship with a lower-wattage unit than the chassis supports.",
-      "Look at the storage and memory configuration, not just the GPU. Entry configurations sometimes pair a strong graphics card with a small SSD or single-channel memory.",
-      "Factor in support. Alienware systems include Dell warranty coverage, which has real value compared with a cheaper system from a brand with limited service options.",
+      "Check the power supply wattage if you plan to upgrade the GPU later.",
+      "Factor in Dell warranty coverage, which has real value compared with cheaper systems with limited support.",
     ],
     faqs: [
       {
-        q: "Are Alienware desktops a good deal on sale?",
-        a: "A discounted Alienware desktop can be good value, especially when you factor in Dell's warranty and support. Compare the full configuration, including the CPU, GPU, memory, storage, and power supply, against similar systems before buying.",
-      },
-      {
-        q: "How often do Alienware gaming PCs go on sale?",
-        a: "Frequently. Dell and Amazon both run promotions on Alienware desktops throughout the year, with deeper cuts around new generation launches and major shopping events. Prices on this page refresh every day.",
+        q: "Are Alienware discounts worth it?",
+        a: "Often. Alienware hardware and support are strong, and promotions are frequent. Compare the full configuration, including CPU, GPU, memory, storage, and power supply, against similar systems before buying.",
       },
       {
         q: "Can you upgrade an Alienware Aurora?",
-        a: "GPU, memory, and storage upgrades are generally possible. Some generations use proprietary motherboards, cases, or power supplies, which can limit bigger upgrades, so check the model details before planning a major rebuild.",
+        a: "GPU, memory, and storage upgrades are generally possible. Some generations use proprietary parts that limit bigger upgrades, so check the model details first.",
       },
     ],
   },
   {
-    slug: "logitech",
-    name: "Logitech G",
-    apiBrand: "Logitech",
-    aliases: ["logitech"],
+    slug: "corsair",
+    name: "Corsair",
+    group: "pcs",
+    apiBrand: "Corsair",
     searches: [
-      { keywords: "Logitech G gaming", searchIndex: "VideoGames" },
-      { keywords: "Logitech G gaming", searchIndex: "Computers" },
+      { keywords: "Corsair gaming PC", searchIndex: "Computers" },
+      { keywords: "Corsair", searchIndex: "Computers" },
+      { keywords: "Corsair", searchIndex: "VideoGames" },
     ],
-    // Logitech also sells office gear; only list its gaming lines.
-    require: /\b(logitech g|gaming|lightspeed|astro|g pro|pro x|racing wheel)\b/i,
-    include: /\b(gaming (pc|desktop|computer)|desktop)\b/i,
+    include: DESKTOP,
     exclude: PERIPHERALS,
-    metaTitle: "Logitech G Deals & Clearances: 20-50% Off Gaming Gear",
-    metaDescription:
-      "Every Logitech G gaming product on Amazon marked down 20 to 50 percent: mice, keyboards, headsets, racing wheels, and streaming gear. Live prices, refreshed daily.",
+    sells: "gaming PCs, keyboards, mice, headsets, and PC components",
     intro:
-      "Logitech G is Logitech's gaming division, best known for lightweight wireless mice, low-latency LIGHTSPEED wireless, and the racing wheels that many sim racers start with. Its gear goes on sale often, which makes tracking real discounts worthwhile.",
+      "Corsair built its name on memory, cases, cooling, and power supplies, and its gaming PCs and peripherals use that same in-house hardware. Corsair runs promotions across its whole range, from Vengeance gaming PCs to keyboards, mice, and headsets.",
     overview: [
-      "Logitech was founded in 1981 in Switzerland and became one of the world's largest makers of computer peripherals. Its gaming brand, Logitech G, covers mice, keyboards, headsets, racing wheels, and streaming equipment, and the company has expanded the line through acquisitions such as ASTRO Gaming headsets and Blue microphones.",
-      "Logitech G's flagship mice and keyboards are widely used in competitive esports, and its wireless technology is a large part of why wireless gaming peripherals are now mainstream. Because Logitech refreshes models regularly, the previous generation is often discounted heavily while still being very capable.",
-      "The listings above include only Logitech's gaming products, not its office range, and only items currently 20 to 50 percent below Amazon's reference price.",
+      "Corsair was founded in 1994 in California and grew from a memory maker into one of the largest PC gaming brands in the world. Its prebuilt desktops use the same cases, AIO liquid coolers, fans, memory, and power supplies it sells to DIY builders, so the parts inside are standard components that are easy to upgrade.",
+      "Corsair's peripherals and components are discounted often, especially when a new generation launches. Corsair also owns SCUF Gaming and Origin PC, both of which have their own pages here.",
     ],
     lines: [
-      { name: "PRO and PRO X series", summary: "Logitech G's esports line: lightweight wireless mice, compact keyboards, and headsets designed with professional players." },
-      { name: "G series mice and keyboards", summary: "Mainstream gaming peripherals such as the G502 mouse family and G-series mechanical keyboards, often with LIGHTSPEED wireless." },
-      { name: "Racing wheels", summary: "Force-feedback wheels and pedal sets for PC, PlayStation, and Xbox, from entry-level gear-driven wheels to direct-drive bases." },
-      { name: "ASTRO and Blue", summary: "Headsets from ASTRO Gaming and streaming microphones from Blue, both now part of Logitech G." },
+      { name: "Vengeance gaming PCs", summary: "Corsair's main gaming desktop line, built around Corsair cases and cooling in a wide range of configurations." },
+      { name: "Keyboards and mice", summary: "K-series keyboards and gaming mice such as the Scimitar, Dark Core, and M65 families." },
+      { name: "Headsets", summary: "HS-series and Virtuoso headsets for PC and console, wired and wireless." },
+      { name: "Components", summary: "Memory, AIO coolers, fans, cases, and power supplies, all managed in iCUE." },
     ],
     buyingTips: [
-      "Check the model generation. Logitech often keeps older versions on sale alongside newer ones with nearly identical names.",
-      "For wireless mice and keyboards, LIGHTSPEED models use a low-latency 2.4GHz receiver suited to competitive play.",
-      "Racing wheels are platform-specific. Confirm PC, PlayStation, or Xbox support before buying.",
+      "For gaming PCs, price the GPU on its own first. A deal is only as good as the graphics card inside it.",
+      "Corsair reuses product names across generations. Check the exact model suffix before comparing prices.",
+      "Buying fans, coolers, and peripherals from one ecosystem keeps lighting and control in a single app.",
     ],
     faqs: [
       {
-        q: "Are Logitech G products worth buying on sale?",
-        a: "Yes. Logitech G peripherals are widely used and well supported, and discounts on previous-generation models often make high-end mice and keyboards very good value.",
+        q: "Are Corsair prebuilt gaming PCs worth buying on sale?",
+        a: "Usually, yes. Corsair uses standard components from its own retail range, so a discounted Corsair PC tends to be easy to upgrade and repair.",
       },
       {
-        q: "Does this page include Logitech office products?",
-        a: "No. We list only Logitech's gaming products, including Logitech G, ASTRO, and racing wheels, so the deals stay relevant to PC gamers.",
-      },
-      {
-        q: "How often do Logitech G deals change?",
-        a: "Frequently. Logitech gaming gear is discounted throughout the year, with larger drops around major sale events. We check prices every day.",
-      },
-    ],
-  },
-  {
-    slug: "razer",
-    name: "Razer",
-    apiBrand: "Razer",
-    searches: [
-      { keywords: "Razer", searchIndex: "VideoGames" },
-      { keywords: "Razer", searchIndex: "Computers" },
-    ],
-    include: /\b(gaming (pc|desktop|computer)|desktop)\b/i,
-    exclude: PERIPHERALS,
-    metaTitle: "Razer Deals & Clearances: 20-50% Off Mice, Keyboards & More",
-    metaDescription:
-      "Every Razer product on Amazon marked down 20 to 50 percent: gaming mice, keyboards, headsets, Blade laptops, and accessories. Live prices, refreshed daily.",
-    intro:
-      "Razer builds gaming gear with a strong focus on design and performance, from the DeathAdder and Viper mice to BlackWidow keyboards and Blade laptops. Razer products are discounted regularly, and the deepest cuts often land on outgoing models.",
-    overview: [
-      "Razer was founded in 2005 and grew into one of the most recognisable gaming brands in the world, with its \"For Gamers. By Gamers.\" slogan and green triple-headed snake logo. It designs mice, keyboards, headsets, laptops, controllers, and streaming equipment, all tied together by its Synapse software and Chroma RGB lighting.",
-      "Razer refreshes its popular product lines often, so the previous version of a mouse or keyboard is frequently discounted while remaining competitive. That makes Razer one of the best brands to track for genuine markdowns.",
-      "The tracker above shows every Razer product currently 20 to 50 percent below Amazon's reference price.",
-    ],
-    lines: [
-      { name: "Mice", summary: "DeathAdder, Viper, and Basilisk families, from ergonomic shapes to ultra-light esports designs." },
-      { name: "Keyboards", summary: "BlackWidow and Huntsman keyboards with Razer's mechanical and optical switches." },
-      { name: "Headsets", summary: "Kraken and BlackShark headsets for PC and console, wired and wireless." },
-      { name: "Blade laptops", summary: "Premium thin-and-light gaming laptops with high-refresh displays." },
-    ],
-    buyingTips: [
-      "Razer reuses product names across versions (V2, V3, Pro, Ultimate). Check the exact version before comparing prices.",
-      "Optical switches in Huntsman keyboards are faster and more durable; mechanical switches in BlackWidow models offer more feel options.",
-      "For Blade laptops, compare the GPU and its power limit, not just the model year.",
-    ],
-    faqs: [
-      {
-        q: "When do Razer products go on sale?",
-        a: "Razer discounts are common throughout the year, with larger cuts when new versions launch and during major retail events. We check Amazon prices every day.",
-      },
-      {
-        q: "Are older Razer models still worth buying?",
-        a: "Often yes. A previous-generation Razer mouse or keyboard at 30 to 40 percent off can be better value than a new model at full price.",
-      },
-      {
-        q: "Do I need Razer Synapse?",
-        a: "Synapse is needed to customise lighting, macros, and settings on most Razer devices, but many products store settings on board and work without it.",
-      },
-    ],
-  },
-  {
-    slug: "steelseries",
-    name: "SteelSeries",
-    apiBrand: "SteelSeries",
-    searches: [
-      { keywords: "SteelSeries", searchIndex: "VideoGames" },
-      { keywords: "SteelSeries", searchIndex: "Computers" },
-    ],
-    include: /\b(gaming (pc|desktop|computer)|desktop)\b/i,
-    exclude: PERIPHERALS,
-    metaTitle: "SteelSeries Deals & Clearances: 20-50% Off Gaming Gear",
-    metaDescription:
-      "Every SteelSeries product on Amazon marked down 20 to 50 percent: Arctis headsets, Apex keyboards, Aerox and Rival mice, and mouse pads. Live prices, refreshed daily.",
-    intro:
-      "SteelSeries is a Danish gaming peripheral maker known for its Arctis headsets, Apex keyboards with adjustable switches, and QcK mouse pads. Its products show up on sale often, especially around new Arctis and Apex releases.",
-    overview: [
-      "SteelSeries was founded in Denmark in 2001 and has been part of competitive gaming since the early days of esports. It makes headsets, keyboards, mice, and mouse pads, all managed through its SteelSeries GG software.",
-      "The Arctis headset line is one of the most popular in gaming, and the Apex Pro keyboards popularised adjustable actuation switches. When SteelSeries launches a new generation, the outgoing models are frequently discounted.",
-      "The listings above show every SteelSeries product currently 20 to 50 percent below Amazon's reference price.",
-    ],
-    lines: [
-      { name: "Arctis headsets", summary: "Wired and wireless headsets for PC and console, including the Arctis Nova range." },
-      { name: "Apex keyboards", summary: "Mechanical and adjustable-switch keyboards, from compact layouts to full-size boards." },
-      { name: "Mice", summary: "Aerox, Rival, and Prime mice, from ultra-light designs to ergonomic shapes." },
-      { name: "QcK mouse pads", summary: "Cloth and hard mouse pads in sizes up to full-desk mats." },
-    ],
-    buyingTips: [
-      "Arctis headsets come in platform-specific versions (for example PlayStation or Xbox). Check compatibility before buying.",
-      "Adjustable-switch Apex Pro keyboards let you change actuation depth per key, which is worth paying more for if you play fast-paced games.",
-      "Mouse pad discounts are frequent and a cheap upgrade alongside a new mouse.",
-    ],
-    faqs: [
-      {
-        q: "Are SteelSeries headsets good value on sale?",
-        a: "Yes. Arctis headsets are comfortable and well reviewed, and older generations often drop significantly when a new model launches.",
-      },
-      {
-        q: "What software do SteelSeries products use?",
-        a: "SteelSeries GG manages lighting, audio settings, and device configuration for most current SteelSeries products.",
-      },
-      {
-        q: "How often are SteelSeries prices updated here?",
-        a: "Every day. We list only items currently discounted 20 to 50 percent, so the page changes as deals start and end.",
+        q: "When does Corsair run promotions?",
+        a: "Throughout the year, with the biggest drops around new hardware launches and major retail events such as Black Friday.",
       },
     ],
   },
   {
     slug: "origin-pc",
     name: "Origin PC",
+    group: "pcs",
     apiBrand: "ORIGIN PC",
     aliases: ["origin pc"],
     searches: [{ keywords: "ORIGIN PC gaming desktop", searchIndex: "Computers" }],
-    include: /\b(gaming (pc|desktop|computer)|desktop|tower)\b/i,
+    include: DESKTOP,
     exclude: PERIPHERALS,
-    metaTitle: "Origin PC Gaming PC Deals & Clearances",
-    metaDescription:
-      "Origin PC gaming desktops on Amazon marked down 20 to 50 percent. Track discounts on custom-built Origin PC systems with live prices, refreshed daily.",
+    sells: "custom-built gaming desktops",
     intro:
-      "Origin PC builds custom, hand-assembled gaming desktops with a strong focus on build quality and support. Its systems sell mostly direct, so discounted Origin PCs on Amazon are rare and worth catching when they appear.",
+      "Origin PC builds custom, hand-assembled gaming desktops with a strong focus on build quality and support. Most systems sell direct, so discounted Origin PCs are rare and worth catching when they appear.",
     overview: [
-      "Origin PC was founded in 2009 in Miami by former Alienware staff, and was acquired by Corsair in 2019. It continues to build custom gaming desktops and workstations, assembled and tested in the United States, with an emphasis on clean cable management, custom cooling, and lifetime support.",
-      "Because Origin PC systems are configured to order and sold mostly through Origin's own site, Amazon listings are limited and discounts are infrequent. When one does appear in the 20 to 50 percent range, it is typically a fixed configuration being cleared.",
-      "This page shows every Origin PC gaming desktop currently discounted 20 to 50 percent on Amazon. It may be empty for long periods; for more prebuilt options, see the Corsair and Alienware deal pages.",
+      "Origin PC was founded in 2009 in Miami by former Alienware staff and was acquired by Corsair in 2019. It builds custom gaming desktops assembled and tested in the United States, with an emphasis on clean cable management, custom cooling, and long-term support.",
+      "Because Origin systems are mostly configured to order, fixed configurations on promotion are uncommon. This page may be empty for long stretches; for more prebuilt options, see Corsair, CyberPowerPC, and iBUYPOWER.",
     ],
     lines: [
-      { name: "Neuron", summary: "Origin PC's mid-tower gaming desktop, offered in a wide range of CPU and GPU configurations." },
+      { name: "Neuron", summary: "Origin PC's mid-tower gaming desktop, offered in a wide range of configurations." },
       { name: "Genesis", summary: "Full-tower systems with room for top-end GPUs and custom liquid cooling." },
-      { name: "Chronos", summary: "Compact small-form-factor gaming PCs for smaller desks and living rooms." },
+      { name: "Chronos", summary: "Compact small-form-factor gaming PCs." },
     ],
     buyingTips: [
-      "Compare the discounted Origin PC against a Corsair Vengeance system with similar parts, since both share Corsair components.",
-      "Check exactly which configuration is listed. Amazon listings are fixed builds, not the configure-to-order options on Origin's site.",
+      "Compare a discounted Origin PC against a Corsair Vengeance system with similar parts, since both share Corsair components.",
+      "Promoted listings are fixed builds, not configure-to-order options. Check exactly which configuration you are buying.",
       "Factor in Origin's build quality and support, which add value beyond the parts list.",
     ],
     faqs: [
-      {
-        q: "Is Origin PC owned by Corsair?",
-        a: "Yes. Corsair acquired Origin PC in 2019. Origin continues to sell its own custom-built systems, many of which use Corsair components.",
-      },
-      {
-        q: "Why are there so few Origin PC deals?",
-        a: "Most Origin PC systems are built to order and sold directly, so few fixed configurations are listed on Amazon, and fewer still are discounted 20 percent or more.",
-      },
-      {
-        q: "Are Origin PC gaming PCs upgradeable?",
-        a: "Generally yes. Origin uses standard components and cases, so common upgrades like GPU, memory, and storage work as in a DIY build.",
-      },
+      { q: "Is Origin PC owned by Corsair?", a: "Yes. Corsair acquired Origin PC in 2019, and many Origin systems use Corsair components." },
+      { q: "Why are Origin PC deals rare?", a: "Most Origin PCs are built to order and sold directly, so few fixed configurations are available at a discount." },
+    ],
+  },
+  {
+    slug: "cyberpowerpc",
+    name: "CyberPowerPC",
+    group: "pcs",
+    apiBrand: "CyberpowerPC",
+    aliases: ["cyberpowerpc", "cyberpower pc"],
+    searches: [{ keywords: "CyberpowerPC gaming PC", searchIndex: "Computers" }],
+    include: DESKTOP,
+    exclude: PERIPHERALS,
+    sells: "prebuilt gaming PCs",
+    intro:
+      "CyberPowerPC is one of the largest prebuilt gaming PC makers in the United States, known for aggressive pricing and frequent promotions on its Gamer Xtreme, Gamer Supreme, and Gamer Master desktops.",
+    overview: [
+      "CyberPowerPC is a California-based system builder that has been assembling gaming PCs since the late 1990s. Its systems use standard off-the-shelf components, which keeps them easy to upgrade and makes it simple to compare a deal against the cost of building the same machine yourself.",
+      "Because CyberPowerPC offers so many configurations, discounts often land on specific builds rather than whole lines. Checking the exact CPU, GPU, memory, and storage is the key to spotting the best value.",
+    ],
+    lines: [
+      { name: "Gamer Xtreme", summary: "Mainstream gaming desktops, usually Intel-based, in a wide range of GPU options." },
+      { name: "Gamer Supreme", summary: "Higher-end systems with stronger GPUs and liquid cooling options." },
+      { name: "Gamer Master", summary: "AMD-based gaming desktops across budget and mid-range tiers." },
+    ],
+    buyingTips: [
+      "Check the power supply brand and wattage. Budget configurations sometimes ship with a basic unit.",
+      "Look for 16GB or more of dual-channel memory and at least a 1TB NVMe SSD.",
+      "Compare the price with the GPU's standalone price. A strong deal costs little more than the parts.",
+    ],
+    faqs: [
+      { q: "Are CyberPowerPC gaming PCs good value?", a: "Often, especially on promotion. They use standard parts, so you can verify the value by pricing the main components yourself." },
+      { q: "Can CyberPowerPC systems be upgraded?", a: "Yes. They use standard motherboards, power supplies, and cases, so common upgrades work as in a DIY build." },
+    ],
+  },
+  {
+    slug: "ibuypower",
+    name: "iBUYPOWER",
+    group: "pcs",
+    apiBrand: "iBUYPOWER",
+    aliases: ["ibuypower"],
+    searches: [{ keywords: "iBUYPOWER gaming PC", searchIndex: "Computers" }],
+    include: DESKTOP,
+    exclude: PERIPHERALS,
+    sells: "prebuilt gaming PCs",
+    intro:
+      "iBUYPOWER is a long-running US gaming PC builder known for RGB-heavy designs and competitive pricing. Its prebuilt desktops are discounted regularly, especially when new GPU generations arrive.",
+    overview: [
+      "iBUYPOWER has been building custom and prebuilt gaming PCs in California since the late 1990s. Its systems use standard components in its own case designs, from compact builds to showpiece towers with full glass panels.",
+      "Like other large builders, iBUYPOWER discounts specific configurations to clear stock. The best iBUYPOWER deals pair a current-generation GPU with balanced memory, storage, and power supply choices.",
+    ],
+    lines: [
+      { name: "Prebuilt gaming desktops", summary: "Ready-to-ship systems across budget, mid-range, and high-end tiers." },
+      { name: "Custom-look cases", summary: "iBUYPOWER's own case designs with tempered glass and RGB lighting." },
+    ],
+    buyingTips: [
+      "Check the exact GPU model and memory amount. Similar-looking builds can differ significantly in performance.",
+      "Confirm memory is dual-channel and storage is NVMe.",
+      "Look at case airflow. Glass-front showpiece cases can run warmer than mesh-front designs.",
+    ],
+    faqs: [
+      { q: "Is iBUYPOWER a good gaming PC brand?", a: "iBUYPOWER systems use standard parts and are widely available. As with any builder, judge each deal by its components and price." },
+      { q: "When are iBUYPOWER discounts biggest?", a: "Around new GPU launches and major sale events, when outgoing configurations are cleared." },
+    ],
+  },
+  {
+    slug: "skytech",
+    name: "Skytech Gaming",
+    group: "pcs",
+    apiBrand: "Skytech Gaming",
+    aliases: ["skytech", "skytech gaming"],
+    searches: [{ keywords: "Skytech gaming PC", searchIndex: "Computers" }],
+    include: DESKTOP,
+    exclude: PERIPHERALS,
+    sells: "prebuilt gaming PCs",
+    intro:
+      "Skytech Gaming builds prebuilt gaming PCs that are consistently among the most popular online, with lines such as Archangel, Shadow, and Chronos covering budget to high-end builds.",
+    overview: [
+      "Skytech Gaming focuses on ready-to-ship gaming desktops built from standard components. Its systems are popular with first-time PC buyers because they arrive ready to play and are easy to upgrade later.",
+      "Skytech promotions are frequent, and older configurations are often marked down when a new GPU generation launches. Comparing GPU, CPU, and memory across similar listings is the fastest way to find the strongest value.",
+    ],
+    lines: [
+      { name: "Archangel", summary: "Mid-range gaming desktops with mesh-front cases and solid airflow." },
+      { name: "Shadow and Chronos", summary: "Mainstream to high-end builds across a range of GPU options." },
+    ],
+    buyingTips: [
+      "Compare similar Skytech listings carefully. Small differences in GPU or memory can change the value significantly.",
+      "Check the included power supply rating if you plan to upgrade the GPU.",
+      "Look for at least a 1TB SSD; smaller drives fill quickly with modern games.",
+    ],
+    faqs: [
+      { q: "Are Skytech gaming PCs reliable?", a: "They use standard off-the-shelf components, so reliability and repairability are similar to a well-built DIY PC." },
+      { q: "Can I upgrade a Skytech PC?", a: "Yes. Standard motherboards, cases, and power supplies make GPU, memory, and storage upgrades straightforward." },
+    ],
+  },
+  {
+    slug: "hp-omen",
+    name: "HP OMEN",
+    group: "pcs",
+    apiBrand: "HP",
+    aliases: ["hp", "omen"],
+    searches: [{ keywords: "HP OMEN gaming", searchIndex: "Computers" }],
+    // HP sells far more than gaming hardware; only list OMEN and Victus.
+    require: /\b(omen|victus)\b/i,
+    include: DESKTOP,
+    exclude: new RegExp(`${PERIPHERALS.source}|\\b(laptop|notebook)\\b`, "i"),
+    sells: "OMEN and Victus gaming laptops, desktops, and monitors",
+    intro:
+      "OMEN is HP's gaming brand, covering gaming desktops, laptops, and monitors, with the more affordable Victus line below it. HP runs frequent promotions on both.",
+    overview: [
+      "HP launched its OMEN gaming brand to compete directly with the major gaming PC makers, offering desktops in several tower sizes and gaming laptops from mainstream to high-end. The Victus line brings gaming hardware to lower price points.",
+      "Because HP sells through many channels, OMEN and Victus prices move often. Previous-generation OMEN laptops in particular are frequently discounted when new models launch.",
+    ],
+    lines: [
+      { name: "OMEN desktops", summary: "Gaming towers in several sizes, with configurations from mid-range to flagship GPUs." },
+      { name: "OMEN laptops", summary: "Performance gaming laptops with high-refresh displays." },
+      { name: "Victus", summary: "HP's budget-friendly gaming laptops and desktops." },
+    ],
+    buyingTips: [
+      "Victus models trade some build quality and cooling for price. Compare carefully against discounted OMEN models.",
+      "For laptops, check the GPU's power limit, not just its name.",
+      "Check memory and storage upgradability before buying a laptop.",
+    ],
+    faqs: [
+      { q: "What is the difference between OMEN and Victus?", a: "OMEN is HP's premium gaming line; Victus is its more affordable gaming range with simpler designs and cooling." },
+      { q: "Does this page include regular HP laptops?", a: "No. We list only HP's gaming hardware under the OMEN and Victus names." },
+    ],
+  },
+  {
+    slug: "lenovo-legion",
+    name: "Lenovo Legion",
+    group: "pcs",
+    apiBrand: "Lenovo",
+    aliases: ["lenovo", "legion"],
+    searches: [{ keywords: "Lenovo Legion gaming", searchIndex: "Computers" }],
+    require: /\b(legion|loq)\b/i,
+    include: DESKTOP,
+    exclude: new RegExp(`${PERIPHERALS.source}|\\b(laptop|notebook)\\b`, "i"),
+    sells: "Legion and LOQ gaming laptops, desktops, and handhelds",
+    intro:
+      "Legion is Lenovo's gaming brand, best known for well-cooled gaming laptops with strong keyboards, plus Legion Tower desktops and the Legion Go handheld. The LOQ line offers similar hardware at lower prices.",
+    overview: [
+      "Lenovo launched Legion as its dedicated gaming brand and has built a strong reputation for laptops that balance performance, cooling, and build quality. Legion Pro models target maximum performance, while LOQ brings gaming hardware to budget-conscious buyers.",
+      "Legion laptops see regular promotions, and outgoing generations are often discounted heavily when new models launch, making them some of the best-value gaming laptops to track.",
+    ],
+    lines: [
+      { name: "Legion laptops", summary: "Legion 5, 7, and Pro gaming laptops with high-refresh displays and strong cooling." },
+      { name: "LOQ", summary: "Lenovo's budget gaming laptops and desktops." },
+      { name: "Legion Tower and Go", summary: "Gaming desktops and the Legion Go handheld PC." },
+    ],
+    buyingTips: [
+      "Compare GPU power limits across Legion and LOQ models; higher limits deliver more performance from the same GPU.",
+      "Check whether memory is upgradeable; some thin models use soldered RAM.",
+      "Previous-generation Legion Pro models can outperform new mid-range laptops at a similar sale price.",
+    ],
+    faqs: [
+      { q: "What is the difference between Legion and LOQ?", a: "Legion is Lenovo's main gaming line with premium builds and cooling; LOQ offers similar components in simpler, cheaper designs." },
+      { q: "Does this page include regular Lenovo laptops?", a: "No. We list only Lenovo's gaming hardware under the Legion and LOQ names." },
+    ],
+  },
+  {
+    slug: "asus-rog",
+    name: "ASUS ROG",
+    group: "pcs",
+    apiBrand: "ASUS",
+    aliases: ["asus", "rog", "republic of gamers"],
+    searches: [
+      { keywords: "ASUS ROG gaming", searchIndex: "Computers" },
+      { keywords: "ASUS ROG", searchIndex: "VideoGames" },
+    ],
+    require: /\b(rog|tuf gaming|republic of gamers)\b/i,
+    include: DESKTOP,
+    exclude: new RegExp(`${PERIPHERALS.source}|\\b(laptop|notebook)\\b`, "i"),
+    sells: "ROG and TUF gaming laptops, handhelds, mice, keyboards, and monitors",
+    intro:
+      "ROG (Republic of Gamers) is ASUS's gaming brand, spanning gaming laptops, the ROG Ally handheld, motherboards, monitors, and peripherals. The TUF Gaming line offers durable, more affordable alternatives.",
+    overview: [
+      "ASUS launched Republic of Gamers in 2006 and it has grown into one of the broadest gaming brands available, from Strix and Zephyrus laptops to ROG mice, keyboards, headsets, and high-refresh monitors.",
+      "ROG products are refreshed often, so previous-generation laptops and peripherals regularly drop in price. The TUF Gaming range is worth comparing when you want similar performance for less.",
+    ],
+    lines: [
+      { name: "Laptops", summary: "Strix, Zephyrus, and Flow gaming laptops, plus TUF Gaming models." },
+      { name: "ROG Ally", summary: "ASUS's handheld gaming PC." },
+      { name: "Peripherals", summary: "ROG mice, keyboards, and headsets." },
+      { name: "Monitors", summary: "ROG Swift and Strix gaming monitors, including OLED models." },
+    ],
+    buyingTips: [
+      "Compare Strix and TUF models with the same GPU; TUF often matches performance for less.",
+      "For monitors, match resolution and refresh rate to your GPU.",
+      "Check the exact laptop model year; ASUS reuses names across generations.",
+    ],
+    faqs: [
+      { q: "What is the difference between ROG and TUF Gaming?", a: "ROG is ASUS's premium gaming line; TUF Gaming focuses on durability and value with simpler designs." },
+      { q: "Does this page include regular ASUS products?", a: "No. We list only ASUS gaming products under the ROG and TUF Gaming names." },
+    ],
+  },
+  {
+    slug: "msi",
+    name: "MSI",
+    group: "pcs",
+    apiBrand: "MSI",
+    searches: [{ keywords: "MSI gaming", searchIndex: "Computers" }],
+    include: DESKTOP,
+    exclude: new RegExp(`${PERIPHERALS.source}|\\b(laptop|notebook)\\b`, "i"),
+    sells: "gaming laptops, desktops, monitors, and components",
+    intro:
+      "MSI is a major Taiwanese hardware maker known for gaming laptops, motherboards, graphics cards, and monitors. Its wide range means there are almost always MSI promotions to track.",
+    overview: [
+      "Founded in 1986, MSI makes motherboards and graphics cards for PC builders alongside complete gaming laptops, desktops, and monitors. Its laptop range runs from budget models to flagship machines.",
+      "MSI refreshes its laptops and monitors frequently, so outgoing models are regularly discounted. Its components also see steady promotions, especially around new GPU and CPU launches.",
+    ],
+    lines: [
+      { name: "Gaming laptops", summary: "From budget Cyborg and Katana models to flagship Raider and Titan machines." },
+      { name: "Monitors", summary: "MAG and MPG gaming monitors, including QD-OLED panels." },
+      { name: "Components", summary: "Motherboards and graphics cards for PC builders." },
+    ],
+    buyingTips: [
+      "MSI laptops in the same price band can have very different GPU power limits; compare them.",
+      "For graphics cards, compare the discounted MSI model against other brands' versions of the same GPU.",
+      "OLED monitors are frequently promoted; check the warranty terms on burn-in.",
+    ],
+    faqs: [
+      { q: "Are MSI gaming laptops good value on sale?", a: "Often. MSI discounts previous-generation laptops regularly, and they can outperform newer budget models at a similar price." },
+      { q: "Does MSI make prebuilt gaming PCs?", a: "Yes. MSI sells gaming desktops alongside laptops, monitors, and components." },
+    ],
+  },
+  {
+    slug: "acer-predator",
+    name: "Acer Predator",
+    group: "pcs",
+    apiBrand: "Acer",
+    aliases: ["acer", "predator"],
+    searches: [{ keywords: "Acer Predator gaming", searchIndex: "Computers" }],
+    require: /\b(predator|nitro)\b/i,
+    include: DESKTOP,
+    exclude: new RegExp(`${PERIPHERALS.source}|\\b(laptop|notebook)\\b`, "i"),
+    sells: "Predator and Nitro gaming laptops, desktops, and monitors",
+    intro:
+      "Predator is Acer's gaming brand, covering Helios gaming laptops, Orion desktops, and high-refresh monitors, with the Nitro line offering strong value at lower prices.",
+    overview: [
+      "Acer's Predator brand targets enthusiast gamers with high-performance laptops and desktops, while Nitro brings gaming hardware to entry and mid-range budgets. Both lines are refreshed frequently.",
+      "Nitro laptops in particular are among the most frequently discounted gaming laptops, making them a common pick for budget gaming builds on sale.",
+    ],
+    lines: [
+      { name: "Predator Helios", summary: "Performance gaming laptops with high-refresh displays." },
+      { name: "Predator Orion", summary: "Gaming desktops with tool-less upgrade access." },
+      { name: "Nitro", summary: "Acer's value gaming laptops, desktops, and monitors." },
+    ],
+    buyingTips: [
+      "Nitro models trade build quality and cooling for price; compare against discounted Helios models.",
+      "Check display refresh rate and brightness on laptops; budget panels vary widely.",
+      "Look for upgradeable memory and a spare SSD slot.",
+    ],
+    faqs: [
+      { q: "What is the difference between Predator and Nitro?", a: "Predator is Acer's premium gaming line; Nitro is its value-focused gaming range." },
+      { q: "Does this page include regular Acer laptops?", a: "No. We list only Acer's gaming products under the Predator and Nitro names." },
+    ],
+  },
+  {
+    slug: "nzxt",
+    name: "NZXT",
+    group: "pcs",
+    apiBrand: "NZXT",
+    searches: [{ keywords: "NZXT", searchIndex: "Computers" }],
+    include: DESKTOP,
+    exclude: PERIPHERALS,
+    sells: "gaming PCs, cases, coolers, and peripherals",
+    intro:
+      "NZXT is known for clean, minimalist PC cases and Kraken liquid coolers, and it also builds prebuilt Player gaming PCs. Its components and cases see frequent promotions.",
+    overview: [
+      "NZXT was founded in 2004 and became one of the most recognisable PC case and cooling brands. Its H-series cases and Kraken AIO coolers are popular with DIY builders, and its Player PCs bring the same design to prebuilt systems.",
+      "NZXT products are managed through its CAM software, and the company has expanded into peripherals including keyboards, mice, and audio.",
+    ],
+    lines: [
+      { name: "Player PCs", summary: "Prebuilt gaming desktops in NZXT's own cases." },
+      { name: "Cases", summary: "H-series cases with clean lines and good cable management." },
+      { name: "Kraken coolers", summary: "AIO liquid coolers, several with LCD pump displays." },
+    ],
+    buyingTips: [
+      "Check cooler and case compatibility before buying components separately.",
+      "Prebuilt Player PCs use standard parts; price the GPU to judge the deal.",
+      "LCD Kraken models cost more; non-LCD versions cool just as well.",
+    ],
+    faqs: [
+      { q: "Does NZXT make prebuilt gaming PCs?", a: "Yes. NZXT sells Player prebuilt PCs alongside cases, coolers, and peripherals." },
+      { q: "Are NZXT cases good for airflow?", a: "Current NZXT cases with mesh or flow front panels offer good airflow; solid-front models prioritise looks and noise." },
+    ],
+  },
+
+  // -------------------------------------------------------- Peripherals
+  {
+    slug: "logitech",
+    name: "Logitech G",
+    group: "peripherals",
+    apiBrand: "Logitech",
+    aliases: ["logitech", "logitech g"],
+    searches: [
+      { keywords: "Logitech G gaming", searchIndex: "VideoGames" },
+      { keywords: "Logitech G gaming", searchIndex: "Computers" },
+    ],
+    // Logitech also sells office gear; only list its gaming lines.
+    require: /\b(logitech g|gaming|lightspeed|astro|g pro|pro x|racing wheel)\b/i,
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "gaming mice, keyboards, headsets, and racing wheels",
+    intro:
+      "Logitech G is Logitech's gaming division, best known for lightweight wireless mice, LIGHTSPEED wireless, and the racing wheels many sim racers start with. Its gear is promoted often.",
+    overview: [
+      "Logitech was founded in 1981 in Switzerland and became one of the world's largest makers of computer peripherals. Its gaming brand covers mice, keyboards, headsets, racing wheels, and streaming gear, expanded through acquisitions such as ASTRO Gaming and Blue microphones.",
+      "Logitech refreshes models regularly, so the previous generation is often discounted heavily while still being very capable. This page lists only Logitech's gaming products, not its office range.",
+    ],
+    lines: [
+      { name: "PRO series", summary: "Esports mice, keyboards, and headsets designed with professional players." },
+      { name: "G series", summary: "Mainstream gaming peripherals such as the G502 mouse family." },
+      { name: "Racing wheels", summary: "Force-feedback wheels and pedals for PC, PlayStation, and Xbox." },
+      { name: "ASTRO and Blue", summary: "Headsets and streaming microphones now part of Logitech G." },
+    ],
+    buyingTips: [
+      "Logitech keeps older versions on sale alongside newer ones with similar names; check the generation.",
+      "LIGHTSPEED models use a low-latency wireless receiver suited to competitive play.",
+      "Racing wheels are platform-specific; confirm PC, PlayStation, or Xbox support.",
+    ],
+    faqs: [
+      { q: "Does this page include Logitech office products?", a: "No. We list only Logitech's gaming products, including Logitech G, ASTRO, and racing wheels." },
+      { q: "Are older Logitech G mice worth buying?", a: "Often. Previous-generation flagship mice at a discount can be better value than newer mid-range models." },
+    ],
+  },
+  {
+    slug: "razer",
+    name: "Razer",
+    group: "peripherals",
+    apiBrand: "Razer",
+    searches: [
+      { keywords: "Razer", searchIndex: "VideoGames" },
+      { keywords: "Razer", searchIndex: "Computers" },
+    ],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "gaming mice, keyboards, headsets, controllers, and Blade laptops",
+    intro:
+      "Razer builds gaming gear with a strong focus on design and performance, from DeathAdder and Viper mice to BlackWidow keyboards and Blade laptops. The deepest promotions often land on outgoing models.",
+    overview: [
+      "Razer was founded in 2005 and grew into one of the most recognisable gaming brands in the world. It designs mice, keyboards, headsets, laptops, controllers, and streaming equipment, tied together by Synapse software and Chroma RGB lighting.",
+      "Razer refreshes its popular lines often, so the previous version of a mouse or keyboard is frequently discounted while remaining competitive.",
+    ],
+    lines: [
+      { name: "Mice", summary: "DeathAdder, Viper, and Basilisk families, from ergonomic to ultra-light designs." },
+      { name: "Keyboards", summary: "BlackWidow and Huntsman keyboards with mechanical and optical switches." },
+      { name: "Headsets", summary: "Kraken and BlackShark headsets for PC and console." },
+      { name: "Blade laptops", summary: "Premium thin-and-light gaming laptops." },
+    ],
+    buyingTips: [
+      "Razer reuses names across versions (V2, V3, Pro). Check the exact version before comparing prices.",
+      "Optical switches are faster and more durable; mechanical switches offer more feel options.",
+      "For Blade laptops, compare the GPU and its power limit, not just the model year.",
+    ],
+    faqs: [
+      { q: "Are older Razer models still worth buying?", a: "Often. A previous-generation Razer mouse or keyboard at 30 to 40 percent off can beat a new model at full price." },
+      { q: "Do I need Razer Synapse?", a: "Synapse customises lighting and settings, but many Razer devices store settings on board and work without it." },
+    ],
+  },
+  {
+    slug: "steelseries",
+    name: "SteelSeries",
+    group: "peripherals",
+    apiBrand: "SteelSeries",
+    searches: [
+      { keywords: "SteelSeries", searchIndex: "VideoGames" },
+      { keywords: "SteelSeries", searchIndex: "Computers" },
+    ],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "Arctis headsets, Apex keyboards, mice, and mouse pads",
+    intro:
+      "SteelSeries is a Danish gaming peripheral maker known for Arctis headsets, Apex keyboards with adjustable switches, and QcK mouse pads.",
+    overview: [
+      "SteelSeries was founded in Denmark in 2001 and has been part of competitive gaming since the early days of esports. Its products are managed through SteelSeries GG software.",
+      "When SteelSeries launches a new Arctis or Apex generation, the outgoing models are frequently discounted, which makes it one of the best brands to track for markdowns.",
+    ],
+    lines: [
+      { name: "Arctis headsets", summary: "Wired and wireless headsets for PC and console, including Arctis Nova." },
+      { name: "Apex keyboards", summary: "Mechanical and adjustable-switch keyboards." },
+      { name: "Mice and QcK pads", summary: "Aerox, Rival, and Prime mice plus cloth and hard mouse pads." },
+    ],
+    buyingTips: [
+      "Arctis headsets come in platform-specific versions; check compatibility.",
+      "Adjustable-switch Apex Pro keyboards are worth the premium for fast-paced games.",
+      "Mouse pad promotions are frequent and a cheap upgrade alongside a new mouse.",
+    ],
+    faqs: [
+      { q: "Are SteelSeries headsets good value on sale?", a: "Yes. Arctis headsets are comfortable and well reviewed, and older generations drop significantly when new models launch." },
+      { q: "What software do SteelSeries products use?", a: "SteelSeries GG manages lighting, audio, and device settings." },
+    ],
+  },
+  {
+    slug: "hyperx",
+    name: "HyperX",
+    group: "peripherals",
+    apiBrand: "HyperX",
+    searches: [
+      { keywords: "HyperX", searchIndex: "VideoGames" },
+      { keywords: "HyperX", searchIndex: "Computers" },
+    ],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "Cloud headsets, keyboards, mice, and microphones",
+    intro:
+      "HyperX is best known for its Cloud gaming headsets, among the most popular ever made, plus Alloy keyboards, Pulsefire mice, and QuadCast microphones. Its gear is promoted frequently.",
+    overview: [
+      "HyperX began as Kingston's gaming division and was acquired by HP in 2021. Its Cloud headsets built a reputation for comfort and value, and the range now covers keyboards, mice, microphones, and console accessories.",
+      "HyperX products are discounted often, and long-running models like the Cloud II and Cloud III regularly appear at strong prices.",
+    ],
+    lines: [
+      { name: "Cloud headsets", summary: "Comfortable wired and wireless headsets for PC and console." },
+      { name: "Alloy keyboards", summary: "Mechanical gaming keyboards in full-size and compact layouts." },
+      { name: "Pulsefire mice", summary: "Lightweight gaming mice, wired and wireless." },
+      { name: "QuadCast and SoloCast", summary: "USB microphones popular with streamers." },
+    ],
+    buyingTips: [
+      "Cloud headsets come in several versions; check whether a model is wired, wireless, or console-specific.",
+      "QuadCast microphones are frequently discounted and are a strong first streaming mic.",
+      "Compare Pulsefire weights and shapes; they vary more than the names suggest.",
+    ],
+    faqs: [
+      { q: "Is HyperX owned by HP?", a: "Yes. HP acquired HyperX from Kingston in 2021." },
+      { q: "Are HyperX Cloud headsets worth buying on sale?", a: "Yes. They are comfortable and durable, and frequent promotions make them strong value." },
+    ],
+  },
+  {
+    slug: "turtle-beach",
+    name: "Turtle Beach",
+    group: "peripherals",
+    apiBrand: "Turtle Beach",
+    searches: [{ keywords: "Turtle Beach", searchIndex: "VideoGames" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "gaming headsets, controllers, and PC peripherals",
+    intro:
+      "Turtle Beach is one of the biggest names in console and PC gaming headsets, with its Stealth and Recon lines, and it now also makes controllers and PC peripherals.",
+    overview: [
+      "Turtle Beach became a household name in console gaming audio, and has expanded through acquisitions including ROCCAT PC peripherals and PDP controllers.",
+      "Turtle Beach headsets are among the most frequently discounted gaming headsets, especially around holiday sale events and new model launches.",
+    ],
+    lines: [
+      { name: "Stealth headsets", summary: "Wireless headsets for Xbox, PlayStation, and PC." },
+      { name: "Recon headsets", summary: "Affordable wired headsets for every platform." },
+      { name: "Controllers", summary: "Wired and wireless controllers for Xbox and PC." },
+    ],
+    buyingTips: [
+      "Check the platform version; many Stealth headsets come in separate Xbox and PlayStation editions.",
+      "Recon wired headsets are a strong budget pick when discounted.",
+      "For controllers, check for Hall-effect sticks, which resist drift.",
+    ],
+    faqs: [
+      { q: "Do Turtle Beach headsets work on PC?", a: "Most do, but some wireless models are console-specific. Check compatibility on the listing." },
+      { q: "When are Turtle Beach discounts biggest?", a: "Around major holiday sales and when new headset generations launch." },
+    ],
+  },
+  {
+    slug: "glorious",
+    name: "Glorious",
+    group: "peripherals",
+    apiBrand: "Glorious",
+    aliases: ["glorious", "glorious pc gaming race"],
+    searches: [{ keywords: "Glorious gaming", searchIndex: "Computers" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "lightweight mice, modular keyboards, and mouse pads",
+    intro:
+      "Glorious is an enthusiast peripheral brand known for lightweight Model O and Model D mice, modular hot-swap GMMK keyboards, and large mouse pads.",
+    overview: [
+      "Glorious grew from the PC enthusiast community and helped popularise ultra-light gaming mice and hot-swappable mechanical keyboards that let you change switches without soldering.",
+      "Glorious products are discounted regularly, and keyboard kits and switch packs make it easy to customise a build on a budget.",
+    ],
+    lines: [
+      { name: "Model O and Model D", summary: "Lightweight gaming mice in ambidextrous and ergonomic shapes." },
+      { name: "GMMK keyboards", summary: "Modular, hot-swappable mechanical keyboards." },
+      { name: "Mouse pads", summary: "Cloth pads in sizes up to full-desk mats." },
+    ],
+    buyingTips: [
+      "Hot-swap keyboards let you change switches later; a discounted board plus your own switches can beat a prebuilt option.",
+      "Check whether a keyboard is prebuilt or a barebones kit without switches and keycaps.",
+      "Wireless versions of Glorious mice cost more; compare the wired version if latency and weight matter most.",
+    ],
+    faqs: [
+      { q: "What does hot-swappable mean?", a: "Switches can be removed and replaced without soldering, so you can change the keyboard's feel at any time." },
+      { q: "Are Glorious mice good for competitive play?", a: "Yes. They are light, use accurate sensors, and are popular with competitive players." },
+    ],
+  },
+
+  // -------------------------------------------------------- Controllers
+  {
+    slug: "scuf",
+    name: "SCUF Gaming",
+    group: "controllers",
+    apiBrand: "SCUF",
+    aliases: ["scuf", "scuf gaming"],
+    searches: [{ keywords: "SCUF controller", searchIndex: "VideoGames" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "performance controllers for PC, Xbox, and PlayStation",
+    intro:
+      "SCUF Gaming makes performance controllers with remappable rear paddles, adjustable triggers, and interchangeable thumbsticks, used by competitive players across PC and console.",
+    overview: [
+      "SCUF was founded in 2011 and pioneered the rear-paddle controller design now common across pro controllers. It was acquired by Corsair in 2019 and makes controllers for Xbox, PlayStation, and PC.",
+      "SCUF controllers sit at the premium end of the market, so promotions make a real difference. Outgoing models and limited designs are the most frequently discounted.",
+    ],
+    lines: [
+      { name: "Instinct Pro", summary: "SCUF's Xbox and PC controller with rear paddles and trigger stops." },
+      { name: "Reflex", summary: "PlayStation 5 controllers built on the DualSense platform." },
+      { name: "Envision", summary: "PC-focused controllers with extra remappable buttons." },
+    ],
+    buyingTips: [
+      "Check platform compatibility; SCUF makes separate controllers for Xbox and PlayStation.",
+      "Compare paddle count and trigger options between models; they differ more than the price suggests.",
+      "Look for Hall-effect or replaceable thumbsticks if stick drift is a concern.",
+    ],
+    faqs: [
+      { q: "Is SCUF owned by Corsair?", a: "Yes. Corsair acquired SCUF Gaming in 2019." },
+      { q: "Are SCUF controllers worth it?", a: "For competitive players, rear paddles and adjustable triggers are a real advantage, and discounts narrow the price gap with standard controllers." },
+    ],
+  },
+  {
+    slug: "xbox",
+    name: "Xbox",
+    group: "controllers",
+    apiBrand: "Xbox",
+    aliases: ["xbox", "microsoft"],
+    searches: [{ keywords: "Xbox controller", searchIndex: "VideoGames" }],
+    // Only controllers, headsets, and accessories, not consoles or games.
+    require: /\b(controller|headset|charging|play and charge|adapter|elite|rechargeable battery)\b/i,
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "controllers, headsets, and accessories for Xbox and PC",
+    intro:
+      "Microsoft's Xbox Wireless Controller is the standard PC controller, and the Elite Series 2 is one of the most popular pro controllers. Special editions and colours are discounted regularly.",
+    overview: [
+      "Xbox controllers work natively with Windows PCs as well as Xbox consoles, which makes them the default choice for many PC gamers. Microsoft also makes the Elite Series 2 pro controller and official Xbox headsets.",
+      "Limited-edition colours and the Elite controller see the biggest promotions, typically around major sale events.",
+    ],
+    lines: [
+      { name: "Xbox Wireless Controller", summary: "The standard controller for Xbox and Windows PCs, in many colours." },
+      { name: "Elite Series 2", summary: "Microsoft's pro controller with paddles and adjustable tension sticks." },
+      { name: "Headsets and accessories", summary: "Official headsets, charging kits, and adapters." },
+    ],
+    buyingTips: [
+      "Every current Xbox Wireless Controller works on PC via USB-C, Bluetooth, or the Xbox Wireless Adapter.",
+      "The Elite Series 2 Core is a cheaper version without the accessory kit; compare both.",
+      "Special-edition colours are often discounted more than the standard black and white models.",
+    ],
+    faqs: [
+      { q: "Do Xbox controllers work on PC?", a: "Yes. They are supported natively in Windows and in most PC games." },
+      { q: "Does this page include Xbox consoles or games?", a: "No. We list only Xbox controllers, headsets, and accessories." },
+    ],
+  },
+  {
+    slug: "playstation",
+    name: "PlayStation",
+    group: "controllers",
+    apiBrand: "PlayStation",
+    aliases: ["playstation", "sony"],
+    searches: [{ keywords: "PlayStation DualSense controller", searchIndex: "VideoGames" }],
+    require: /\b(dualsense|controller|headset|pulse|charging)\b/i,
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "DualSense controllers, Pulse headsets, and accessories",
+    intro:
+      "Sony's DualSense controller, with haptic feedback and adaptive triggers, works on PlayStation 5 and PC. The DualSense Edge pro controller and Pulse headsets round out the range.",
+    overview: [
+      "The DualSense controller introduced detailed haptics and adaptive triggers, and works on PC over USB or Bluetooth with growing game support. The DualSense Edge adds back buttons, trigger stops, and replaceable stick modules.",
+      "DualSense colour variants and limited editions are discounted often, especially around holiday and summer sale events.",
+    ],
+    lines: [
+      { name: "DualSense", summary: "The standard PS5 controller, in many colours and limited editions." },
+      { name: "DualSense Edge", summary: "Sony's pro controller with back buttons and replaceable stick modules." },
+      { name: "Pulse headsets", summary: "Official PlayStation wireless headsets and earbuds." },
+    ],
+    buyingTips: [
+      "DualSense works on PC; haptics and adaptive triggers need a wired connection in many games.",
+      "The DualSense Edge's replaceable stick modules address stick drift long-term.",
+      "Colour variants are often discounted more than the standard white controller.",
+    ],
+    faqs: [
+      { q: "Does the DualSense work on PC?", a: "Yes, over USB or Bluetooth. Haptics and adaptive triggers work in supported PC games, usually over a wired connection." },
+      { q: "Does this page include PlayStation consoles or games?", a: "No. We list only PlayStation controllers, headsets, and accessories." },
+    ],
+  },
+  {
+    slug: "powera",
+    name: "PowerA",
+    group: "controllers",
+    apiBrand: "PowerA",
+    searches: [{ keywords: "PowerA controller", searchIndex: "VideoGames" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "licensed controllers and accessories for Xbox, Switch, and PC",
+    intro:
+      "PowerA makes officially licensed controllers and accessories for Xbox, Nintendo Switch, and PC, from budget wired controllers to Fusion Pro models with paddles.",
+    overview: [
+      "PowerA is known for affordable, officially licensed controllers, including Enhanced Wired Controllers for Xbox and PC and a wide range of Switch controllers. Its Fusion Pro line adds pro features like rear paddles.",
+      "PowerA controllers are already priced below first-party controllers, and promotions make them some of the cheapest ways to add a second controller.",
+    ],
+    lines: [
+      { name: "Enhanced Wired Controller", summary: "Affordable wired controllers for Xbox and PC with mappable buttons." },
+      { name: "Fusion Pro", summary: "Pro controllers with rear paddles and trigger locks." },
+      { name: "Switch controllers", summary: "Licensed wired and wireless controllers for Nintendo Switch." },
+    ],
+    buyingTips: [
+      "Check whether a controller is wired or wireless; many PowerA models are wired-only.",
+      "Licensed Xbox controllers work on PC as standard XInput devices.",
+      "Fusion Pro models offer paddles for less than first-party pro controllers.",
+    ],
+    faqs: [
+      { q: "Do PowerA controllers work on PC?", a: "Their Xbox-licensed controllers work on Windows PCs. Check the listing for each model's compatibility." },
+      { q: "Are PowerA controllers officially licensed?", a: "Yes. PowerA makes officially licensed controllers for Xbox and Nintendo Switch." },
+    ],
+  },
+  {
+    slug: "8bitdo",
+    name: "8BitDo",
+    group: "controllers",
+    apiBrand: "8Bitdo",
+    aliases: ["8bitdo"],
+    searches: [{ keywords: "8BitDo controller", searchIndex: "VideoGames" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "controllers, arcade sticks, and retro-style keyboards",
+    intro:
+      "8BitDo makes well-built, affordable controllers with retro styling, including the Ultimate and Pro 2 controllers, arcade sticks, and retro mechanical keyboards.",
+    overview: [
+      "8BitDo started with retro-inspired controllers and has become a favourite for PC, Switch, and Android gaming thanks to strong build quality at modest prices. Many current models use Hall-effect sticks that resist drift.",
+      "8BitDo products are frequently discounted, and its controllers often outperform first-party options at a fraction of the price.",
+    ],
+    lines: [
+      { name: "Ultimate controllers", summary: "Wireless controllers with charging docks and Hall-effect sticks." },
+      { name: "Pro 2", summary: "A versatile controller with back buttons and a retro-inspired layout." },
+      { name: "Arcade sticks and keyboards", summary: "Fight sticks and retro-styled mechanical keyboards." },
+    ],
+    buyingTips: [
+      "Check platform support; some 8BitDo models target Switch or Xbox, others PC and Android.",
+      "Look for Hall-effect sticks if drift has been a problem with past controllers.",
+      "Charging-dock bundles are often discounted together with the controller.",
+    ],
+    faqs: [
+      { q: "Do 8BitDo controllers work on PC?", a: "Most do, over USB, Bluetooth, or an included 2.4GHz receiver. Check each model's listing for supported platforms." },
+      { q: "What are Hall-effect sticks?", a: "Thumbsticks that use magnets instead of physical contact sensors, which greatly reduces stick drift over time." },
+    ],
+  },
+  {
+    slug: "thrustmaster",
+    name: "Thrustmaster",
+    group: "controllers",
+    apiBrand: "Thrustmaster",
+    searches: [{ keywords: "Thrustmaster", searchIndex: "VideoGames" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "racing wheels, flight sticks, and HOTAS setups",
+    intro:
+      "Thrustmaster makes racing wheels and flight simulation controllers, from entry-level wheels to direct-drive bases and HOTAS flight setups.",
+    overview: [
+      "Thrustmaster is a French company and a long-standing name in sim racing and flight simulation. Its wheels support PC and console, and its flight sticks and throttles are popular with flight sim players.",
+      "Sim gear is expensive, so promotions on Thrustmaster wheels and HOTAS bundles can save a significant amount. Bundles with pedals or shifters often carry the biggest discounts.",
+    ],
+    lines: [
+      { name: "Racing wheels", summary: "Belt-driven and direct-drive wheels for PC, PlayStation, and Xbox." },
+      { name: "Flight sticks and HOTAS", summary: "Joysticks, throttles, and full hands-on-throttle-and-stick setups." },
+      { name: "Pedals and shifters", summary: "Add-ons that expand racing setups." },
+    ],
+    buyingTips: [
+      "Check platform compatibility; racing wheels are usually PlayStation-or-Xbox plus PC.",
+      "Belt-driven and direct-drive wheels give smoother force feedback than gear-driven ones.",
+      "Compare bundles with pedals included against buying the wheel alone.",
+    ],
+    faqs: [
+      { q: "Do Thrustmaster wheels work on PC?", a: "Yes. Most Thrustmaster wheels support PC alongside either PlayStation or Xbox." },
+      { q: "What is a HOTAS?", a: "Hands On Throttle And Stick: a flight setup with a separate joystick and throttle, used in flight and space sims." },
     ],
   },
 ];
@@ -338,9 +830,23 @@ export function getBrand(slug: string): Brand | undefined {
   return BRANDS.find((b) => b.slug === slug);
 }
 
-/** Map an Amazon brand string back to one of our tracked brands. */
-export function brandFromAmazon(value: string | undefined | null): Brand | undefined {
+/**
+ * Map a byline brand string to one of our brands. Matches whole names only
+ * ("hp" matches "HP" or "HP OMEN", never a brand that merely contains "hp").
+ */
+export function brandFromByline(value: string | undefined | null): Brand | undefined {
   if (!value) return undefined;
-  const v = value.toLowerCase();
-  return BRANDS.find((b) => [b.apiBrand.toLowerCase(), ...(b.aliases ?? [])].some((n) => v.includes(n)));
+  const v = value.trim().toLowerCase();
+  return BRANDS.find((b) =>
+    [b.apiBrand.toLowerCase(), ...(b.aliases ?? [])].some((n) => v === n || v.startsWith(`${n} `)),
+  );
+}
+
+export const brandTitle = (b: Brand) => `${b.name} Discounts and Promos`;
+
+export const brandDescription = (b: Brand) =>
+  `${b.name} discounts and promos on ${b.sells}, 20 to 50% off. Live prices checked daily, with buying advice from ClearanceStream.`;
+
+export function brandsInGroup(group: BrandGroup) {
+  return BRANDS.filter((b) => b.group === group);
 }

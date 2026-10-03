@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { ArrowRight } from "@/components/Icons";
+import { BrandDirectory } from "@/components/BrandDirectory";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
-import { BRANDS } from "@/lib/brands";
+import { BRANDS, brandTitle } from "@/lib/brands";
 import { getAllDeals } from "@/lib/deals";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
@@ -11,7 +11,7 @@ export const revalidate = 86400;
 export const metadata = pageMetadata({
   title: "Gaming PC Brands: Deals by Manufacturer",
   description:
-    "Browse live gaming deals by brand: Corsair, Alienware, Origin PC, Razer, Logitech G, and SteelSeries discounts on Amazon, with buying advice for each.",
+    "Browse discounts and promos from the biggest gaming brands: gaming PCs, laptops, mice, keyboards, headsets, and controllers, with buying advice for each.",
   path: "/brands",
 });
 
@@ -22,37 +22,12 @@ export default async function BrandsPage() {
     <>
       <PageHeader
         crumbs={[{ name: "Brands", path: "/brands" }]}
-        title="Gaming deals by brand"
-        lede="Each brand page tracks every product from that manufacturer discounted 20 to 50% on Amazon, split into categories, with the product lines and buying tips that matter when you buy on sale."
+        title="Discounts and promos by brand"
+        lede="Each brand page tracks every product from that manufacturer discounted 20 to 50%, split into categories, with the product lines and buying tips that matter when you buy on sale."
       />
       <section className="section-tight">
-        <div className="container card-grid">
-          {BRANDS.map((b) => {
-            const brandDeals = deals.filter((d) => d.brandSlug === b.slug);
-            const top = brandDeals.reduce((m, d) => Math.max(m, d.savingsPercent ?? 0), 0);
-            return (
-              <Link key={b.slug} href={`/brands/${b.slug}`} className="card">
-                <h2 style={{ fontSize: 22, marginBottom: 10 }}>{b.name}</h2>
-                <p className="clamp-3">{b.intro}</p>
-                <p style={{ marginTop: 16, fontSize: 14 }}>
-                  <strong style={{ color: "var(--ink)" }}>Product lines:</strong> {b.lines.map((l) => l.name).join(", ")}
-                </p>
-                {brandDeals.length > 0 ? (
-                  <p style={{ marginTop: 6, fontSize: 14 }}>
-                    <strong style={{ color: "var(--ink)" }}>{brandDeals.length}</strong> live deals
-                    {top > 0 ? (
-                      <>
-                        , up to <strong style={{ color: "var(--ink)" }}>{top}% off</strong>
-                      </>
-                    ) : null}
-                  </p>
-                ) : null}
-                <span className="text-link">
-                  {b.name} deals <ArrowRight />
-                </span>
-              </Link>
-            );
-          })}
+        <div className="container">
+          <BrandDirectory deals={deals} variant="cards" headingLevel={2} />
         </div>
       </section>
       <section className="section-tight">
@@ -73,7 +48,7 @@ export default async function BrandsPage() {
           </div>
         </div>
       </section>
-      <JsonLd data={itemListLd("Gaming brands", BRANDS.map((b) => ({ name: `${b.name} deals`, path: `/brands/${b.slug}` })))} />
+      <JsonLd data={itemListLd("Gaming brands", BRANDS.map((b) => ({ name: brandTitle(b), path: `/brands/${b.slug}` })))} />
     </>
   );
 }

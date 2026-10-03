@@ -10,7 +10,7 @@ import { ArrowRight, ClockIcon, RefreshIcon, TagIcon } from "@/components/Icons"
 import { JsonLd } from "@/components/JsonLd";
 import { ValueBar } from "@/components/ValueBar";
 import { POSTS } from "@/lib/blog";
-import { BRANDS, getBrand } from "@/lib/brands";
+import { BRAND_GROUPS, BRANDS, brandDescription, brandTitle, getBrand } from "@/lib/brands";
 import { getBrandDeals } from "@/lib/deals";
 import { formatChecked } from "@/lib/format";
 import { POPULAR_SEARCHES } from "@/lib/search";
@@ -29,21 +29,21 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const brand = getBrand((await params).brand);
   if (!brand) return {};
-  return pageMetadata({ title: brand.metaTitle, description: brand.metaDescription, path: `/brands/${brand.slug}` });
+  return pageMetadata({ title: brandTitle(brand), description: brandDescription(brand), path: `/brands/${brand.slug}` });
 }
 
 export default async function BrandPage({ params }: Props) {
   const brand = getBrand((await params).brand);
   if (!brand) notFound();
   const { deals, fetchedAt } = await getBrandDeals(brand.slug);
-  const others = BRANDS.filter((b) => b.slug !== brand.slug);
+  const others = BRANDS.filter((b) => b.slug !== brand.slug && b.group === brand.group);
   const searches = POPULAR_SEARCHES.filter((s) => s.label.toLowerCase().includes(brand.name.toLowerCase()));
   const band = `${SITE.minDiscount} to ${SITE.maxDiscount}%`;
 
   const faqs = [
     {
       q: `How often are ${brand.name} deals updated?`,
-      a: `Every day. ClearanceStream checks Amazon for every ${brand.name} product marked down ${band} and shows the time each price was checked. Prices can change between checks, so confirm the final price on Amazon.`,
+      a: `Every day. ClearanceStream checks live prices on every ${brand.name} product marked down ${band} and shows the time each price was checked. Prices can change between checks, so confirm the final price at checkout.`,
     },
     {
       q: `Why do you only show ${brand.name} deals between ${SITE.minDiscount}% and ${SITE.maxDiscount}% off?`,
@@ -64,13 +64,13 @@ export default async function BrandPage({ params }: Props) {
         <header className="brand-hero">
           <span className="eyebrow">
             <span className="live-dot" aria-hidden="true" />
-            Amazon &middot; Hidden markdowns
+            {brand.name} &middot; Discounts &amp; promos
           </span>
           <h1>
-            {brand.name} Hidden Deals <span>&amp; Clearances</span>
+            {brand.name} <span>Discounts and Promos</span>
           </h1>
           <p className="lede">
-            Every {brand.name} product on Amazon marked down {band}. Live prices, refreshed daily.
+            Every {brand.name} discount and promo we track, {band} off. Live prices, refreshed daily.
           </p>
           <div className="page-meta">
             <span>
@@ -121,7 +121,7 @@ export default async function BrandPage({ params }: Props) {
               ))}
               <p>
                 Use the search box, category filter, and sort options above to narrow the list. Every deal is at least{" "}
-                {SITE.minDiscount}% below Amazon&apos;s reference price, and new {brand.name} markdowns appear as soon as
+                {SITE.minDiscount}% below its reference price, and new {brand.name} markdowns appear as soon as
                 our daily check finds them.
               </p>
 
@@ -154,21 +154,21 @@ export default async function BrandPage({ params }: Props) {
             </div>
 
             <h2 className="sub-head" style={{ marginBottom: 16 }}>
-              Browse clearance at other brands
+              More {BRAND_GROUPS.find((g) => g.id === brand.group)?.name.toLowerCase()} brands
             </h2>
             <ul className="chip-list">
               {others.map((b) => (
                 <li key={b.slug}>
                   <Link href={`/brands/${b.slug}`} className="chip">
-                    {b.name} clearance deals
+                    {b.name} discounts
                   </Link>
                 </li>
               ))}
             </ul>
             <p className="mt-md muted" style={{ fontSize: 15 }}>
               Or browse{" "}
-              <Link href="/deals" className="text-link">
-                all hidden deals <ArrowRight />
+              <Link href="/brands" className="text-link">
+                all brands <ArrowRight />
               </Link>
             </p>
           </div>
@@ -197,13 +197,14 @@ export default async function BrandPage({ params }: Props) {
               </div>
             ) : null}
             <div className="aside-box">
-              <h2>All brands</h2>
+              <h2>Browse</h2>
               <ul>
-                {BRANDS.map((b) => (
-                  <li key={b.slug}>
-                    <Link href={`/brands/${b.slug}`}>{b.name}</Link>
-                  </li>
-                ))}
+                <li>
+                  <Link href="/brands">All brands</Link>
+                </li>
+                <li>
+                  <Link href="/deals">All discounts</Link>
+                </li>
               </ul>
             </div>
           </aside>

@@ -18,14 +18,16 @@ export default function TermsPage() {
     >
       <h2 className="mt-0">1. About the site</h2>
       <p>
-        {SITE.name} publishes information about gaming PC prices and deals available on Amazon, along with buying
-        guides. We do not sell products. All purchases are made on Amazon and are governed by Amazon&apos;s terms.
+        {SITE.name} publishes information about gaming PC and gaming gear prices and deals, along with buying guides.
+        We do not sell products. All purchases are made on third-party retailer sites and are governed by those
+        retailers&apos; terms.
       </p>
 
       <h2>2. Pricing information</h2>
       <p>
-        Prices and availability are retrieved from Amazon and are accurate as of the time shown. They may change at any
-        time. We do not guarantee that any price, discount, or product shown will be available when you visit Amazon.
+        Prices and availability are retrieved from a retail product feed and are accurate as of the time shown. They
+        may change at any time. We do not guarantee that any price, discount, or product shown will be available when
+        you visit the retailer.
         See our <Link href="/disclaimer">disclaimer</Link> for details.
       </p>
 
@@ -46,13 +48,13 @@ export default function TermsPage() {
       <p>
         The {SITE.name} name, logo, design, guides, and original text are owned by {SITE.name} and protected by
         copyright and trademark law. You may share links to our pages and quote brief excerpts with attribution.
-        Product names, images, and descriptions belong to their respective owners and are displayed under
-        Amazon&apos;s program terms.
+        Product names, images, and descriptions belong to their respective owners and are displayed under our
+        retail partners&apos; program terms.
       </p>
 
       <h2>5. Third-party sites</h2>
       <p>
-        The site links to Amazon and other third-party websites. We are not responsible for their content, products,
+        The site links to retailers and other third-party websites. We are not responsible for their content, products,
         policies, or practices. Your use of those sites is at your own risk and subject to their terms.
       </p>
 
