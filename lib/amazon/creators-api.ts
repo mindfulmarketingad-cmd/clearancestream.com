@@ -96,9 +96,11 @@ async function getAccessToken(config: Config): Promise<string> {
   return cachedToken.value;
 }
 
-// The Creators API starts accounts at roughly one request per second, so calls
-// from a single server instance are serialised with a small gap between them.
-const MIN_GAP_MS = 1100;
+// The Creators API starts eligible accounts at one request per second (8,640/day).
+// Calls from a single server instance are serialised with a gap between them;
+// 429s caused by other instances running in parallel are retried with backoff.
+const MIN_GAP_MS = 1200;
+const MAX_THROTTLE_RETRIES = 4;
 let queue: Promise<unknown> = Promise.resolve();
 let lastCall = 0;
 
@@ -113,7 +115,30 @@ function throttle<T>(fn: () => Promise<T>): Promise<T> {
   return run;
 }
 
+export class CreatorsApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 async function call<T>(operation: "searchItems" | "getItems", body: Record<string, unknown>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await callOnce<T>(operation, body);
+    } catch (err) {
+      if (!(err instanceof CreatorsApiError) || err.status !== 429 || attempt >= MAX_THROTTLE_RETRIES) throw err;
+      // Exponential backoff with jitter so parallel instances spread out: ~2s, 4s, 8s, 16s.
+      await sleep(2000 * 2 ** attempt + Math.random() * 1000);
+    }
+  }
+}
+
+async function callOnce<T>(operation: "searchItems" | "getItems", body: Record<string, unknown>): Promise<T> {
   const config = getConfig();
   if (!config) throw new Error("Amazon Creators API is not configured");
 
@@ -135,7 +160,7 @@ async function call<T>(operation: "searchItems" | "getItems", body: Record<strin
     if (res.status === 401) cachedToken = null;
     if (!res.ok) {
       const detail = (await res.text()).slice(0, 300);
-      throw new Error(`Creators API ${operation} failed: ${res.status} ${detail}`);
+      throw new CreatorsApiError(`Creators API ${operation} failed: ${res.status} ${detail}`, res.status);
     }
     return (await res.json()) as T;
   });

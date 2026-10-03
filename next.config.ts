@@ -34,6 +34,14 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  // Amazon allows one API request per second per account. Prerender on a single
+  // worker so the whole build shares one throttled request queue, and give pages
+  // time for a full refresh (~24 calls) plus 429 backoff.
+  staticPageGenerationTimeout: 300,
+  experimental: {
+    cpus: 1,
+    staticGenerationMinPagesPerWorker: 1000,
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

@@ -113,6 +113,10 @@ function rank(a: Deal, b: Deal) {
   return (b.savingsPercent ?? 0) - (a.savingsPercent ?? 0) || (b.savings ?? 0) - (a.savings ?? 0) || a.price - b.price;
 }
 
+// Pages of 10 results per search. Keeps a full refresh near 24 calls, about
+// 30 seconds at Amazon's starting limit of one request per second.
+const MAX_PAGES = 3;
+
 const fetchAllDeals = unstable_cache(
   async (): Promise<{ deals: Deal[]; fetchedAt: string }> => {
     const fetchedAt = new Date().toISOString();
@@ -122,7 +126,7 @@ const fetchAllDeals = unstable_cache(
 
     for (const brand of BRANDS) {
       for (const { keywords, searchIndex } of brand.searches) {
-        for (let itemPage = 1; itemPage <= 5; itemPage++) {
+        for (let itemPage = 1; itemPage <= MAX_PAGES; itemPage++) {
           attempts++;
           try {
             const items = await searchItems({
@@ -153,7 +157,7 @@ const fetchAllDeals = unstable_cache(
     if (failures === attempts) throw new Error("All Creators API searches failed");
     return { deals: [...byAsin.values()].sort(rank), fetchedAt };
   },
-  ["all-deals-v2"],
+  ["all-deals-v3"],
   { revalidate: SITE.revalidate, tags: ["deals"] },
 );
 
