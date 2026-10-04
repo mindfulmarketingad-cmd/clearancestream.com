@@ -23,6 +23,8 @@ export type ListDef = {
   sort?: (a: Deal, b: Deal) => number;
   /** Slug of an equivalent list this one should canonicalise to (identical product set). */
   canonical?: string;
+  /** Generated lists are dropped from the index when they near-duplicate another list. */
+  generated?: boolean;
 };
 
 const PRICE_CAPS: Record<string, number[]> = {
@@ -128,12 +130,13 @@ const ATTRIBUTE_LISTS: [string, string, string, string][] = [
 function build(): ListDef[] {
   const lists: ListDef[] = [];
   const seen = new Set<string>();
-  const add = (def: Omit<ListDef, "slug">) => {
+  let generated = false;
+  const add = (def: Omit<ListDef, "slug" | "generated">) => {
     const slug = slugify(`${LIST_SIZE} ${def.label}`, 90);
     // First definition wins if two generators produce the same title.
     if (seen.has(slug)) return;
     seen.add(slug);
-    lists.push({ ...def, slug });
+    lists.push({ ...def, slug, generated });
   };
 
   for (const category of CATEGORIES) {
@@ -228,6 +231,9 @@ function build(): ListDef[] {
     });
   }
 
+  // Everything below is generated in bulk and checked for near-duplicates.
+  generated = true;
+
   // Gaming PCs and laptops by spec.
   for (const cat of ["gaming-pcs", "laptops"]) {
     const category = getCategory(cat)!;
@@ -279,8 +285,11 @@ function build(): ListDef[] {
   // Brand x category.
   for (const brand of BRANDS) {
     for (const category of CATEGORIES) {
+      const plural = BRAND_PLURAL[category.slug] ?? category.plural;
+      // "Skytech Gaming" + "Gaming PCs" reads as "Skytech Gaming PCs".
+      const name = plural.startsWith("Gaming ") ? brand.name.replace(/ Gaming$/, "") : brand.name;
       add({
-        label: `Best ${brand.name} ${BRAND_PLURAL[category.slug] ?? category.plural}`,
+        label: `Best ${name} ${plural}`,
         category,
         kind: "brand",
         qualifier: `from ${brand.name}`,
@@ -366,9 +375,10 @@ export type ResolvedList = ReturnType<typeof resolveList>;
 let resolved: { key: string; lists: ResolvedList[] } | null = null;
 
 /**
- * Resolve every list against the current catalog. A full list whose products
- * mostly overlap an earlier list (earlier definitions take priority) points its
- * canonical there and stays out of the index, so near-identical pages never compete.
+ * Resolve every list against the current catalog. A generated list whose
+ * products mostly overlap another indexed list points its canonical there and
+ * stays out of the index, so near-identical pages never compete. Hand-defined
+ * lists are always kept.
  */
 export function resolveAll(deals: Deal[]): ResolvedList[] {
   const key = `${deals.length}:${deals[0]?.fetchedAt ?? ""}:${deals.at(-1)?.asin ?? ""}`;
@@ -378,7 +388,7 @@ export function resolveAll(deals: Deal[]): ResolvedList[] {
   for (const list of lists) {
     if (!list.indexable) continue;
     const asins = new Set(list.items.map((d) => d.asin));
-    const twin = accepted.find((a) => {
+    const twin = !list.def.generated ? undefined : accepted.find((a) => {
       let shared = 0;
       for (const asin of asins) if (a.asins.has(asin)) shared++;
       return shared >= DUPLICATE_OVERLAP;
