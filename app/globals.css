@@ -2175,3 +2175,7 @@ a.card:hover {
 .table-scroll .spec-table td {
   font-weight: 400;
 }
+/* Let wide content (post tables) scroll inside its column instead of widening the grid. */
+.with-aside > * {
+  min-width: 0;
+}

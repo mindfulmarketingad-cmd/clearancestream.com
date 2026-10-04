@@ -297,7 +297,7 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="card-grid card-grid-2">
-            {POSTS.map((p) => (
+            {POSTS.slice(0, 4).map((p) => (
               <Link key={p.slug} href={`/blog/${p.slug}`} className="card">
                 <div className="icon-tile">
                   <BookIcon />

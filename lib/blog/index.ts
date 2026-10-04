@@ -1,3 +1,13 @@
+import { areProControllersWorthIt } from "./posts/are-pro-controllers-worth-it";
+import { bestTimeToBuyAGamingPc } from "./posts/best-time-to-buy-a-gaming-pc";
+import { gamingLaptopVsGamingPc } from "./posts/gaming-laptop-vs-gaming-pc";
+import { howMuchRamForGaming } from "./posts/how-much-ram-for-gaming";
+import { howMuchShouldISpendOnAGamingPc } from "./posts/how-much-should-i-spend-on-a-gaming-pc";
+import { mechanicalKeyboardSwitchesExplained } from "./posts/mechanical-keyboard-switches-explained";
+import { oledVsIpsGamingMonitor } from "./posts/oled-vs-ips-gaming-monitor";
+import { refurbishedGamingPcWorthIt } from "./posts/refurbished-gaming-pc-worth-it";
+import { whatGraphicsCardDoINeed } from "./posts/what-graphics-card-do-i-need";
+import { wirelessVsWiredGamingMouse } from "./posts/wireless-vs-wired-gaming-mouse";
 import { gamingPcDealsGuide } from "./gaming-pc-deals-guide";
 import { prebuiltBuyingGuide } from "./prebuilt-gaming-pc-buying-guide";
 import { getAuthor, type Author } from "./authors";
@@ -6,7 +16,22 @@ import type { Post } from "./types";
 export type { Author, Post };
 export { AUTHORS, authorPath, getAuthor } from "./authors";
 
-export const POSTS: Post[] = [gamingPcDealsGuide, prebuiltBuyingGuide];
+/** Pillar guides first; they stay pinned in navigation and sidebars. */
+export const PILLAR_POSTS: Post[] = [gamingPcDealsGuide, prebuiltBuyingGuide];
+
+export const POSTS: Post[] = [
+  ...PILLAR_POSTS,
+  bestTimeToBuyAGamingPc,
+  howMuchShouldISpendOnAGamingPc,
+  gamingLaptopVsGamingPc,
+  whatGraphicsCardDoINeed,
+  howMuchRamForGaming,
+  oledVsIpsGamingMonitor,
+  mechanicalKeyboardSwitchesExplained,
+  wirelessVsWiredGamingMouse,
+  areProControllersWorthIt,
+  refurbishedGamingPcWorthIt,
+];
 
 
 export function getPost(slug: string): Post | undefined {

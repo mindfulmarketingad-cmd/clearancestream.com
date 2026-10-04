@@ -44,7 +44,11 @@ export default async function PostPage({ params }: Props) {
   if (!post) notFound();
   const { deals } = await getAllDeals();
   const topDeals = deals.slice(0, 4);
-  const others = POSTS.filter((p) => p.slug !== post.slug);
+  // Same author first, then everything else.
+  const others = [
+    ...POSTS.filter((p) => p.slug !== post.slug && p.author === post.author),
+    ...POSTS.filter((p) => p.slug !== post.slug && p.author !== post.author),
+  ].slice(0, 4);
   const { Body } = post;
   const author = postAuthor(post);
 

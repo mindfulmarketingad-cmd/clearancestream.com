@@ -9,7 +9,7 @@ import { Faq } from "@/components/Faq";
 import { ArrowRight, ClockIcon, RefreshIcon, TagIcon } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
 import { ValueBar } from "@/components/ValueBar";
-import { POSTS } from "@/lib/blog";
+import { getPost, type Post } from "@/lib/blog";
 import { BRAND_GROUPS, BRANDS, brandDescription, brandTitle, getBrand } from "@/lib/brands";
 import { getBrandDeals } from "@/lib/deals";
 import { formatChecked, lowerName } from "@/lib/format";
@@ -21,6 +21,14 @@ export const revalidate = 604800;
 export const dynamicParams = false;
 
 type Props = { params: Promise<{ brand: string }> };
+
+/** Guides most relevant to each brand group. */
+const GROUP_GUIDES: Record<string, string[]> = {
+  pcs: ["gaming-pc-deals-guide", "prebuilt-gaming-pc-buying-guide", "best-time-to-buy-a-gaming-pc", "gaming-laptop-vs-gaming-pc", "what-graphics-card-do-i-need"],
+  peripherals: ["wireless-vs-wired-gaming-mouse", "mechanical-keyboard-switches-explained", "gaming-pc-deals-guide"],
+  displays: ["oled-vs-ips-gaming-monitor", "what-graphics-card-do-i-need", "gaming-pc-deals-guide"],
+  controllers: ["are-pro-controllers-worth-it", "gaming-pc-deals-guide"],
+};
 
 export function generateStaticParams() {
   return BRANDS.map((b) => ({ brand: b.slug }));
@@ -37,6 +45,7 @@ export default async function BrandPage({ params }: Props) {
   if (!brand) notFound();
   const { deals, fetchedAt } = await getBrandDeals(brand.slug);
   const others = BRANDS.filter((b) => b.slug !== brand.slug && b.group === brand.group);
+  const guides = (GROUP_GUIDES[brand.group] ?? []).map(getPost).filter((p): p is Post => !!p);
   const searches = POPULAR_SEARCHES.filter((s) => s.label.toLowerCase().includes(brand.name.toLowerCase()));
 
   const faqs = [
@@ -176,7 +185,7 @@ export default async function BrandPage({ params }: Props) {
             <div className="aside-box">
               <h2>Guides</h2>
               <ul>
-                {POSTS.map((p) => (
+                {guides.map((p) => (
                   <li key={p.slug}>
                     <Link href={`/blog/${p.slug}`}>{p.title}</Link>
                   </li>
