@@ -38,6 +38,10 @@ const nextConfig: NextConfig = {
   // worker so the whole build shares one throttled request queue, and give pages
   // time for a full refresh (~24 calls) plus 429 backoff.
   staticPageGenerationTimeout: 900,
+  // Ship the build-time product snapshot (lib/deals.ts) with every server function.
+  outputFileTracingIncludes: {
+    "/**": ["./data/deals-snapshot.json"],
+  },
   experimental: {
     cpus: 1,
     staticGenerationMinPagesPerWorker: 1000,

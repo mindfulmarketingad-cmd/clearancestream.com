@@ -1,4 +1,6 @@
 import "server-only";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { unstable_cache } from "next/cache";
 import { BRANDS, brandFromByline, getBrand, type Brand } from "./brands";
 import { extractAttributes } from "./attributes";
@@ -180,43 +182,72 @@ function searchesFor(brand: Brand) {
   return [...brand.searches, ...extra];
 }
 
-const fetchBrandDeals = unstable_cache(
-  async (slug: string): Promise<BrandFetch> => {
-    const brand = getBrand(slug);
-    if (!brand) return { deals: [], fetchedAt: new Date().toISOString() };
-    const fetchedAt = new Date().toISOString();
-    const byAsin = new Map<string, Deal>();
-    let failures = 0;
-    let attempts = 0;
+/** Fetch one brand's catalog straight from the product API (no caching). */
+export async function fetchBrandLive(slug: string): Promise<BrandFetch> {
+  const brand = getBrand(slug);
+  if (!brand) return { deals: [], fetchedAt: new Date().toISOString() };
+  const fetchedAt = new Date().toISOString();
+  const byAsin = new Map<string, Deal>();
+  let failures = 0;
+  let attempts = 0;
 
-    for (const { keywords, searchIndex } of searchesFor(brand)) {
-      for (let itemPage = 1; itemPage <= PAGES_PER_SEARCH; itemPage++) {
-        attempts++;
-        try {
-          const items = await searchItems({ keywords, searchIndex, brand: brand.apiBrand, itemPage, itemCount: ITEMS_PER_PAGE });
-          for (const item of items) {
-            const deal = normalize(item, brand, fetchedAt);
-            if (deal && !byAsin.has(deal.asin)) byAsin.set(deal.asin, deal);
-          }
-          if (items.length < 10) break;
-        } catch (err) {
-          const message = (err as Error).message;
-          // Auth/eligibility rejections apply to every request; stop instead of repeating them.
-          if (/ failed: (401|403)\b/.test(message)) throw new Error(`${ACCOUNT_REJECTED}: ${message}`);
-          failures++;
-          console.error(`[deals] ${brand.slug} "${keywords}" (${searchIndex}) page ${itemPage}:`, message);
-          break;
+  for (const { keywords, searchIndex } of searchesFor(brand)) {
+    for (let itemPage = 1; itemPage <= PAGES_PER_SEARCH; itemPage++) {
+      attempts++;
+      try {
+        const items = await searchItems({ keywords, searchIndex, brand: brand.apiBrand, itemPage, itemCount: ITEMS_PER_PAGE });
+        for (const item of items) {
+          const deal = normalize(item, brand, fetchedAt);
+          if (deal && !byAsin.has(deal.asin)) byAsin.set(deal.asin, deal);
         }
+        if (items.length < 10) break;
+      } catch (err) {
+        const message = (err as Error).message;
+        // Auth/eligibility rejections apply to every request; stop instead of repeating them.
+        if (/ failed: (401|403)\b/.test(message)) throw new Error(`${ACCOUNT_REJECTED}: ${message}`);
+        failures++;
+        console.error(`[deals] ${brand.slug} "${keywords}" (${searchIndex}) page ${itemPage}:`, message);
+        break;
       }
     }
+  }
 
-    // Throwing keeps a total failure out of the cache so a later request retries.
-    if (failures === attempts) throw new Error(`All searches failed for ${slug}`);
-    return { deals: [...byAsin.values()].sort(rank), fetchedAt };
-  },
-  ["brand-deals-v3"],
-  { revalidate: SITE.revalidate, tags: ["deals"] },
-);
+  // Throwing keeps a total failure out of the cache so a later request retries.
+  if (failures === attempts) throw new Error(`All searches failed for ${slug}`);
+  return { deals: [...byAsin.values()].sort(rank), fetchedAt };
+}
+
+const fetchBrandDeals = unstable_cache(fetchBrandLive, ["brand-deals-v3"], {
+  revalidate: SITE.revalidate,
+  tags: ["deals"],
+});
+
+/**
+ * Snapshot of every brand's catalog, written by scripts/snapshot-deals.ts just
+ * before `next build` and shipped with the deployment. The runtime data cache is
+ * not shared with the build on every host, so without this each page rendered
+ * on first visit would refetch the whole catalog. Entries older than the refresh
+ * interval are ignored, so data still refreshes weekly.
+ */
+export const SNAPSHOT_FILE = "data/deals-snapshot.json";
+type Snapshot = { generatedAt: string; brands: Record<string, BrandFetch> };
+let snapshot: Snapshot | null | undefined;
+
+function readSnapshot(): Snapshot | null {
+  if (snapshot !== undefined) return snapshot;
+  try {
+    snapshot = JSON.parse(readFileSync(join(process.cwd(), SNAPSHOT_FILE), "utf8")) as Snapshot;
+  } catch {
+    snapshot = null;
+  }
+  return snapshot;
+}
+
+function snapshotFor(slug: string): BrandFetch | null {
+  const entry = readSnapshot()?.brands[slug];
+  if (!entry) return null;
+  return Date.now() - Date.parse(entry.fetchedAt) < SITE.revalidate * 1000 ? entry : null;
+}
 
 const ACCOUNT_REJECTED = "Product API rejected the account";
 let warnedUnconfigured = false;
@@ -253,6 +284,8 @@ async function loadBrand(brand: Brand): Promise<BrandFetch | null> {
   const now = Date.now();
   const hit = memo.get(brand.slug);
   if (hit && now - hit.at < MEMO_MS) return hit.result;
+  const snap = snapshotFor(brand.slug);
+  if (snap) return snap;
   if (now < failedUntil || now < (brandFailedUntil.get(brand.slug) ?? 0)) return null;
   let pending = inflight.get(brand.slug);
   if (!pending) {
