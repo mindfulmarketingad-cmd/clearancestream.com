@@ -1044,3 +1044,11 @@ export const brandDescription = (b: Brand) =>
 export function brandsInGroup(group: BrandGroup) {
   return BRANDS.filter((b) => b.group === group);
 }
+
+// ---------------------------------------------------------------- 70 new brands: 100-brand expansion
+// Brand definitions live in ./brands/extra-a.ts and ./brands/extra-b.ts;
+// merged here so BRANDS stays the single source of truth.
+import { EXTRA_BRANDS_A } from "./brands/extra-a";
+import { EXTRA_BRANDS_B } from "./brands/extra-b";
+
+BRANDS.push(...EXTRA_BRANDS_A, ...EXTRA_BRANDS_B);
