@@ -8,7 +8,7 @@ import { ArrowRight, CheckIcon, ClockIcon, ExternalIcon, TagIcon } from "@/compo
 import { JsonLd } from "@/components/JsonLd";
 import { getAllDeals, type Deal } from "@/lib/deals";
 import { formatChecked, lowerName } from "@/lib/format";
-import { LIST_SIZE, getListDef, liveLists, resolveList, type ResolvedList } from "@/lib/lists";
+import { getListDef, liveLists, resolveAll, specSummary, type ResolvedList } from "@/lib/lists";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
 export const revalidate = 604800;
@@ -27,7 +27,7 @@ async function load(params: Props["params"]) {
   const def = getListDef((await params).slug);
   if (!def) notFound();
   const { deals, fetchedAt } = await getAllDeals();
-  return { list: resolveList(def, deals), deals, fetchedAt };
+  return { list: resolveAll(deals).find((l) => l.def.slug === def.slug)!, deals, fetchedAt };
 }
 
 function summary(list: ResolvedList) {
@@ -54,10 +54,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: s
       ? `The ${list.items.length} best ${s.plural} ${list.def.qualifier}, ranked by current discount and customer ratings. Live prices from ${money(s.min)} to ${money(s.max)}${s.topDiscount ? `, with discounts up to ${s.topDiscount}%` : ""}. Updated weekly.`
       : `The best ${lowerName(list.def.category.plural)} ${list.def.qualifier}, ranked by current discount and customer ratings. Updated weekly.`,
-    path: `/lists/${list.def.canonical ?? list.def.slug}`,
-    // A "10 best" list is only indexed when it actually has 10 products, and a
-    // list with a canonical twin defers to it.
-    noindex: list.items.length < LIST_SIZE,
+    path: `/lists/${list.canonical ?? list.def.slug}`,
+    // A "10 best" list is only indexed when it actually has 10 products and is
+    // not a near-duplicate of another list.
+    noindex: !list.indexable,
   });
 }
 
@@ -65,7 +65,12 @@ function reasons(d: Deal, list: ResolvedList): string[] {
   const out: string[] = [];
   if (d.savingsPercent && d.savingsDisplay) out.push(`${d.savingsPercent}% below its ${d.listPriceLabel?.toLowerCase() ?? "reference price"} (save ${d.savingsDisplay})`);
   if (d.rating && d.reviewCount) out.push(`Rated ${d.rating.toFixed(1)} out of 5 from ${d.reviewCount.toLocaleString("en-US")} reviews`);
-  if (list.def.kind === "price") out.push(`Priced ${list.def.qualifier.replace("wireless, ", "")} at ${d.priceDisplay}`);
+  const under = list.def.qualifier.match(/under \$\d+/);
+  if (list.def.kind === "price" && under) out.push(`Priced ${under[0]} at ${d.priceDisplay}`);
+  if (d.categorySlug === "gaming-pcs" || d.categorySlug === "laptops") {
+    const spec = specSummary(d);
+    if (spec.length > 0) out.push(spec.join(", "));
+  }
   if (d.attrs.includes("wireless")) out.push("Wireless");
   const gpu = d.attrs.find((a) => a.startsWith("gpu:"));
   if (gpu) out.push(`${gpu.slice(4).toUpperCase().replace(/-/g, " ").replace(" TI", " Ti").replace(" SUPER", " Super")} graphics`);

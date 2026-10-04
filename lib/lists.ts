@@ -1,3 +1,5 @@
+import { specTags } from "./attributes";
+import { BRANDS } from "./brands";
 import { CATEGORIES, getCategory, type Category } from "./categories";
 import type { Deal } from "./deals";
 import { slugify } from "./slug";
@@ -7,7 +9,7 @@ export const LIST_SIZE = 10;
 /** Lists with fewer products than this are not rendered at all. */
 export const LIST_MIN = 3;
 
-export type ListKind = "price" | "attribute" | "discounts" | "cheapest";
+export type ListKind = "price" | "attribute" | "discounts" | "cheapest" | "brand" | "spec";
 
 export type ListDef = {
   slug: string;
@@ -65,6 +67,33 @@ export function gpuName(slug: string) {
 }
 
 const has = (tag: string) => (d: Deal) => d.attrs.includes(tag);
+
+// Spec tags are derived from titles on demand, so they work on cached data too.
+const specCache = new Map<string, string[]>();
+function specs(d: Deal) {
+  let tags = specCache.get(d.title);
+  if (!tags) specCache.set(d.title, (tags = specTags(d.title)));
+  return tags;
+}
+const hasSpec = (tag: string) => (d: Deal) => specs(d).includes(tag);
+
+const CPUS: [string, string][] = [
+  ["core-i5", "Intel Core i5"],
+  ["core-i7", "Intel Core i7"],
+  ["core-i9", "Intel Core i9"],
+  ["core-ultra-7", "Intel Core Ultra 7"],
+  ["core-ultra-9", "Intel Core Ultra 9"],
+  ["ryzen-5", "AMD Ryzen 5"],
+  ["ryzen-7", "AMD Ryzen 7"],
+  ["ryzen-9", "AMD Ryzen 9"],
+  ["x3d", "AMD Ryzen X3D"],
+];
+
+/** Shorter category names for "Best [Brand] ..." titles. */
+const BRAND_PLURAL: Record<string, string> = {
+  controllers: "Controllers",
+  streaming: "Streaming Gear",
+};
 const byPrice = (a: Deal, b: Deal) => a.price - b.price;
 const bySavings = (a: Deal, b: Deal) => (b.savingsPercent ?? 0) - (a.savingsPercent ?? 0) || a.price - b.price;
 
@@ -98,7 +127,14 @@ const ATTRIBUTE_LISTS: [string, string, string, string][] = [
 
 function build(): ListDef[] {
   const lists: ListDef[] = [];
-  const add = (def: Omit<ListDef, "slug">) => lists.push({ ...def, slug: slugify(`${LIST_SIZE} ${def.label}`, 90) });
+  const seen = new Set<string>();
+  const add = (def: Omit<ListDef, "slug">) => {
+    const slug = slugify(`${LIST_SIZE} ${def.label}`, 90);
+    // First definition wins if two generators produce the same title.
+    if (seen.has(slug)) return;
+    seen.add(slug);
+    lists.push({ ...def, slug });
+  };
 
   for (const category of CATEGORIES) {
     for (const cap of PRICE_CAPS[category.slug] ?? []) {
@@ -192,6 +228,67 @@ function build(): ListDef[] {
     });
   }
 
+  // Gaming PCs and laptops by spec.
+  for (const cat of ["gaming-pcs", "laptops"]) {
+    const category = getCategory(cat)!;
+    const caps = cat === "gaming-pcs" ? [1000, 1500, 2000] : [1000, 1500];
+    for (const gb of [16, 32, 64]) {
+      add({ label: `Best ${category.plural} With ${gb}GB RAM`, category, kind: "spec", qualifier: `with ${gb}GB of RAM`, filter: hasSpec(`ram:${gb}`) });
+      for (const cap of caps) {
+        add({
+          label: `Best ${category.plural} With ${gb}GB RAM Under $${cap}`,
+          category,
+          kind: "price",
+          qualifier: `with ${gb}GB of RAM, under $${cap}`,
+          filter: (d) => hasSpec(`ram:${gb}`)(d) && d.price < cap,
+        });
+      }
+    }
+    for (const size of ["1tb", "2tb", "4tb"]) {
+      const name = size.toUpperCase();
+      add({ label: `Best ${category.plural} With ${name} SSD`, category, kind: "spec", qualifier: `with a ${name} SSD`, filter: hasSpec(`ssd:${size}`) });
+    }
+    for (const [tag, name] of CPUS) {
+      const cpuLabel = tag === "x3d" ? `${name} CPUs` : name;
+      add({
+        label: `Best ${category.plural} With ${cpuLabel}`,
+        category,
+        kind: "spec",
+        qualifier: `with an ${name} processor`,
+        filter: hasSpec(`cpu:${tag}`),
+      });
+    }
+    for (const gpu of GPUS) {
+      for (const cap of caps) {
+        add({
+          label: `Best ${gpuName(gpu)} ${category.plural} Under $${cap}`,
+          category,
+          kind: "price",
+          qualifier: `with an ${gpuName(gpu)}, under $${cap}`,
+          filter: (d) => d.attrs.includes(`gpu:${gpu}`) && d.price < cap,
+        });
+      }
+    }
+  }
+  const laptops = getCategory("laptops")!;
+  for (const inch of [14, 15, 16, 17, 18]) {
+    add({ label: `Best ${inch}-Inch Gaming Laptops`, category: laptops, kind: "spec", qualifier: `with a ${inch}-inch screen`, filter: hasSpec(`screen:${inch}`) });
+  }
+  add({ label: "Best Gaming Laptops With 240Hz+ Screens", category: laptops, kind: "spec", qualifier: "with a 240Hz or faster screen", filter: has("high-refresh") });
+
+  // Brand x category.
+  for (const brand of BRANDS) {
+    for (const category of CATEGORIES) {
+      add({
+        label: `Best ${brand.name} ${BRAND_PLURAL[category.slug] ?? category.plural}`,
+        category,
+        kind: "brand",
+        qualifier: `from ${brand.name}`,
+        filter: (d) => d.brandSlug === brand.slug,
+      });
+    }
+  }
+
   // Racing and flight gear.
   const controllers = getCategory("controllers")!;
   add({
@@ -228,6 +325,21 @@ function defaultRank(a: Deal, b: Deal) {
   return score(b) - score(a) || a.price - b.price;
 }
 
+/** Lists sharing this many of their 10 products are treated as duplicates. */
+const DUPLICATE_OVERLAP = 7;
+
+/** Human-readable specs for a PC or laptop, e.g. ["32GB RAM", "1TB SSD", "Intel Core i7"]. */
+export function specSummary(d: Deal): string[] {
+  return specs(d).flatMap((t) => {
+    const [k, v] = t.split(":");
+    if (k === "ram") return [`${v}GB RAM`];
+    if (k === "ssd") return [`${v.toUpperCase()} SSD`];
+    if (k === "cpu") return [CPUS.find(([c]) => c === v)?.[1] ?? v];
+    if (k === "screen") return [`${v}-inch screen`];
+    return [];
+  });
+}
+
 export function resolveList(def: ListDef, deals: Deal[]) {
   const matches = deals
     .filter((d) => d.categorySlug === def.category.slug && d.inStock && def.filter(d))
@@ -242,6 +354,8 @@ export function resolveList(def: ListDef, deals: Deal[]) {
     // e.g. "10 Best Gaming PCs Under $1500 - 2026 Updated List"
     title: `${count}${def.label} - ${new Date().getFullYear()} Updated List`,
     shortTitle: `${count}${def.label}`,
+    /** Slug of the list this one defers to: a fixed twin, or an earlier list with nearly the same products. */
+    canonical: def.canonical as string | undefined,
     indexable: items.length >= LIST_SIZE && !def.canonical,
     renderable: items.length >= LIST_MIN,
   };
@@ -249,7 +363,36 @@ export function resolveList(def: ListDef, deals: Deal[]) {
 
 export type ResolvedList = ReturnType<typeof resolveList>;
 
+let resolved: { key: string; lists: ResolvedList[] } | null = null;
+
+/**
+ * Resolve every list against the current catalog. A full list whose products
+ * mostly overlap an earlier list (earlier definitions take priority) points its
+ * canonical there and stays out of the index, so near-identical pages never compete.
+ */
+export function resolveAll(deals: Deal[]): ResolvedList[] {
+  const key = `${deals.length}:${deals[0]?.fetchedAt ?? ""}:${deals.at(-1)?.asin ?? ""}`;
+  if (resolved?.key === key) return resolved.lists;
+  const lists = LISTS.map((def) => resolveList(def, deals));
+  const accepted: { slug: string; asins: Set<string> }[] = [];
+  for (const list of lists) {
+    if (!list.indexable) continue;
+    const asins = new Set(list.items.map((d) => d.asin));
+    const twin = accepted.find((a) => {
+      let shared = 0;
+      for (const asin of asins) if (a.asins.has(asin)) shared++;
+      return shared >= DUPLICATE_OVERLAP;
+    });
+    if (twin) {
+      list.canonical = twin.slug;
+      list.indexable = false;
+    } else accepted.push({ slug: list.def.slug, asins });
+  }
+  resolved = { key, lists };
+  return lists;
+}
+
 /** All lists that currently have enough products to render. */
 export function liveLists(deals: Deal[]) {
-  return LISTS.map((def) => resolveList(def, deals)).filter((l) => l.renderable);
+  return resolveAll(deals).filter((l) => l.renderable);
 }

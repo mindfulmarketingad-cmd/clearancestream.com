@@ -46,3 +46,27 @@ export function extractAttributes(title: string, features: string[]): string[] {
   if (gpu) tags.push(`gpu:${gpu}`);
   return [...new Set(tags)];
 }
+
+/**
+ * Spec tags for gaming PCs and laptops, read from the product title only
+ * (feature bullets often describe maximums like "supports up to 64GB").
+ * Tags: ram:32, ssd:1tb, cpu:core-i7, cpu:ryzen-7, cpu:core-ultra-9, cpu:x3d, screen:16.
+ */
+export function specTags(title: string): string[] {
+  const tags: string[] = [];
+  // System memory, never graphics memory ("12GB GDDR6" does not match DDR).
+  const ram = title.match(/\b(8|16|32|64|128)\s?GB\s*(?:of\s+)?(?:LP)?(?:DDR[45]X?|RAM|memory)\b/i);
+  if (ram) tags.push(`ram:${ram[1]}`);
+  const ssd = title.match(/\b(512\s?GB|1\s?TB|2\s?TB|4\s?TB)\s*(?:PCIe|NVMe|M\.2|SSD|Gen\s?[45]|storage)/i);
+  if (ssd) tags.push(`ssd:${ssd[1].replace(/\s/g, "").toLowerCase()}`);
+  const ultra = title.match(/\bcore\s+ultra\s+([579])\b/i);
+  const core = title.match(/\b(?:core\s*)?i([579])[- ]?\d{4,5}[a-z]*\b/i);
+  const ryzen = title.match(/\bryzen\s+([579])\b/i);
+  if (ultra) tags.push(`cpu:core-ultra-${ultra[1]}`);
+  else if (core) tags.push(`cpu:core-i${core[1]}`);
+  if (ryzen) tags.push(`cpu:ryzen-${ryzen[1]}`);
+  if (/\b\d{4}x3d\b/i.test(title)) tags.push("cpu:x3d");
+  const screen = title.match(/\b(1[3-8])(?:\.\d)?\s?(?:"|”|''|-?\s?inch|in\b)/i);
+  if (screen) tags.push(`screen:${screen[1]}`);
+  return tags;
+}
