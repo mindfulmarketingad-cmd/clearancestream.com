@@ -10,6 +10,8 @@ import { getAllDeals, type Deal } from "@/lib/deals";
 import { formatChecked, lowerName } from "@/lib/format";
 import { getListDef, liveLists, resolveAll, specSummary, type ResolvedList } from "@/lib/lists";
 import { itemListLd, pageMetadata } from "@/lib/seo";
+import { getBrand, type Brand } from "@/lib/brands";
+import { ListDirectory } from "@/components/ListLinks";
 
 export const revalidate = 604800;
 // Lists render on first request and then cache for a week, like product pages.
@@ -82,8 +84,16 @@ export default async function ListPage({ params }: Props) {
   const { list, deals, fetchedAt } = await load(params);
   const { def, items } = list;
   const s = summary(list);
-  const related = liveLists(deals).filter((l) => l.def.category.slug === def.category.slug && l.def.slug !== def.slug && l.indexable).slice(0, 8);
+  const allLists = liveLists(deals);
+  const related = allLists.filter((l) => l.def.category.slug === def.category.slug && l.def.slug !== def.slug && l.indexable).slice(0, 12);
   const path = `/lists/${def.slug}`;
+  // Brands on this list, most products first.
+  const brandCounts = new Map<string, number>();
+  for (const d of items) brandCounts.set(d.brandSlug, (brandCounts.get(d.brandSlug) ?? 0) + 1);
+  const listBrands = [...brandCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([slug]) => getBrand(slug))
+    .filter((b): b is Brand => !!b);
 
   const faqs = s
     ? [
@@ -268,6 +278,32 @@ export default async function ListPage({ params }: Props) {
               </ul>
             </>
           ) : null}
+          {listBrands.length > 0 ? (
+            <>
+              <h2 className="sub-head" style={{ marginBottom: 16 }}>
+                Brands on this list
+              </h2>
+              <ul className="chip-list">
+                {listBrands.map((b) => (
+                  <li key={b.slug}>
+                    <Link href={`/brands/${b.slug}/${def.category.slug}`} className="chip">
+                      {b.name} {lowerName(def.category.name)}
+                    </Link>
+                  </li>
+                ))}
+                {listBrands.map((b) => (
+                  <li key={`${b.slug}-all`}>
+                    <Link href={`/brands/${b.slug}`} className="chip">
+                      All {b.name} discounts
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+
+          <ListDirectory lists={allLists} current={def.slug} openCategory={def.category.slug} />
+
           <p className="mt-md muted" style={{ fontSize: 15 }}>
             Browse every{" "}
             <Link href={`/categories/${def.category.slug}`} className="text-link">

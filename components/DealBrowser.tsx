@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CATEGORIES } from "@/lib/categories";
 import type { Deal } from "@/lib/deals";
 import { DealCard } from "./DealCard";
@@ -35,6 +35,12 @@ export function DealBrowser({
   const [sort, setSort] = useState<SortKey>("discount");
   const [category, setCategory] = useState("");
   const [visible, setVisible] = useState(PAGE);
+
+  // Links such as the homepage Scan button can preselect a sort with ?sort=savings.
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("sort");
+    if (requested && requested in SORTS) setSort(requested as SortKey);
+  }, []);
 
   const categories = useMemo(() => {
     const present = new Set(deals.map((d) => d.categorySlug));

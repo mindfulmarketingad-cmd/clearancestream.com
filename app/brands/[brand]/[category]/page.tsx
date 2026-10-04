@@ -12,6 +12,8 @@ import { ValueBar } from "@/components/ValueBar";
 import { BRANDS, getBrand } from "@/lib/brands";
 import { getCategory } from "@/lib/categories";
 import { getAllDeals } from "@/lib/deals";
+import { listsForBrand, liveLists } from "@/lib/lists";
+import { ListChips } from "@/components/ListLinks";
 import { formatChecked, lowerName } from "@/lib/format";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
@@ -39,7 +41,8 @@ async function load(params: Props["params"]) {
   const otherBrands = BRANDS.filter(
     (b) => b.slug !== brand.slug && all.some((d) => d.brandSlug === b.slug && d.categorySlug === category.slug),
   );
-  return { brand, category, deals, brandDeals, otherBrands, fetchedAt };
+  const lists = listsForBrand(liveLists(all), brand.slug, category.slug).slice(0, 12);
+  return { brand, category, deals, brandDeals, otherBrands, lists, fetchedAt };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -54,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BrandCategoryPage({ params }: Props) {
-  const { brand, category, deals, brandDeals, otherBrands, fetchedAt } = await load(params);
+  const { brand, category, deals, brandDeals, otherBrands, lists, fetchedAt } = await load(params);
   const path = `/brands/${brand.slug}/${category.slug}`;
 
   const faqs = [
@@ -154,6 +157,15 @@ export default async function BrandCategoryPage({ params }: Props) {
           <div style={{ marginTop: 16 }}>
             <Faq items={faqs} />
           </div>
+
+          {lists.length > 0 ? (
+            <>
+              <h2 className="sub-head" style={{ marginBottom: 16 }}>
+                Top {lowerName(category.name)} lists featuring {brand.name}
+              </h2>
+              <ListChips lists={lists} />
+            </>
+          ) : null}
 
           {otherBrands.length > 0 ? (
             <>

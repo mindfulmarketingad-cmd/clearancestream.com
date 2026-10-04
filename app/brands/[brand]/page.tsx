@@ -10,12 +10,14 @@ import { ArrowRight, ClockIcon, RefreshIcon, TagIcon } from "@/components/Icons"
 import { JsonLd } from "@/components/JsonLd";
 import { ValueBar } from "@/components/ValueBar";
 import { getPost, type Post } from "@/lib/blog";
-import { BRAND_GROUPS, BRANDS, brandDescription, brandTitle, getBrand } from "@/lib/brands";
-import { getBrandDeals } from "@/lib/deals";
-import { formatChecked, lowerName } from "@/lib/format";
+import { BRANDS, brandDescription, brandTitle, getBrand } from "@/lib/brands";
+import { getAllDeals, getBrandDeals } from "@/lib/deals";
+import { listsForBrand, liveLists } from "@/lib/lists";
+import { AllBrandLinks } from "@/components/BrandLinks";
+import { ListChips } from "@/components/ListLinks";
+import { formatChecked } from "@/lib/format";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
-import { SITE } from "@/lib/site";
 
 export const revalidate = 604800;
 export const dynamicParams = false;
@@ -44,7 +46,8 @@ export default async function BrandPage({ params }: Props) {
   const brand = getBrand((await params).brand);
   if (!brand) notFound();
   const { deals, fetchedAt } = await getBrandDeals(brand.slug);
-  const others = BRANDS.filter((b) => b.slug !== brand.slug && b.group === brand.group);
+  const { deals: all } = await getAllDeals();
+  const brandLists = listsForBrand(liveLists(all), brand.slug).slice(0, 18);
   const guides = (GROUP_GUIDES[brand.group] ?? []).map(getPost).filter((p): p is Post => !!p);
   const searches = POPULAR_SEARCHES.filter((s) => s.label.toLowerCase().includes(brand.name.toLowerCase()));
 
@@ -97,7 +100,7 @@ export default async function BrandPage({ params }: Props) {
         </header>
       </div>
 
-      <section className="section-tight">
+      <section className="section-tight" id="deals">
         <div className="container">
           <h2 className="sr-only">All {brand.name} deals</h2>
           {deals.length > 0 ? (
@@ -161,24 +164,22 @@ export default async function BrandPage({ params }: Props) {
               <Faq items={faqs} />
             </div>
 
-            <h2 className="sub-head" style={{ marginBottom: 16 }}>
-              More {lowerName(BRAND_GROUPS.find((g) => g.id === brand.group)?.name ?? "")} brands
-            </h2>
-            <ul className="chip-list">
-              {others.map((b) => (
-                <li key={b.slug}>
-                  <Link href={`/brands/${b.slug}`} className="chip">
-                    {b.name} discounts
+            {brandLists.length > 0 ? (
+              <>
+                <h2 className="sub-head" style={{ marginBottom: 16 }}>
+                  Top lists featuring {brand.name}
+                </h2>
+                <ListChips lists={brandLists} />
+                <p className="mt-md muted" style={{ fontSize: 15 }}>
+                  Or browse{" "}
+                  <Link href="/lists" className="text-link">
+                    all lists <ArrowRight />
                   </Link>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-md muted" style={{ fontSize: 15 }}>
-              Or browse{" "}
-              <Link href="/brands" className="text-link">
-                all brands <ArrowRight />
-              </Link>
-            </p>
+                </p>
+              </>
+            ) : null}
+
+            <AllBrandLinks current={brand.slug} title="Discounts from other brands" />
           </div>
 
           <aside className="aside" aria-label="Related">

@@ -15,7 +15,8 @@ import { EmailSignup } from "@/components/EmailSignup";
 import { JsonLd } from "@/components/JsonLd";
 import { ValueBar } from "@/components/ValueBar";
 import { POSTS } from "@/lib/blog";
-import { BRANDS, getBrand } from "@/lib/brands";
+import { ScanCta } from "@/components/ScanCta";
+import { BRAND_GROUPS, BRANDS, brandsInGroup, getBrand } from "@/lib/brands";
 import { BrandDirectory } from "@/components/BrandDirectory";
 import { gamingPcsFirst, getAllDeals } from "@/lib/deals";
 import { formatChecked } from "@/lib/format";
@@ -82,15 +83,15 @@ export default async function HomePage() {
               We help gaming PC enthusiasts track deals and clearances on their favorite brands, so you catch the price
               drop before it is gone.
             </p>
-            <div className="hero-actions">
-              <Link href="/deals" className="btn btn-primary">
-                <SearchIcon />
-                Browse all deals
-              </Link>
-              <Link href="/brands" className="btn btn-secondary">
-                Shop by brand
-              </Link>
-            </div>
+            <ScanCta
+              groups={BRAND_GROUPS.map((g) => ({
+                name: g.name,
+                brands: brandsInGroup(g.id).map((b) => ({ slug: b.slug, name: b.name })),
+              }))}
+            />
+            <p className="hero-links">
+              Or <Link href="/deals">browse all deals</Link> &middot; <Link href="/brands">shop by brand</Link>
+            </p>
             <ul className="hero-facts">
               <li>
                 <CheckIcon /> Free to use

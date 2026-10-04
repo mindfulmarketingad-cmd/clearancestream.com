@@ -406,3 +406,16 @@ export function resolveAll(deals: Deal[]): ResolvedList[] {
 export function liveLists(deals: Deal[]) {
   return resolveAll(deals).filter((l) => l.renderable);
 }
+
+/**
+ * Indexable lists that feature a brand: that brand's own lists first, then
+ * lists where it has the most products.
+ */
+export function listsForBrand(lists: ResolvedList[], brandSlug: string, category?: string) {
+  return lists
+    .filter((l) => l.indexable && (!category || l.def.category.slug === category))
+    .map((l) => ({ l, n: l.items.filter((d) => d.brandSlug === brandSlug).length }))
+    .filter((x) => x.n > 0)
+    .sort((a, b) => Number(b.l.def.kind === "brand") - Number(a.l.def.kind === "brand") || b.n - a.n)
+    .map((x) => x.l);
+}
