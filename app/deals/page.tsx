@@ -10,12 +10,12 @@ import { formatChecked } from "@/lib/format";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 86400;
+export const revalidate = 604800;
 
 export const metadata = pageMetadata({
   title: "All Gaming PC Deals: Live Prices on Gaming PCs & Gear",
   description:
-    "Every gaming PC and gaming gear deal we track: gaming PCs, laptops, mice, keyboards, headsets, and controllers from the biggest gaming brands, with live prices refreshed daily.",
+    "Every gaming PC and gaming gear deal we track: gaming PCs, laptops, mice, keyboards, headsets, and controllers from the biggest gaming brands, with live prices refreshed weekly.",
   path: "/deals",
 });
 
@@ -27,11 +27,11 @@ export default async function DealsPage() {
       <PageHeader
         crumbs={[{ name: "All Deals", path: "/deals" }]}
         title="All gaming PC deals"
-        lede="The biggest live discounts across every brand we track, from complete gaming PCs to mice and controllers. Live prices, refreshed every day."
+        lede="The biggest live discounts across every brand we track, from complete gaming PCs to mice and controllers. Live prices, refreshed every week."
       >
         <div className="page-meta">
           <span>
-            <RefreshIcon /> Refreshed daily
+            <RefreshIcon /> Refreshed weekly
           </span>
           {fetchedAt ? (
             <span>

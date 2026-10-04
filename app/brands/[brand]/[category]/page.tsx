@@ -16,7 +16,7 @@ import { formatChecked, lowerName } from "@/lib/format";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
-export const revalidate = 86400;
+export const revalidate = 604800;
 // Rendered on first request rather than at build time: most brand/category
 // combinations are empty at any moment, and this keeps builds to one API fetch.
 export const dynamicParams = true;
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { brand, category, deals } = await load(params);
   return pageMetadata({
     title: `${brand.name} ${category.name} Discounts and Promos`,
-    description: `${deals.length > 0 ? `${deals.length} ` : ""}${brand.name} ${category.noun} discounts and promos with live prices, refreshed daily by ClearanceStream.`,
+    description: `${deals.length > 0 ? `${deals.length} ` : ""}${brand.name} ${category.noun} discounts and promos with live prices, refreshed weekly by ClearanceStream.`,
     path: `/brands/${brand.slug}/${category.slug}`,
     // Empty category pages stay out of the index until they have deals.
     noindex: deals.length === 0,
@@ -64,7 +64,7 @@ export default async function BrandCategoryPage({ params }: Props) {
     },
     {
       q: `How often do ${brand.name} ${lowerName(category.name)} prices change?`,
-      a: `Prices can change at any time. We check every day and show the time each price was checked, so always confirm the final price at checkout.`,
+      a: `Prices can change at any time. We check every week and show the time each price was checked, so always confirm the final price at checkout.`,
     },
   ];
 
@@ -87,7 +87,7 @@ export default async function BrandCategoryPage({ params }: Props) {
             {brand.name} {category.name} <span>Deals</span>
           </h1>
           <p className="lede">
-            Live prices on every {brand.name} {category.noun} we track, with current discounts first. Refreshed daily.
+            Live prices on every {brand.name} {category.noun} we track, with current discounts first. Refreshed weekly.
           </p>
           <div className="page-meta">
             <span>
@@ -99,7 +99,7 @@ export default async function BrandCategoryPage({ params }: Props) {
               </span>
             ) : (
               <span>
-                <RefreshIcon /> Refreshed daily
+                <RefreshIcon /> Refreshed weekly
               </span>
             )}
           </div>

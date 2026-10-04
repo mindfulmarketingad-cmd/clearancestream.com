@@ -6,14 +6,14 @@ import { getAllDeals } from "@/lib/deals";
 import { liveLists } from "@/lib/lists";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 86400;
+export const revalidate = 604800;
 
 const year = new Date().getFullYear();
 
 export const metadata = pageMetadata({
   title: `Best Gaming Gear Lists - ${year} Updated`,
   description:
-    "Ranked lists of the best gaming PCs, laptops, mice, keyboards, headsets, monitors, and controllers by price, GPU, and features. Live prices, updated daily.",
+    "Ranked lists of the best gaming PCs, laptops, mice, keyboards, headsets, monitors, and controllers by price, GPU, and features. Live prices, updated weekly.",
   path: "/lists",
 });
 
@@ -26,7 +26,7 @@ export default async function ListsHub() {
       <PageHeader
         crumbs={[{ name: "Lists", path: "/lists" }]}
         title={`Best gaming gear lists, ${year}`}
-        lede="Top 10 lists built from live prices: the best gaming PCs, laptops, and peripherals by budget, GPU, platform, and features. Every list updates daily."
+        lede="Top 10 lists built from live prices: the best gaming PCs, laptops, and peripherals by budget, GPU, platform, and features. Every list updates weekly."
       />
       <section className="section-tight">
         <div className="container brand-directory">

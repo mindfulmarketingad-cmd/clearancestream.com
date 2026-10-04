@@ -14,12 +14,12 @@ import { pageMetadata } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import { asinFromSlug } from "@/lib/slug";
 
-export const revalidate = 86400;
+export const revalidate = 604800;
 export const dynamicParams = true;
 
 type Props = { params: Promise<{ brand: string; product: string }> };
 
-// Product pages render on first request (then cache for a day). Prerendering
+// Product pages render on first request (then cache for a week). Prerendering
 // them would need a second full price fetch during every build.
 export function generateStaticParams() {
   return [];
@@ -43,7 +43,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     title: `${deal.name} Discount: ${deal.priceDisplay}${saving}`,
     description: `${deal.name} is ${deal.priceDisplay}${
       deal.savingsDisplay ? `, ${deal.savingsDisplay} below the ${deal.listPriceLabel?.toLowerCase() ?? "reference price"}` : ""
-    }. Live ${deal.brandName} ${deal.isGamingPc ? "gaming PC " : ""}deal tracked daily by ClearanceStream.`,
+    }. Live ${deal.brandName} ${deal.isGamingPc ? "gaming PC " : ""}deal tracked weekly by ClearanceStream.`,
     path: deal.path,
     image: deal.image ? { url: deal.image.url, width: deal.image.width, height: deal.image.height, alt: deal.name } : null,
   });

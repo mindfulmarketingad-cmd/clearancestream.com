@@ -6,7 +6,7 @@ import { BRANDS, brandTitle } from "@/lib/brands";
 import { getAllDeals } from "@/lib/deals";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 86400;
+export const revalidate = 604800;
 
 export const metadata = pageMetadata({
   title: "Gaming PC Brands: Deals by Manufacturer",

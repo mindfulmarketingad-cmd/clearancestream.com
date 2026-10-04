@@ -23,7 +23,7 @@ import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
-export const revalidate = 86400;
+export const revalidate = 604800;
 
 const FEATURED = ["corsair", "razer", "logitech", "alienware", "asus-rog", "scuf", "steelseries", "msi"];
 
@@ -38,7 +38,7 @@ export const metadata = pageMetadata({
 const HOME_FAQ = [
   {
     q: "What is a hidden gaming PC deal?",
-    a: "A hidden deal is a discount that is not promoted on a retailer's homepage or in a sale banner. It is often a single configuration marked down to clear stock, or a quiet price cut when a new hardware generation launches. ClearanceStream finds these by checking live prices every day.",
+    a: "A hidden deal is a discount that is not promoted on a retailer's homepage or in a sale banner. It is often a single configuration marked down to clear stock, or a quiet price cut when a new hardware generation launches. ClearanceStream finds these by checking live prices every week.",
   },
   {
     q: "Where do ClearanceStream prices come from?",
@@ -69,7 +69,7 @@ export default async function HomePage() {
           <div>
             <span className="eyebrow">
               <span className="live-dot" aria-hidden="true" />
-              Live prices, refreshed daily
+              Live prices, refreshed weekly
             </span>
             <h1>
               Hidden Deals &amp; Clearances <span>From Your Favorite Tech Brands</span>
@@ -135,7 +135,7 @@ export default async function HomePage() {
                 <li>
                   <span className="step-num">1</span>
                   <span>
-                    <b>Scan prices every day</b>
+                    <b>Scan prices every week</b>
                     Live prices on gaming PCs and gear from every brand we track.
                   </span>
                 </li>
@@ -209,7 +209,7 @@ export default async function HomePage() {
               <dt>Brands covered</dt>
             </div>
             <div>
-              <dd>Daily</dd>
+              <dd>Weekly</dd>
               <dt>Price refresh</dt>
             </div>
             <div>
@@ -236,7 +236,7 @@ export default async function HomePage() {
               <span className="step-label">Step 1</span>
               <h3>We scan</h3>
               <p>
-                Every day we check live prices on gaming PCs and gear from the brands we track, including
+                Every week we check live prices on gaming PCs and gear from the brands we track, including
                 configurations that never appear in a sale banner.
               </p>
             </div>

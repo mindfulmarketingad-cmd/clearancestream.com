@@ -11,8 +11,8 @@ import { formatChecked, lowerName } from "@/lib/format";
 import { LIST_SIZE, getListDef, liveLists, resolveList, type ResolvedList } from "@/lib/lists";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 86400;
-// Lists render on first request and then cache for a day, like product pages.
+export const revalidate = 604800;
+// Lists render on first request and then cache for a week, like product pages.
 export const dynamicParams = true;
 
 type Props = { params: Promise<{ slug: string }> };
@@ -52,8 +52,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return pageMetadata({
     title: list.title,
     description: s
-      ? `The ${list.items.length} best ${s.plural} ${list.def.qualifier}, ranked by current discount and customer ratings. Live prices from ${money(s.min)} to ${money(s.max)}${s.topDiscount ? `, with discounts up to ${s.topDiscount}%` : ""}. Updated daily.`
-      : `The best ${lowerName(list.def.category.plural)} ${list.def.qualifier}, ranked by current discount and customer ratings. Updated daily.`,
+      ? `The ${list.items.length} best ${s.plural} ${list.def.qualifier}, ranked by current discount and customer ratings. Live prices from ${money(s.min)} to ${money(s.max)}${s.topDiscount ? `, with discounts up to ${s.topDiscount}%` : ""}. Updated weekly.`
+      : `The best ${lowerName(list.def.category.plural)} ${list.def.qualifier}, ranked by current discount and customer ratings. Updated weekly.`,
     path: `/lists/${list.def.canonical ?? list.def.slug}`,
     // A "10 best" list is only indexed when it actually has 10 products, and a
     // list with a canonical twin defers to it.
@@ -84,7 +84,7 @@ export default async function ListPage({ params }: Props) {
     ? [
         {
           q: `How did you pick these ${s.plural}?`,
-          a: `We start with every ${def.category.noun} we track ${def.qualifier}, keep only in-stock items, and rank them by their current discount and customer ratings. Prices are checked daily, so the list changes as prices move.`,
+          a: `We start with every ${def.category.noun} we track ${def.qualifier}, keep only in-stock items, and rank them by their current discount and customer ratings. Prices are checked weekly, so the list changes as prices move.`,
         },
         {
           q: `How much do ${s.plural} ${def.qualifier} cost right now?`,
@@ -92,7 +92,7 @@ export default async function ListPage({ params }: Props) {
         },
         {
           q: "How often is this list updated?",
-          a: "Every day. Products move up or down as their prices and discounts change, and sold-out products are removed.",
+          a: "Every week. Products move up or down as their prices and discounts change, and sold-out products are removed.",
         },
       ]
     : [];
@@ -110,7 +110,7 @@ export default async function ListPage({ params }: Props) {
         <header className="brand-hero">
           <span className="eyebrow">
             <span className="live-dot" aria-hidden="true" />
-            {def.category.plural} &middot; Updated daily
+            {def.category.plural} &middot; Updated weekly
           </span>
           <h1>{list.title}</h1>
           {s ? (
@@ -231,7 +231,7 @@ export default async function ListPage({ params }: Props) {
               gaming brands. We keep only in-stock items that match the list ({def.qualifier}), then rank them by their
               current discount against a real reference price and by customer ratings. We never invent prices or
               discounts, and a strikethrough price only appears when a genuine reference price exists. Prices are checked
-              daily and can change, so confirm the final price at checkout.
+              weekly and can change, so confirm the final price at checkout.
             </p>
             <h2>What to look for</h2>
             <ul>

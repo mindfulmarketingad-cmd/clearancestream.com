@@ -15,7 +15,7 @@ import { formatChecked, lowerName } from "@/lib/format";
 import { liveLists } from "@/lib/lists";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 86400;
+export const revalidate = 604800;
 export const dynamicParams = false;
 
 // Hub pages show the top of the category; every product is still reachable
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!category) return {};
   return pageMetadata({
     title: `${category.hubTitle}: Discounts and Promos`,
-    description: `${category.blurb} Compare live prices and real discounts across every brand, updated daily.`,
+    description: `${category.blurb} Compare live prices and real discounts across every brand, updated weekly.`,
     path: `/categories/${category.slug}`,
   });
 }
@@ -51,7 +51,7 @@ export default async function CategoryPage({ params }: Props) {
   const faqs = [
     {
       q: `How many ${lowerName(category.plural)} do you track?`,
-      a: `${deals.length} right now, from ${brandCounts.length} brands${discounted ? `, with ${discounted} currently discounted` : ""}. The count changes daily as products are added, sell out, or change price.`,
+      a: `${deals.length} right now, from ${brandCounts.length} brands${discounted ? `, with ${discounted} currently discounted` : ""}. The count changes weekly as products are added, sell out, or change price.`,
     },
     {
       q: `Are the discounts on ${lowerName(category.plural)} real?`,

@@ -185,7 +185,7 @@ function Body() {
       <h3>Short-term and limited-time deals</h3>
       <p>
         Retailers run time-limited deals that can last hours or days. They sometimes carry the deepest discounts but
-        disappear quickly. ClearanceStream refreshes prices every day and flags listings marked as a limited-time
+        disappear quickly. ClearanceStream refreshes prices every week and flags listings marked as a limited-time
         deal, but short deals can end between checks, so always confirm the price at checkout.
       </p>
       <h3>Renewed and open-box stock</h3>
@@ -295,7 +295,7 @@ function Body() {
 
       <h2 id="using-clearancestream">How to use ClearanceStream</h2>
       <p>
-        ClearanceStream tracks gaming PC and gear listings from supported brands and refreshes prices every day. Every
+        ClearanceStream tracks gaming PC and gear listings from supported brands and refreshes prices every week. Every
         deal shows the current price, the reference price, the saving in dollars and percent, and the time
         the price was checked.
       </p>

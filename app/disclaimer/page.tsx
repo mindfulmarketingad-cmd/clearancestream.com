@@ -38,7 +38,7 @@ export default function DisclaimerPage() {
         the product.
       </p>
       <p>
-        Prices on {SITE.name} are retrieved from an official retail product feed and refreshed about once a day. Each
+        Prices on {SITE.name} are retrieved from an official retail product feed and refreshed about once a week. Each
         deal shows the time its price was last checked. Retailers may change a price, end a promotion, or sell out of
         an item at any time, including between our checks. Always confirm the final price and details at checkout.
       </p>

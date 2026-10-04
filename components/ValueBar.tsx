@@ -7,7 +7,7 @@ export function ValueBar() {
         <ShieldIcon />
         <p>
           <b>Verified listings</b>
-          <span>Live prices, checked every day</span>
+          <span>Live prices, checked every week</span>
         </p>
       </div>
       <div>
@@ -20,7 +20,7 @@ export function ValueBar() {
       <div>
         <RefreshIcon />
         <p>
-          <b>Updated daily</b>
+          <b>Updated weekly</b>
           <span>Every price shows when it was checked</span>
         </p>
       </div>

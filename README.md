@@ -1,7 +1,7 @@
 # ClearanceStream.com
 
 Gaming PC hidden deals and clearances, powered by live Amazon data. Built with
-Next.js 16 (App Router), statically rendered with daily incremental
+Next.js 16 (App Router), statically rendered with weekly incremental
 regeneration.
 
 ## Setup
@@ -46,8 +46,8 @@ product is assigned one by title; order in the list decides ties.
 
 ## Refresh cadence
 
-Prices refresh every 24 hours (`SITE.revalidate`), the longest Amazon's API terms allow
-product data to be cached. A cold refresh of all brands is ~70 API calls at 1 request/second.
+Prices refresh once a week (`SITE.revalidate`, 604800 seconds). Every price shows the
+time it was checked. Note: Amazon's API license limits caching to 24 hours. A cold refresh of all brands is ~70 API calls at 1 request/second.
 
 ## Retailer naming on the site
 

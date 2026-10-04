@@ -17,7 +17,7 @@ import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
-export const revalidate = 86400;
+export const revalidate = 604800;
 export const dynamicParams = false;
 
 type Props = { params: Promise<{ brand: string }> };
@@ -42,7 +42,7 @@ export default async function BrandPage({ params }: Props) {
   const faqs = [
     {
       q: `How often are ${brand.name} deals updated?`,
-      a: `Every day. ClearanceStream checks live prices on every ${brand.name} product we track and shows the time each price was checked. Prices can change between checks, so confirm the final price at checkout.`,
+      a: `Every week. ClearanceStream checks live prices on every ${brand.name} product we track and shows the time each price was checked. Prices can change between checks, so confirm the final price at checkout.`,
     },
     {
       q: `Are ${brand.name} discounts on ClearanceStream real?`,
@@ -69,7 +69,7 @@ export default async function BrandPage({ params }: Props) {
             {brand.name} <span>Discounts and Promos</span>
           </h1>
           <p className="lede">
-            Live prices on every {brand.name} product we track, with current discounts first. Refreshed daily.
+            Live prices on every {brand.name} product we track, with current discounts first. Refreshed weekly.
           </p>
           <div className="page-meta">
             <span>
@@ -81,7 +81,7 @@ export default async function BrandPage({ params }: Props) {
               </span>
             ) : (
               <span>
-                <RefreshIcon /> Refreshed daily
+                <RefreshIcon /> Refreshed weekly
               </span>
             )}
           </div>
@@ -121,7 +121,7 @@ export default async function BrandPage({ params }: Props) {
               <p>
                 Use the search box, category filter, and sort options above to narrow the list. Discounts are always measured against a genuine
                 reference price, and new {brand.name} markdowns appear as soon as
-                our daily check finds them.
+                our weekly check finds them.
               </p>
 
               <h2>What we track from {brand.name}</h2>

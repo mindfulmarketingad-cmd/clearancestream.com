@@ -12,7 +12,7 @@ import { POPULAR_SEARCHES, popularSearch, runSearch } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { searchSlug } from "@/lib/slug";
 
-export const revalidate = 86400;
+export const revalidate = 604800;
 export const dynamicParams = true;
 
 type Props = { params: Promise<{ query: string }> };
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return pageMetadata({
     title: `${label} Deals`,
     description: count
-      ? `${count} live ${label} deals, ranked by discount and refreshed daily on ClearanceStream.`
+      ? `${count} live ${label} deals, ranked by discount and refreshed weekly on ClearanceStream.`
       : `Search results for ${label} on ClearanceStream: gaming PC deals, brands, and buying guides.`,
     path: `/search/${slug}`,
     // Only curated searches with live results are indexable; everything else

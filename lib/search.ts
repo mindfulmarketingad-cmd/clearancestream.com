@@ -119,7 +119,7 @@ function buildIndex(deals: Deal[]): SearchDoc[] {
     docs.push({
       type: "guide",
       title: l.title,
-      description: `Ranked list, updated daily.`,
+      description: `Ranked list, updated weekly.`,
       path: `/lists/${l.def.slug}`,
       haystack: `${l.title} ${l.def.category.noun} ${l.def.qualifier}`.toLowerCase(),
     });

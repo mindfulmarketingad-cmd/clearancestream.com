@@ -38,7 +38,7 @@ export default function AboutPage() {
 
             <h2>How we find deals</h2>
             <p>
-              Every day, ClearanceStream requests current listings for the brands we track through an official
+              Every week, ClearanceStream requests current listings for the brands we track through an official
               retail product feed. We filter out unrelated products, read the current price and reference price for
               each listing, and rank the results by the size of the discount.
             </p>
@@ -88,7 +88,7 @@ export default function AboutPage() {
                 </li>
                 <li style={{ display: "flex", gap: 10 }}>
                   <RadarIcon style={{ width: 18, height: 18, color: "var(--blue)", flexShrink: 0, marginTop: 3 }} />
-                  <span>Checked every day, timestamped on every deal</span>
+                  <span>Checked every week, timestamped on every deal</span>
                 </li>
                 <li style={{ display: "flex", gap: 10 }}>
                   <FilterIcon style={{ width: 18, height: 18, color: "var(--blue)", flexShrink: 0, marginTop: 3 }} />
