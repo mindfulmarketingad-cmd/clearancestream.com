@@ -3,18 +3,13 @@ import { searchSlug } from "./lib/slug";
 
 /**
  * URL canonicalisation, applied before any page renders:
- *  - www.clearancestream.com -> clearancestream.com
+ *  (The host itself is canonicalised by Vercel's domain settings:
+ *  clearancestream.com redirects to www.clearancestream.com.)
  *  - /Brands/Corsair -> /brands/corsair (single lowercase URL per page)
  *  - /search?q=RTX 5080 -> /search/rtx-5080 (search form submissions)
  */
 export function proxy(request: NextRequest) {
   const url = request.nextUrl;
-  const host = request.headers.get("host") ?? "";
-
-  if (host.startsWith("www.")) {
-    const target = new URL(url.pathname + url.search, `https://${host.slice(4)}`);
-    return NextResponse.redirect(target, 301);
-  }
 
   if (url.pathname === "/search" && url.searchParams.has("q")) {
     const slug = searchSlug(url.searchParams.get("q") ?? "");

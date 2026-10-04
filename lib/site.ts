@@ -1,7 +1,7 @@
 export const SITE = {
   name: "ClearanceStream",
   domain: "ClearanceStream.com",
-  url: "https://clearancestream.com",
+  url: "https://www.clearancestream.com",
   tagline: "Gaming PC Hidden Deals & Clearances",
   description:
     "ClearanceStream helps gaming PC enthusiasts track hidden discounts, price drops, and promos on gaming PCs, laptops, mice, keyboards, headsets, and controllers from the biggest brands in gaming.",

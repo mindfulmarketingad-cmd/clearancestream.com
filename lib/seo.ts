@@ -18,7 +18,10 @@ export function pageMetadata(input: MetaInput): Metadata {
   const url = absoluteUrl(input.path);
   const image = input.image ?? { url: "/og.png", width: 1200, height: 630, alt: SITE.tagline };
   return {
-    title: input.absoluteTitle ? { absolute: input.title } : input.title,
+    // Skip the "| ClearanceStream.com" suffix when it would push the title past
+    // what search results display (~60 characters).
+    title:
+      input.absoluteTitle || input.title.length + SITE.domain.length + 3 > 62 ? { absolute: input.title } : input.title,
     description: input.description,
     alternates: { canonical: url },
     robots: input.noindex
