@@ -1,5 +1,11 @@
 import type { Brand } from "../brands";
 
+// Local copies of the filter gates from lib/brands.ts (duplicated here to avoid
+// a circular import: lib/brands.ts imports this file's EXTRA_BRANDS_B).
+const PERIPHERALS =
+  /\b(keyboard|mouse|mice|headset|headphones?|monitor|webcam|microphone|mouse ?pad|controller|chair|desk|cable|fans?|fan kit|case|chassis|power supply|psu|ram kit|memory kit|cooler|stream deck|capture card|replacement|sticker|skin)\b/i;
+const NO_DESKTOPS = /\b(gaming (pc|desktop|computer)|desktop)\b/i;
+
 export const EXTRA_BRANDS_B: Brand[] = [
   // ------------------------------------------------------- Monitors
   {
