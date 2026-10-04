@@ -40,7 +40,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const deal = await resolve(props);
   const saving = deal.savingsPercent ? ` (${deal.savingsPercent}% off)` : "";
   return pageMetadata({
-    title: `${deal.name} Deal: ${deal.priceDisplay}${saving}`,
+    title: `${deal.name} Discount: ${deal.priceDisplay}${saving}`,
     description: `${deal.name} is ${deal.priceDisplay}${
       deal.savingsDisplay ? `, ${deal.savingsDisplay} below the ${deal.listPriceLabel?.toLowerCase() ?? "reference price"}` : ""
     }. Live ${deal.brandName} ${deal.isGamingPc ? "gaming PC " : ""}deal tracked daily by ClearanceStream.`,
@@ -134,7 +134,7 @@ export default async function ProductPage(props: Props) {
               {deal.savingsPercent ? <span className="badge badge-discount">{deal.savingsPercent}% off</span> : null}
               {deal.dealBadge ? <span className="badge badge-neutral">{deal.dealBadge}</span> : null}
             </div>
-            <h1>{deal.name}</h1>
+            <h1>{deal.name} Discount</h1>
 
             <div className="buy-box">
               <div className="price-row">
