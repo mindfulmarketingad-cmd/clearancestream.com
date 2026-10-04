@@ -65,6 +65,10 @@ export default async function HomePage() {
   return (
     <>
       <section className="hero">
+        <video className="hero-bg" autoPlay muted loop playsInline preload="auto" aria-hidden="true" tabIndex={-1}>
+          <source src="/hero-bg.mp4" type="video/mp4" />
+        </video>
+        <div className="hero-tint" aria-hidden="true" />
         <div className="container hero-grid">
           <div>
             <span className="eyebrow">
