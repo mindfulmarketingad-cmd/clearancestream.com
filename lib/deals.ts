@@ -206,7 +206,8 @@ export async function fetchBrandLive(slug: string): Promise<BrandFetch> {
         // Auth/eligibility rejections apply to every request; stop instead of repeating them.
         if (/ failed: (401|403)\b/.test(message)) throw new Error(`${ACCOUNT_REJECTED}: ${message}`);
         failures++;
-        console.error(`[deals] ${brand.slug} "${keywords}" (${searchIndex}) page ${itemPage}:`, message);
+        if (process.env.NODE_ENV === "development")
+          console.error(`[deals] ${brand.slug} "${keywords}" (${searchIndex}) page ${itemPage}:`, message);
         break;
       }
     }
@@ -251,7 +252,6 @@ function snapshotFor(slug: string): BrandFetch | null {
 
 const ACCOUNT_REJECTED = "Product API rejected the account";
 let warnedUnconfigured = false;
-const loggedFetches = new Set<string>();
 // Failures are not written to the shared cache, so remember them in-process
 // briefly; otherwise every page render would retry the failing API calls.
 const FAILURE_BACKOFF_MS = 10 * 60 * 1000;
@@ -269,8 +269,10 @@ function configured() {
   if (getConfig()) return true;
   if (!warnedUnconfigured) {
     warnedUnconfigured = true;
-    const missing = ["AMAZON_CREDENTIAL_ID", "AMAZON_CREDENTIAL_SECRET"].filter((k) => !process.env[k]?.trim());
-    console.warn(`[deals] Product API not configured; missing env: ${missing.join(", ")}. No deals will be shown.`);
+    if (process.env.NODE_ENV === "development") {
+      const missing = ["AMAZON_CREDENTIAL_ID", "AMAZON_CREDENTIAL_SECRET"].filter((k) => !process.env[k]?.trim());
+      console.warn(`[deals] Product API not configured; missing env: ${missing.join(", ")}. No deals will be shown.`);
+    }
   }
   return false;
 }
@@ -295,17 +297,12 @@ async function loadBrand(brand: Brand): Promise<BrandFetch | null> {
   try {
     const result = await pending;
     memo.set(brand.slug, { at: Date.now(), result });
-    const key = `${brand.slug}@${result.fetchedAt}`;
-    if (!loggedFetches.has(key)) {
-      loggedFetches.add(key);
-      console.info(`[deals] ${brand.slug}: ${result.deals.length} deals (fetched ${result.fetchedAt})`);
-    }
     return result;
   } catch (err) {
     const message = (err as Error).message;
     if (message.startsWith(ACCOUNT_REJECTED)) failedUntil = Date.now() + FAILURE_BACKOFF_MS;
     else brandFailedUntil.set(brand.slug, Date.now() + FAILURE_BACKOFF_MS);
-    console.error(`[deals] ${brand.slug} unavailable, retrying in 10 minutes:`, message);
+    if (process.env.NODE_ENV === "development") console.error(`[deals] ${brand.slug} unavailable, retrying in 10 minutes:`, message);
     return null;
   }
 }
@@ -355,7 +352,7 @@ export async function getDeal(asin: string): Promise<Deal | null> {
   try {
     return await fetchItem(asin);
   } catch (err) {
-    console.error(`[deals] getItems ${asin}:`, (err as Error).message);
+    if (process.env.NODE_ENV === "development") console.error(`[deals] getItems ${asin}:`, (err as Error).message);
     return null;
   }
 }
