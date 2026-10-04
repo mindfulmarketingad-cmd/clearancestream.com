@@ -1778,9 +1778,9 @@ a.card:hover {
 /* Grouped brand dropdown */
 .submenu.mega {
   display: grid;
-  grid-template-columns: repeat(3, minmax(170px, 1fr));
-  gap: 4px 20px;
-  min-width: 600px;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 4px 16px;
+  min-width: 760px;
   padding: 16px;
   /* Anchored right so the wide panel never extends past the viewport. */
   left: auto;

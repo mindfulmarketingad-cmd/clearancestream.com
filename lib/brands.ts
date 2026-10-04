@@ -1,8 +1,9 @@
-export type BrandGroup = "pcs" | "peripherals" | "controllers";
+export type BrandGroup = "pcs" | "peripherals" | "displays" | "controllers";
 
 export const BRAND_GROUPS: { id: BrandGroup; name: string }[] = [
   { id: "pcs", name: "Gaming PCs & Laptops" },
   { id: "peripherals", name: "Mice, Keyboards & Headsets" },
+  { id: "displays", name: "Monitors & Streaming" },
   { id: "controllers", name: "Controllers & Racing" },
 ];
 
@@ -822,6 +823,199 @@ export const BRANDS: Brand[] = [
     faqs: [
       { q: "Do Thrustmaster wheels work on PC?", a: "Yes. Most Thrustmaster wheels support PC alongside either PlayStation or Xbox." },
       { q: "What is a HOTAS?", a: "Hands On Throttle And Stick: a flight setup with a separate joystick and throttle, used in flight and space sims." },
+    ],
+  },
+  // ---------------------------------------------------- More peripherals
+  {
+    slug: "redragon",
+    name: "Redragon",
+    group: "peripherals",
+    apiBrand: "Redragon",
+    searches: [{ keywords: "Redragon gaming", searchIndex: "Computers" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "budget mechanical keyboards, gaming mice, and headsets",
+    intro:
+      "Redragon makes budget gaming peripherals, best known for affordable mechanical keyboards, RGB gaming mice, and headsets that undercut the big-name brands.",
+    overview: [
+      "Redragon built its following by bringing mechanical keyboards and high-DPI mice down to entry-level prices. Its range now covers keyboards, mice, headsets, microphones, and mouse pads.",
+      "Because Redragon prices start low, even modest discounts can make a complete keyboard, mouse, and headset setup very affordable. Bundles are common and worth comparing against buying items separately.",
+    ],
+    lines: [
+      { name: "Mechanical keyboards", summary: "Full-size, TKL, and 60% boards, many with hot-swap sockets." },
+      { name: "Gaming mice", summary: "Wired and wireless mice with adjustable DPI and RGB lighting." },
+      { name: "Headsets and mics", summary: "Affordable gaming headsets and USB streaming microphones." },
+    ],
+    buyingTips: [
+      "Check the switch type listed; Redragon uses its own switches, which vary in feel between models.",
+      "Hot-swap models let you upgrade switches later, which stretches a budget keyboard further.",
+      "Compare bundles against individual prices; the bundle is not always cheaper.",
+    ],
+    faqs: [
+      { q: "Are Redragon keyboards good?", a: "For the price, yes. They are a popular way to get a mechanical keyboard on a tight budget." },
+      { q: "Do Redragon keyboards have hot-swap switches?", a: "Many recent models do. Check the product details for hot-swap support before buying." },
+    ],
+  },
+  {
+    slug: "keychron",
+    name: "Keychron",
+    group: "peripherals",
+    apiBrand: "Keychron",
+    searches: [{ keywords: "Keychron keyboard", searchIndex: "Computers" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "wireless mechanical keyboards and mice",
+    intro:
+      "Keychron makes wireless mechanical keyboards for gaming, work, and Mac users, with hot-swap switches, QMK and VIA support, and compact layouts.",
+    overview: [
+      "Keychron became popular for compact wireless mechanical keyboards that work equally well on Mac and Windows. Its range runs from affordable K-series boards to aluminium Q- and V-series custom keyboards.",
+      "Keychron keyboards are discounted regularly, especially outgoing versions when a new revision launches. Gaming-focused models add high polling rates for lower latency.",
+    ],
+    lines: [
+      { name: "K series", summary: "Wireless mechanical keyboards in many layouts, from full-size to 60%." },
+      { name: "Q and V series", summary: "Customisable keyboards with QMK and VIA support, in aluminium or plastic cases." },
+      { name: "Mice", summary: "Lightweight wireless mice designed to pair with Keychron keyboards." },
+    ],
+    buyingTips: [
+      "Check the polling rate if you play competitively; gaming-focused models run at 1000Hz or higher.",
+      "QMK and VIA support makes remapping keys easy without extra software.",
+      "Older revisions are often cleared at bigger discounts with only minor differences.",
+    ],
+    faqs: [
+      { q: "Are Keychron keyboards good for gaming?", a: "Yes, especially models with high polling rates and wired mode. Use wired or 2.4GHz mode for the lowest latency." },
+      { q: "Do Keychron keyboards work with Windows?", a: "Yes. They switch between Mac and Windows layouts." },
+    ],
+  },
+  {
+    slug: "cooler-master",
+    name: "Cooler Master",
+    group: "peripherals",
+    apiBrand: "Cooler Master",
+    aliases: ["cooler master", "coolermaster"],
+    searches: [
+      { keywords: "Cooler Master gaming", searchIndex: "Computers" },
+      { keywords: "Cooler Master cooler", searchIndex: "Computers" },
+    ],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "PC cases, CPU coolers, power supplies, and peripherals",
+    intro:
+      "Cooler Master makes PC cases, CPU air and liquid coolers, power supplies, and gaming peripherals, and is one of the longest-running names in PC building.",
+    overview: [
+      "Founded in 1992, Cooler Master started with cooling and grew into cases, power supplies, keyboards, mice, headsets, and monitors. Its MasterBox and HAF cases and Hyper 212 coolers are long-standing builder favourites.",
+      "Cooler Master components are discounted frequently, which makes them a good place to save when building or upgrading a gaming PC.",
+    ],
+    lines: [
+      { name: "Cases", summary: "Airflow-focused MasterBox, HAF, and mesh cases from compact to full tower." },
+      { name: "Cooling", summary: "Hyper air coolers and MasterLiquid all-in-one liquid coolers." },
+      { name: "Power supplies", summary: "MWE and V series PSUs in a wide range of wattages." },
+      { name: "Peripherals", summary: "Gaming keyboards, mice, and headsets." },
+    ],
+    buyingTips: [
+      "Check CPU socket compatibility for coolers, including mounting kits for newer platforms.",
+      "Confirm case GPU clearance and radiator support before buying.",
+      "For power supplies, buy enough wattage for future GPU upgrades and check the efficiency rating.",
+    ],
+    faqs: [
+      { q: "Is Cooler Master a good brand for PC parts?", a: "Yes. It is a long-established component maker, and its cases and coolers are widely used." },
+      { q: "Does the Hyper 212 fit modern CPUs?", a: "Current versions support recent Intel and AMD sockets. Check the listing for socket support." },
+    ],
+  },
+
+  // ------------------------------------------------ Monitors & Streaming
+  {
+    slug: "samsung-odyssey",
+    name: "Samsung Odyssey",
+    group: "displays",
+    apiBrand: "Samsung",
+    aliases: ["samsung", "samsung electronics"],
+    searches: [{ keywords: "Samsung Odyssey gaming monitor", searchIndex: "Computers" }],
+    require: /\b(odyssey|gaming monitor)\b/i,
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "gaming monitors, including curved and OLED models",
+    intro:
+      "Samsung Odyssey is Samsung's gaming monitor line, covering fast 1440p and 4K panels, ultrawide and super-ultrawide curved screens, and QD-OLED displays.",
+    overview: [
+      "Odyssey monitors range from affordable high-refresh G-series panels to the Odyssey Neo mini-LED and Odyssey OLED models. Samsung is known for aggressive curves and very wide formats such as 49-inch super-ultrawides.",
+      "Samsung discounts Odyssey monitors often, particularly older generations when new models arrive, so the same panel can drop significantly in price.",
+    ],
+    lines: [
+      { name: "Odyssey OLED", summary: "QD-OLED gaming monitors with near-instant response times." },
+      { name: "Odyssey Neo", summary: "Mini-LED monitors with high brightness for HDR." },
+      { name: "Odyssey G series", summary: "High-refresh 1440p and 4K monitors, flat and curved." },
+    ],
+    buyingTips: [
+      "Match resolution to your GPU: 1440p suits most mid-range cards, 4K needs a high-end one.",
+      "Check your desk depth and GPU support before buying a super-ultrawide.",
+      "OLED monitors offer the best motion clarity; consider burn-in protection features if you play static games.",
+    ],
+    faqs: [
+      { q: "Which Samsung Odyssey monitor is best for gaming?", a: "It depends on budget and GPU. G-series 1440p models are the best value, while Odyssey OLED models offer the best image quality." },
+      { q: "Are curved monitors better for gaming?", a: "On wide and ultrawide screens a curve keeps the edges in view and is more immersive. On smaller screens it matters less." },
+    ],
+  },
+  {
+    slug: "lg-ultragear",
+    name: "LG UltraGear",
+    group: "displays",
+    apiBrand: "LG",
+    aliases: ["lg", "lg electronics"],
+    searches: [{ keywords: "LG UltraGear gaming monitor", searchIndex: "Computers" }],
+    require: /\b(ultragear|gaming monitor)\b/i,
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "gaming monitors, including OLED and high-refresh models",
+    intro:
+      "LG UltraGear is LG's gaming monitor line, with fast IPS panels, OLED displays, and dual-mode monitors that switch between high resolution and very high refresh rates.",
+    overview: [
+      "LG makes many of the panels used across the monitor industry, and its UltraGear line puts them to work in gaming monitors from 24 to 45 inches, including WOLED models.",
+      "UltraGear monitors see regular discounts, and previous-generation OLED models in particular can drop to much better prices.",
+    ],
+    lines: [
+      { name: "UltraGear OLED", summary: "WOLED gaming monitors with fast response times and high refresh rates." },
+      { name: "UltraGear IPS", summary: "Fast IPS gaming monitors at 1080p, 1440p, and 4K." },
+      { name: "Ultrawide", summary: "Curved ultrawide gaming monitors for immersive play." },
+    ],
+    buyingTips: [
+      "Check the refresh rate your GPU can actually reach at the monitor's resolution.",
+      "Dual-mode models trade resolution for refresh rate at the press of a button, useful for both competitive and story games.",
+      "Look for a DisplayPort or HDMI 2.1 input to reach the full refresh rate.",
+    ],
+    faqs: [
+      { q: "Is LG UltraGear good for gaming?", a: "Yes. UltraGear monitors are widely recommended, especially the fast IPS and OLED models." },
+      { q: "What is a dual-mode monitor?", a: "A monitor that can switch between a high resolution at a normal refresh rate and a lower resolution at a much higher refresh rate." },
+    ],
+  },
+  {
+    slug: "elgato",
+    name: "Elgato",
+    group: "displays",
+    apiBrand: "Elgato",
+    searches: [{ keywords: "Elgato", searchIndex: "Computers" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "capture cards, Stream Decks, webcams, mics, and lights",
+    intro:
+      "Elgato makes streaming and content creation gear, including capture cards, Stream Deck controllers, webcams, microphones, and key lights.",
+    overview: [
+      "Elgato is part of Corsair and is one of the most common names on streaming desks. Its Stream Deck controllers, HD60 and 4K capture cards, and Facecam webcams are used by streamers at every level.",
+      "Elgato gear is discounted regularly, and bundles or previous-generation capture cards can offer large savings for new streamers.",
+    ],
+    lines: [
+      { name: "Stream Deck", summary: "Programmable LCD-key controllers for streaming and productivity." },
+      { name: "Capture cards", summary: "External and internal cards for recording and streaming console or PC gameplay." },
+      { name: "Cameras and audio", summary: "Facecam webcams and Wave microphones." },
+      { name: "Lighting", summary: "Key Light and Ring Light panels for on-camera lighting." },
+    ],
+    buyingTips: [
+      "Match the capture card to your console's output; 4K and high-refresh capture need newer models.",
+      "Choose a Stream Deck size by how many actions you want on one page; folders extend smaller models.",
+      "Check whether a capture card supports passthrough so you can play without lag while recording.",
+    ],
+    faqs: [
+      { q: "Is Elgato owned by Corsair?", a: "Yes. Corsair acquired Elgato's gaming division in 2018." },
+      { q: "Do I need a capture card to stream?", a: "Only for consoles or a second PC. Streaming from the same PC you play on does not require one." },
     ],
   },
 ];
