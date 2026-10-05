@@ -1,13 +1,11 @@
 import "server-only";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { unstable_cache } from "next/cache";
 import { BRANDS, brandFromByline, getBrand, type Brand } from "./brands";
 import { extractAttributes } from "./attributes";
 import { categorize } from "./categories";
 import { getConfig, getItems, searchItems, type ApiItem } from "./amazon/creators-api";
 import { productSlug, shortTitle } from "./slug";
-import { SITE } from "./site";
 
 export type Deal = {
   asin: string;
@@ -217,17 +215,17 @@ export async function fetchBrandLive(slug: string): Promise<BrandFetch> {
   return { deals: [...byAsin.values()].sort(rank), fetchedAt };
 }
 
-const fetchBrandDeals = unstable_cache(fetchBrandLive, ["brand-deals-v3"], {
-  revalidate: SITE.revalidate,
-  tags: ["deals"],
-});
+// The site is built statically once per deploy, so there is no runtime data
+// cache: brand data comes from the deploy-time snapshot, or is fetched once per
+// build process (see loadBrand's in-memory memo).
+const fetchBrandDeals = fetchBrandLive;
 
 /**
  * Snapshot of every brand's catalog, written by scripts/snapshot-deals.ts just
  * before `next build` and shipped with the deployment. The runtime data cache is
  * not shared with the build on every host, so without this each page rendered
- * on first visit would refetch the whole catalog. Entries older than the refresh
- * interval are ignored, so data still refreshes weekly.
+ * on first visit would refetch the whole catalog. The snapshot always matches
+ * the prebuilt pages of the same deploy; data refreshes with each redeploy.
  */
 export const SNAPSHOT_FILE = "data/deals-snapshot.json";
 type Snapshot = { generatedAt: string; brands: Record<string, BrandFetch> };
@@ -244,9 +242,7 @@ function readSnapshot(): Snapshot | null {
 }
 
 function snapshotFor(slug: string): BrandFetch | null {
-  const entry = readSnapshot()?.brands[slug];
-  if (!entry) return null;
-  return Date.now() - Date.parse(entry.fetchedAt) < SITE.revalidate * 1000 ? entry : null;
+  return readSnapshot()?.brands[slug] ?? null;
 }
 
 const ACCOUNT_REJECTED = "Product API rejected the account";
@@ -275,9 +271,9 @@ function configured() {
   return false;
 }
 
-// The data cache is not always consulted between renders in the same process
-// (notably during a build), so recent results are also kept in memory briefly.
-const MEMO_MS = 15 * 60 * 1000;
+// A build renders thousands of pages from one fetch, so results are kept in
+// memory for the whole process.
+const MEMO_MS = 24 * 60 * 60 * 1000;
 const memo = (shared.__csMemo ??= new Map());
 
 async function loadBrand(brand: Brand): Promise<BrandFetch | null> {
@@ -336,16 +332,12 @@ export async function getBrandDeals(slug: string): Promise<DealsResult> {
   return combine([await loadBrand(brand)]);
 }
 
-const fetchItem = unstable_cache(
-  async (asin: string): Promise<Deal | null> => {
-    const [item] = await getItems([asin]);
-    if (!item) return null;
-    const brand = brandFromByline(item.itemInfo?.byLineInfo?.brand?.displayValue ?? item.itemInfo?.title?.displayValue);
-    return brand ? normalize(item, brand, new Date().toISOString()) : null;
-  },
-  ["deal-by-asin-v6"],
-  { revalidate: SITE.revalidate, tags: ["deals"] },
-);
+async function fetchItem(asin: string): Promise<Deal | null> {
+  const [item] = await getItems([asin]);
+  if (!item) return null;
+  const brand = brandFromByline(item.itemInfo?.byLineInfo?.brand?.displayValue ?? item.itemInfo?.title?.displayValue);
+  return brand ? normalize(item, brand, new Date().toISOString()) : null;
+}
 
 export async function getDeal(asin: string): Promise<Deal | null> {
   const { deals } = await getAllDeals();

@@ -8,7 +8,6 @@ import { getAllDeals } from "@/lib/deals";
 import { lowerName } from "@/lib/format";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 604800;
 
 export const metadata = pageMetadata({
   title: "Gaming Deals by Category",

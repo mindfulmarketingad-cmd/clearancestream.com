@@ -1,0 +1,24 @@
+# The site is fully static: every page is built once per deploy from a fresh
+# product snapshot. This triggers a production redeploy every Monday so prices
+# and products stay current. Requires a Vercel Deploy Hook URL stored as the
+# repository secret VERCEL_DEPLOY_HOOK_URL (Vercel: Settings > Git > Deploy Hooks).
+name: Weekly rebuild
+
+on:
+  schedule:
+    - cron: "17 6 * * 1" # Mondays 06:17 UTC
+  workflow_dispatch:
+
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "VERCEL_DEPLOY_HOOK_URL is not set; skipping." >&2
+            exit 1
+          fi
+          curl -fsS -X POST "$HOOK"

@@ -6,7 +6,6 @@ import { getAllDeals } from "@/lib/deals";
 import { liveLists } from "@/lib/lists";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 604800;
 
 const year = new Date().getFullYear();
 

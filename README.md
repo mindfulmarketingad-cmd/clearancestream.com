@@ -46,8 +46,20 @@ product is assigned one by title; order in the list decides ties.
 
 ## Refresh cadence
 
-Prices refresh once a week (`SITE.revalidate`, 604800 seconds). Every price shows the
-time it was checked. Note: Amazon's API license limits caching to 24 hours. A cold refresh of all brands is ~70 API calls at 1 request/second.
+The site is fully static: no ISR, no runtime data cache. `npm run build` first runs
+`scripts/snapshot-deals.ts`, which fetches every brand once and writes
+`data/deals-snapshot.json`; every page (products, lists, brand/category pages,
+coupons, featured images, the search index) is then prebuilt from that snapshot.
+
+Data refreshes by redeploying. `.github/workflows/weekly-rebuild.yml` calls a Vercel
+Deploy Hook every Monday; create the hook in Vercel (Settings > Git > Deploy Hooks,
+on the production branch) and save its URL as the repository secret
+`VERCEL_DEPLOY_HOOK_URL`. Every price shows the time it was checked. Note: Amazon's API
+license limits caching to 24 hours.
+
+Free-text searches (`/search?q=...`) run in the browser against `/search-index.json`;
+only the curated popular searches have prebuilt pages. The homepage Deal of the Day
+is chosen in the browser from a prebuilt pool, so it changes daily without a rebuild.
 
 ## Retailer naming on the site
 

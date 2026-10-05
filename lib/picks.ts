@@ -27,8 +27,16 @@ function isoWeek(now: Date) {
   return d.getUTCFullYear() * 100 + Math.ceil(((d.getTime() - yearStart) / 86_400_000 + 1) / 7);
 }
 
-export function dealPicks(deals: Deal[], now = new Date()) {
-  const pool = deals.filter(eligible).sort((a, b) => score(b) - score(a));
+/** The candidate pool, computed at build time and shipped to the page. */
+export function pickPool(deals: Deal[]) {
+  return deals
+    .filter(eligible)
+    .sort((a, b) => score(b) - score(a))
+    .slice(0, 35);
+}
+
+/** Choose today's and this week's picks from the pool. Safe to run in the browser. */
+export function choosePicks(pool: Deal[], now = new Date()) {
   if (pool.length === 0) return { day: null, week: null };
   const weekPool = pool.slice(0, 5);
   const week = weekPool[isoWeek(now) % weekPool.length];

@@ -12,8 +12,8 @@ import { POPULAR_SEARCHES, popularSearch, runSearch } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { searchSlug } from "@/lib/slug";
 
-export const revalidate = 604800;
-export const dynamicParams = true;
+// Only curated searches are prebuilt; other queries are handled on /search?q=.
+export const dynamicParams = false;
 
 type Props = { params: Promise<{ query: string }> };
 

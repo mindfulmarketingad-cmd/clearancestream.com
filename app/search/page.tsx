@@ -3,6 +3,7 @@ import { SearchIcon } from "@/components/Icons";
 import { BrandDirectory } from "@/components/BrandDirectory";
 import { PageHeader } from "@/components/PageHeader";
 import { SearchBox } from "@/components/SearchBox";
+import { SearchResults } from "@/components/SearchResults";
 import { POSTS } from "@/lib/blog";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { pageMetadata } from "@/lib/seo";
@@ -24,6 +25,7 @@ export default function SearchPage() {
       >
         <SearchBox />
       </PageHeader>
+      <SearchResults />
       <section className="section-tight">
         <div className="container">
           <h2 style={{ fontSize: 20, marginBottom: 16 }}>Popular searches</h2>

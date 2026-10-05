@@ -15,7 +15,6 @@ import { formatChecked, lowerName } from "@/lib/format";
 import { liveLists } from "@/lib/lists";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 604800;
 export const dynamicParams = false;
 
 // Hub pages show the top of the category; every product is still reachable

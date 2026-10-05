@@ -10,7 +10,6 @@ import { formatChecked } from "@/lib/format";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 604800;
 
 export const metadata = pageMetadata({
   title: "All Gaming PC Deals: Live Prices on Gaming PCs & Gear",

@@ -1,9 +1,9 @@
 import Link from "next/link";
-import type { Deal } from "@/lib/deals";
+import type { CardDeal } from "@/lib/search-core";
 import { formatChecked } from "@/lib/format";
 import { ArrowRight, ClockIcon, ShieldIcon } from "./Icons";
 
-type Props = { deal: Deal; priority?: boolean; hidden?: boolean };
+type Props = { deal: CardDeal; priority?: boolean; hidden?: boolean };
 
 export function DealCard({ deal, priority = false, hidden = false }: Props) {
   return (
@@ -59,7 +59,7 @@ export function DealCard({ deal, priority = false, hidden = false }: Props) {
   );
 }
 
-export function DealGrid({ deals, priorityCount = 0 }: { deals: Deal[]; priorityCount?: number }) {
+export function DealGrid({ deals, priorityCount = 0 }: { deals: CardDeal[]; priorityCount?: number }) {
   return (
     <div className="deal-grid">
       {deals.map((deal, i) => (

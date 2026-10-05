@@ -8,20 +8,19 @@ import { ArrowRight, CheckIcon, ClockIcon, ExternalIcon, TagIcon } from "@/compo
 import { JsonLd } from "@/components/JsonLd";
 import { getAllDeals, type Deal } from "@/lib/deals";
 import { formatChecked, lowerName } from "@/lib/format";
-import { getListDef, liveLists, resolveAll, specSummary, type ResolvedList } from "@/lib/lists";
+import { LISTS, getListDef, liveLists, resolveAll, specSummary, type ResolvedList } from "@/lib/lists";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { getBrand, type Brand } from "@/lib/brands";
 import { ListDirectory } from "@/components/ListLinks";
 import { FEATURED_SIZE, listImagePath } from "@/lib/featured-image";
 
-export const revalidate = 604800;
-// Lists render on first request and then cache for a week, like product pages.
-export const dynamicParams = true;
+// Every list is prebuilt at deploy time.
+export const dynamicParams = false;
 
 type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return [];
+  return LISTS.map((l) => ({ slug: l.slug }));
 }
 
 const money = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);

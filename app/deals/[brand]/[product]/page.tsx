@@ -14,15 +14,14 @@ import { pageMetadata } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import { asinFromSlug } from "@/lib/slug";
 
-export const revalidate = 604800;
-export const dynamicParams = true;
+// Every product page is prebuilt at deploy time; unknown products 404.
+export const dynamicParams = false;
 
 type Props = { params: Promise<{ brand: string; product: string }> };
 
-// Product pages render on first request (then cache for a week). Prerendering
-// them would need a second full price fetch during every build.
-export function generateStaticParams() {
-  return [];
+export async function generateStaticParams() {
+  const { deals } = await getAllDeals();
+  return deals.map((d) => ({ brand: d.brandSlug, product: d.slug }));
 }
 
 async function resolve({ params }: Props): Promise<Deal> {

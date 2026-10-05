@@ -6,9 +6,6 @@ export const SITE = {
   description:
     "ClearanceStream helps gaming PC enthusiasts track hidden discounts, price drops, and promos on gaming PCs, laptops, mice, keyboards, headsets, and controllers from the biggest brands in gaming.",
   locale: "en_US",
-  // Refresh cadence for product data, in seconds: once a week (owner's choice).
-  // Every price is shown with the time it was checked.
-  revalidate: 604800,
   social: {
     instagram: "https://www.instagram.com/clearancestream",
     twitter: "https://x.com/clearancestream",

@@ -9,7 +9,6 @@ import { couponMonth, couponSummaries } from "@/lib/coupons";
 import { getAllDeals } from "@/lib/deals";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 604800;
 
 export function generateMetadata(): Metadata {
   return pageMetadata({

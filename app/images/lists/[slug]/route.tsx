@@ -1,12 +1,13 @@
 import { featuredImage } from "@/lib/featured-image";
-import { LIST_SIZE, getListDef } from "@/lib/lists";
+import { LISTS, LIST_SIZE, getListDef } from "@/lib/lists";
 
-// Rendered on first request, then cached.
+// Built once per deploy, like the list pages.
 export const dynamic = "force-static";
-export const revalidate = 604800;
+
+export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return [];
+  return LISTS.map((l) => ({ slug: l.slug }));
 }
 
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {

@@ -19,7 +19,6 @@ import { formatChecked } from "@/lib/format";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
-export const revalidate = 604800;
 export const dynamicParams = false;
 
 type Props = { params: Promise<{ brand: string }> };

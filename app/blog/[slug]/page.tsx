@@ -14,7 +14,6 @@ import { formatDate } from "@/lib/format";
 import { ORGANIZATION_ID, pageMetadata } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 
-export const revalidate = 604800;
 export const dynamicParams = false;
 
 type Props = { params: Promise<{ slug: string }> };

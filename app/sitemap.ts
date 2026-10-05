@@ -9,7 +9,6 @@ import { getAllDeals } from "@/lib/deals";
 import { POPULAR_SEARCHES, runSearch } from "@/lib/search";
 import { absoluteUrl } from "@/lib/site";
 
-export const revalidate = 604800;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { deals, fetchedAt } = await getAllDeals();

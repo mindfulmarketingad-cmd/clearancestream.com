@@ -10,7 +10,7 @@ import { ArrowRight, ClockIcon, RefreshIcon, TagIcon } from "@/components/Icons"
 import { JsonLd } from "@/components/JsonLd";
 import { ValueBar } from "@/components/ValueBar";
 import { BRANDS, getBrand } from "@/lib/brands";
-import { getCategory } from "@/lib/categories";
+import { CATEGORIES, getCategory } from "@/lib/categories";
 import { getAllDeals } from "@/lib/deals";
 import { listsForBrand, liveLists } from "@/lib/lists";
 import { ListChips } from "@/components/ListLinks";
@@ -18,15 +18,13 @@ import { formatChecked, lowerName } from "@/lib/format";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
-export const revalidate = 604800;
-// Rendered on first request rather than at build time: most brand/category
-// combinations are empty at any moment, and this keeps builds to one API fetch.
-export const dynamicParams = true;
+// Every brand/category combination is prebuilt at deploy time (empty ones are noindex).
+export const dynamicParams = false;
 
 type Props = { params: Promise<{ brand: string; category: string }> };
 
 export function generateStaticParams() {
-  return [];
+  return BRANDS.flatMap((b) => CATEGORIES.map((c) => ({ brand: b.slug, category: c.slug })));
 }
 
 async function load(params: Props["params"]) {
