@@ -19,12 +19,16 @@ import { ScanCta } from "@/components/ScanCta";
 import { BRAND_GROUPS, BRANDS, brandsInGroup, getBrand } from "@/lib/brands";
 import { BrandDirectory } from "@/components/BrandDirectory";
 import { gamingPcsFirst, getAllDeals } from "@/lib/deals";
+import { dealPicks } from "@/lib/picks";
+import { DealSpotlight } from "@/components/DealSpotlight";
 import { formatChecked } from "@/lib/format";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
-export const revalidate = 604800;
+// Hourly so the Deal of the Day switches over soon after midnight (UTC).
+// Product data itself still refreshes weekly; this only re-renders the page.
+export const revalidate = 3600;
 
 const FEATURED = ["corsair", "razer", "logitech", "alienware", "asus-rog", "scuf", "steelseries", "msi"];
 
@@ -62,6 +66,8 @@ export default async function HomePage() {
   const trending = ordered.slice(0, 8);
   const biggest = deals.reduce((m, d) => Math.max(m, d.savingsPercent ?? 0), 0);
   const withSavings = deals.filter((d) => d.savingsPercent).length;
+  const picks = dealPicks(deals);
+  const today = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", timeZone: "UTC" }).format(new Date());
 
   return (
     <>
@@ -177,6 +183,23 @@ export default async function HomePage() {
           </Link>
         </div>
       </div>
+
+      {picks.day || picks.week ? (
+        <section className="section-tight spotlight-section" aria-labelledby="picks-title">
+          <div className="container">
+            <div className="section-head">
+              <div>
+                <h2 id="picks-title">Deal of the Day &amp; Deal of the Week</h2>
+                <p>Our top picks right now: real discounts on well-reviewed products, chosen from every brand we track.</p>
+              </div>
+            </div>
+            <div className="spotlight-grid">
+              {picks.day ? <DealSpotlight deal={picks.day} label="Deal of the Day" note={today} /> : null}
+              {picks.week ? <DealSpotlight deal={picks.week} label="Deal of the Week" note="This week's top pick" /> : null}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="section">
         <div className="container">
