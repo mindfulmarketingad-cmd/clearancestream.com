@@ -4,6 +4,7 @@ import { AUTHORS, POSTS, authorPath } from "@/lib/blog";
 import { BRANDS } from "@/lib/brands";
 import { CATEGORIES } from "@/lib/categories";
 import { liveLists } from "@/lib/lists";
+import { couponSummaries } from "@/lib/coupons";
 import { getAllDeals } from "@/lib/deals";
 import { POPULAR_SEARCHES, runSearch } from "@/lib/search";
 import { absoluteUrl } from "@/lib/site";
@@ -31,6 +32,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       entry(`/categories/${c.slug}`, dealsUpdated, "weekly", 0.8),
     ),
     entry("/lists", dealsUpdated, "weekly", 0.8),
+    entry("/coupons", dealsUpdated, "weekly", 0.8),
+    ...couponSummaries(deals)
+      .filter((c) => c.count > 0)
+      .map((c) => entry(`/coupons/${c.brand.slug}`, dealsUpdated, "weekly", 0.8)),
     // Only "top 10" lists that actually have 10 products are indexable.
     ...liveLists(deals)
       .filter((l) => l.indexable)

@@ -164,6 +164,13 @@ export default async function BrandPage({ params }: Props) {
               <Faq items={faqs} />
             </div>
 
+            <p className="callout-link">
+              Looking for {brand.name} coupons?{" "}
+              <Link href={`/coupons/${brand.slug}`} className="text-link">
+                See {brand.name} coupons and deals <ArrowRight />
+              </Link>
+            </p>
+
             {brandLists.length > 0 ? (
               <>
                 <h2 className="sub-head" style={{ marginBottom: 16 }}>

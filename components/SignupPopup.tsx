@@ -31,7 +31,8 @@ export function SignupPopup() {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const eligible = useCallback(() => {
-    if (shown.current || SKIP.includes(pathname)) return false;
+    // Coupon pages have their own sign-up gate.
+    if (shown.current || SKIP.includes(pathname) || pathname.startsWith("/coupons")) return false;
     if (read(SUBSCRIBED_KEY)) return false;
     const dismissed = Number(read(DISMISSED_KEY) ?? 0);
     return !dismissed || Date.now() - dismissed > SNOOZE_MS;

@@ -73,6 +73,15 @@ export default async function SitemapPage() {
             </ul>
           </div>
           <div>
+            <h2>Coupons</h2>
+            <ul>
+              <li><Link href="/coupons">All coupons</Link></li>
+              {BRANDS.map((b) => (
+                <li key={b.slug}><Link href={`/coupons/${b.slug}`}>{b.name} coupons</Link></li>
+              ))}
+            </ul>
+          </div>
+          <div>
             <h2>Authors</h2>
             <ul>
               {AUTHORS.map((a) => (

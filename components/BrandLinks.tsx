@@ -2,7 +2,17 @@ import Link from "next/link";
 import { BRAND_GROUPS, brandsInGroup } from "@/lib/brands";
 
 /** Every brand page, grouped, so all brand pages link to each other. */
-export function AllBrandLinks({ current, title = "Browse every brand" }: { current?: string; title?: string }) {
+export function AllBrandLinks({
+  current,
+  title = "Browse every brand",
+  hrefFor = (slug: string) => `/brands/${slug}`,
+  label = "discounts",
+}: {
+  current?: string;
+  title?: string;
+  hrefFor?: (slug: string) => string;
+  label?: string;
+}) {
   return (
     <nav aria-label="All brands" className="link-directory">
       <h2 className="sub-head" style={{ marginBottom: 16 }}>
@@ -17,8 +27,8 @@ export function AllBrandLinks({ current, title = "Browse every brand" }: { curre
             <ul className="chip-list">
               {brands.map((b) => (
                 <li key={b.slug}>
-                  <Link href={`/brands/${b.slug}`} className="chip">
-                    {b.name} discounts
+                  <Link href={hrefFor(b.slug)} className="chip">
+                    {b.name} {label}
                   </Link>
                 </li>
               ))}
