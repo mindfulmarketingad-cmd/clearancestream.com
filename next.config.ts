@@ -41,6 +41,8 @@ const nextConfig: NextConfig = {
   // Ship the build-time product snapshot (lib/deals.ts) with every server function.
   outputFileTracingIncludes: {
     "/**": ["./data/deals-snapshot.json"],
+    // Fonts for the featured images (lib/featured-image.tsx).
+    "/images/**": ["./node_modules/geist/dist/fonts/geist-sans/Geist-{Regular,SemiBold,Bold}.ttf"],
   },
   experimental: {
     cpus: 1,

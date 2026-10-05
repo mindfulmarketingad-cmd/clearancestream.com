@@ -2451,3 +2451,32 @@ a.card:hover {
 .link-group summary .muted {
   font-weight: 400;
 }
+
+/* ---------- Featured images (blog posts, lists) ---------- */
+
+.featured-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  border-radius: 16px;
+  margin: 0 0 32px;
+  background: var(--blue-100);
+}
+.card-image {
+  display: block;
+  margin: -8px -8px 18px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--blue-100);
+}
+.card-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  transition: transform 0.25s ease;
+}
+.card:hover .card-image img {
+  transform: scale(1.03);
+}

@@ -4,6 +4,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
 import { POSTS, authorPath, postAuthor } from "@/lib/blog";
 import { formatDate } from "@/lib/format";
+import { FEATURED_SIZE, blogImagePath } from "@/lib/featured-image";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -25,6 +26,10 @@ export default function BlogPage() {
         <div className="container card-grid card-grid-2">
           {POSTS.map((p) => (
             <article key={p.slug} className="card">
+              <Link href={`/blog/${p.slug}`} tabIndex={-1} aria-hidden="true" className="card-image">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={blogImagePath(p.slug)} alt="" width={FEATURED_SIZE.width} height={FEATURED_SIZE.height} loading="lazy" />
+              </Link>
               <p style={{ fontSize: 13, marginBottom: 12 }}>
                 <Link href={authorPath(postAuthor(p))} className="text-link">{postAuthor(p).name}</Link>
                 <span className="muted"> &middot; </span>

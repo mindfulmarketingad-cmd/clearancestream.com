@@ -12,6 +12,7 @@ import { getListDef, liveLists, resolveAll, specSummary, type ResolvedList } fro
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { getBrand, type Brand } from "@/lib/brands";
 import { ListDirectory } from "@/components/ListLinks";
+import { FEATURED_SIZE, listImagePath } from "@/lib/featured-image";
 
 export const revalidate = 604800;
 // Lists render on first request and then cache for a week, like product pages.
@@ -57,6 +58,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? `The ${list.items.length} best ${s.plural} ${list.def.qualifier}, ranked by current discount and customer ratings. Live prices from ${money(s.min)} to ${money(s.max)}${s.topDiscount ? `, with discounts up to ${s.topDiscount}%` : ""}. Updated weekly.`
       : `The best ${lowerName(list.def.category.plural)} ${list.def.qualifier}, ranked by current discount and customer ratings. Updated weekly.`,
     path: `/lists/${list.canonical ?? list.def.slug}`,
+    image: { url: listImagePath(list.def.slug), ...FEATURED_SIZE, alt: list.title },
     // A "10 best" list is only indexed when it actually has 10 products and is
     // not a near-duplicate of another list.
     noindex: !list.indexable,
@@ -151,6 +153,15 @@ export default async function ListPage({ params }: Props) {
 
       <section className="section-tight">
         <div className="container" style={{ maxWidth: 960 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="featured-image"
+            src={listImagePath(def.slug)}
+            alt={list.title}
+            width={FEATURED_SIZE.width}
+            height={FEATURED_SIZE.height}
+            fetchPriority="high"
+          />
           {items.length === 0 ? (
             <DealsUnavailable scope={def.category.noun} />
           ) : (

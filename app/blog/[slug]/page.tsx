@@ -6,6 +6,7 @@ import { Faq } from "@/components/Faq";
 import { ArrowRight } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
+import { FEATURED_SIZE, blogImagePath } from "@/lib/featured-image";
 import { POSTS, authorPath, getPost, postAuthor } from "@/lib/blog";
 import { BRANDS } from "@/lib/brands";
 import { getAllDeals } from "@/lib/deals";
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "article",
       publishedTime: post.published,
       modifiedTime: post.updated,
+      image: { url: blogImagePath(post.slug), ...FEATURED_SIZE, alt: post.title },
     }),
     keywords: post.keywords,
     authors: [{ name: postAuthor(post).name, url: absoluteUrl(authorPath(postAuthor(post))) }],
@@ -60,7 +62,7 @@ export default async function PostPage({ params }: Props) {
     datePublished: post.published,
     dateModified: post.updated,
     mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
-    image: absoluteUrl("/og.png"),
+    image: absoluteUrl(blogImagePath(post.slug)),
     keywords: post.keywords.join(", "),
     author: { "@type": "Person", name: author.name, jobTitle: author.role, url: absoluteUrl(authorPath(author)) },
     publisher: { "@id": ORGANIZATION_ID },
@@ -90,6 +92,15 @@ export default async function PostPage({ params }: Props) {
       <section className="section-tight">
         <div className="container with-aside">
           <article className="prose">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className="featured-image"
+              src={blogImagePath(post.slug)}
+              alt={post.title}
+              width={FEATURED_SIZE.width}
+              height={FEATURED_SIZE.height}
+              fetchPriority="high"
+            />
             <Body />
             <h2 id="faq">Frequently asked questions</h2>
             <Faq items={post.faqs} />

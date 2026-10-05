@@ -4,7 +4,6 @@ import { DealsUnavailable } from "@/components/DealsUnavailable";
 import { Faq } from "@/components/Faq";
 import {
   ArrowRight,
-  BookIcon,
   CheckIcon,
   FilterIcon,
   RadarIcon,
@@ -15,6 +14,7 @@ import { EmailSignup } from "@/components/EmailSignup";
 import { JsonLd } from "@/components/JsonLd";
 import { ValueBar } from "@/components/ValueBar";
 import { POSTS } from "@/lib/blog";
+import { FEATURED_SIZE, blogImagePath } from "@/lib/featured-image";
 import { ScanCta } from "@/components/ScanCta";
 import { BRAND_GROUPS, BRANDS, brandsInGroup, getBrand } from "@/lib/brands";
 import { BrandDirectory } from "@/components/BrandDirectory";
@@ -300,9 +300,10 @@ export default async function HomePage() {
           <div className="card-grid card-grid-2">
             {POSTS.slice(0, 4).map((p) => (
               <Link key={p.slug} href={`/blog/${p.slug}`} className="card">
-                <div className="icon-tile">
-                  <BookIcon />
-                </div>
+                <span className="card-image">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={blogImagePath(p.slug)} alt="" width={FEATURED_SIZE.width} height={FEATURED_SIZE.height} loading="lazy" />
+                </span>
                 <h3>{p.title}</h3>
                 <p>{p.excerpt}</p>
                 <span className="text-link">
