@@ -35,9 +35,9 @@ export function buildIndex(deals: Deal[]): SearchDoc[] {
       title: deal.name,
       description: `${deal.priceDisplay}${deal.savingsPercent ? `, ${deal.savingsPercent}% off` : ""}`,
       path: deal.path,
-      haystack: `${deal.title} ${deal.brandName} ${getCategory(deal.categorySlug)?.name ?? ""} ${deal.features.join(" ")}${
-        deal.isGamingPc ? " gaming pc desktop" : ""
-      }`.toLowerCase(),
+      // Title, brand, and category only: feature bullets would multiply the size
+      // of the static search index for little gain in match quality.
+      haystack: `${deal.title} ${deal.brandName} ${getCategory(deal.categorySlug)?.name ?? ""}${deal.isGamingPc ? " gaming pc desktop" : ""}`.toLowerCase(),
       deal: cardDeal(deal),
     });
   }
@@ -47,7 +47,7 @@ export function buildIndex(deals: Deal[]): SearchDoc[] {
       title: brandTitle(b),
       description: brandDescription(b),
       path: `/brands/${b.slug}`,
-      haystack: `${b.name} ${b.lines.map((l) => l.name).join(" ")} gaming pc desktop ${b.intro}`.toLowerCase(),
+      haystack: `${b.name} ${b.lines.map((l) => l.name).join(" ")} ${b.sells}`.toLowerCase(),
     });
   }
   for (const b of BRANDS) {
