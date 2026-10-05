@@ -3,14 +3,14 @@ import type { NextConfig } from "next";
 const isDev = process.env.NODE_ENV !== "production";
 
 // Static CSP (no per-request nonce) so every page stays statically cacheable.
-// Amazon product images are the only third-party resource loaded.
+// Third-party resources: Amazon product images and Google Analytics (gtag.js).
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline' https://www.googletagmanager.com${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: https://m.media-amazon.com https://images-na.ssl-images-amazon.com",
+  "img-src 'self' data: https://m.media-amazon.com https://images-na.ssl-images-amazon.com https://*.google-analytics.com https://*.googletagmanager.com",
   "font-src 'self'",
-  "connect-src 'self'",
+  "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
   "frame-src 'none'",
   "frame-ancestors 'none'",
   "object-src 'none'",

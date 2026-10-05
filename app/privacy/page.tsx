@@ -21,7 +21,7 @@ export default function PrivacyPage() {
       <ul>
         <li>You can use {SITE.name} without creating an account.</li>
         <li>We do not sell or rent your personal information.</li>
-        <li>We do not set advertising or tracking cookies of our own.</li>
+        <li>We use Google Analytics to understand how the site is used. We do not set advertising cookies.</li>
         <li>If you contact us, we use your details only to reply.</li>
       </ul>
 
@@ -56,8 +56,15 @@ export default function PrivacyPage() {
 
       <h2>Cookies</h2>
       <p>
-        {SITE.name} does not set its own advertising or analytics cookies. If we add analytics in the future, we will
-        update this policy and, where required, ask for your consent.
+        {SITE.name} uses Google Analytics 4 to understand how visitors use the site, such as which pages are viewed
+        and how people arrive. Google Analytics sets first-party cookies (for example <code>_ga</code>) and collects
+        information such as pages visited, approximate location, device and browser type. We use this only in
+        aggregate to improve the site; we do not use it for advertising and do not sell it. Google processes this
+        data under its own privacy policy. You can opt out with Google&apos;s{" "}
+        <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener noreferrer" target="_blank">
+          Analytics opt-out browser add-on
+        </a>{" "}
+        or by blocking cookies in your browser. {SITE.name} does not set advertising cookies of its own.
       </p>
 
       <h2>Retailer and third-party links</h2>
