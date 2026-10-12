@@ -7,6 +7,7 @@ import { DealsUnavailable } from "@/components/DealsUnavailable";
 import { Faq } from "@/components/Faq";
 import { ArrowRight, ClockIcon, TagIcon } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
+import { SwitchLinks } from "@/components/SwitchLinks";
 import { ValueBar } from "@/components/ValueBar";
 import { BRANDS } from "@/lib/brands";
 import { CATEGORIES, getCategory } from "@/lib/categories";
@@ -165,6 +166,7 @@ export default async function CategoryPage({ params }: Props) {
           <div style={{ marginTop: 16 }}>
             <Faq items={faqs} />
           </div>
+          {category.slug === "keyboards" ? <SwitchLinks /> : null}
           <p className="mt-md muted" style={{ fontSize: 15 }}>
             <Link href="/categories" className="text-link">
               All categories <ArrowRight />

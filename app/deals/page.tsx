@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SwitchLinks } from "@/components/SwitchLinks";
 import { DealBrowser } from "@/components/DealBrowser";
 import { DealsUnavailable } from "@/components/DealsUnavailable";
 import { ArrowRight, ClockIcon, RefreshIcon } from "@/components/Icons";
@@ -90,6 +91,11 @@ export default async function DealsPage() {
               ))}
             </ul>
           </div>
+        </div>
+      </section>
+      <section className="section-tight">
+        <div className="container">
+          <SwitchLinks />
         </div>
       </section>
     </>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SwitchLinks } from "@/components/SwitchLinks";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
 import { CATEGORIES } from "@/lib/categories";
@@ -53,6 +54,11 @@ export default async function ListsHub() {
             );
           })}
           {lists.length === 0 ? <p className="muted">Lists appear here as soon as live prices are available.</p> : null}
+        </div>
+      </section>
+      <section className="section-tight">
+        <div className="container">
+          <SwitchLinks />
         </div>
       </section>
       <JsonLd data={itemListLd("Best gaming gear lists", lists.map((l) => ({ name: l.title, path: `/lists/${l.def.slug}` })))} />

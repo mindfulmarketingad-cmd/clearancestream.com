@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SwitchLinks } from "@/components/SwitchLinks";
 import { ArrowRight } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
@@ -50,6 +51,11 @@ export default function BlogPage() {
             Ready to shop? See <Link href="/deals" className="text-link">all live gaming PC deals</Link> or browse{" "}
             <Link href="/brands" className="text-link">deals by brand</Link>.
           </p>
+        </div>
+      </section>
+      <section className="section-tight">
+        <div className="container">
+          <SwitchLinks />
         </div>
       </section>
       <JsonLd data={itemListLd("Gaming PC guides", POSTS.map((p) => ({ name: p.title, path: `/blog/${p.slug}` })))} />
