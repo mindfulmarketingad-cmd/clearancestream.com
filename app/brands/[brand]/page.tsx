@@ -12,7 +12,11 @@ import { ValueBar } from "@/components/ValueBar";
 import { getPost, type Post } from "@/lib/blog";
 import { BRANDS, brandDescription, brandTitle, getBrand } from "@/lib/brands";
 import { getAllDeals, getBrandDeals } from "@/lib/deals";
-import { listsForBrand, liveLists } from "@/lib/lists";
+import { defaultRank, listsForBrand, liveLists } from "@/lib/lists";
+import { listInsights } from "@/lib/list-insights";
+import { CATEGORIES } from "@/lib/categories";
+import { RankedPicks } from "@/components/RankedPicks";
+import { toPickDeal } from "@/components/PickItem";
 import { AllBrandLinks } from "@/components/BrandLinks";
 import { ListChips } from "@/components/ListLinks";
 import { formatChecked } from "@/lib/format";
@@ -47,6 +51,11 @@ export default async function BrandPage({ params }: Props) {
   const { deals, fetchedAt } = await getBrandDeals(brand.slug);
   const { deals: all } = await getAllDeals();
   const brandLists = listsForBrand(liveLists(all), brand.slug).slice(0, 18);
+  // Ranked top picks: in-stock products ranked by real discount and review strength.
+  const pool = deals.filter((d) => d.inStock).sort(defaultRank).slice(0, 60);
+  const insights = listInsights(pool);
+  const picks = pool.map((d, i) => ({ deal: toPickDeal(d), info: insights.get(d.asin)!, rank: i + 1 }));
+  const pickCategories = CATEGORIES.filter((c) => pool.some((d) => d.categorySlug === c.slug)).map((c) => ({ slug: c.slug, name: c.plural }));
   const guides = (GROUP_GUIDES[brand.group] ?? []).map(getPost).filter((p): p is Post => !!p);
   const searches = POPULAR_SEARCHES.filter((s) => s.label.toLowerCase().includes(brand.name.toLowerCase()));
 
@@ -99,13 +108,35 @@ export default async function BrandPage({ params }: Props) {
         </header>
       </div>
 
+      {picks.length > 0 ? (
+        <section className="section-tight" id="top-picks">
+          <div className="container" style={{ maxWidth: 960 }}>
+            <nav aria-label="On this page" className="page-toc">
+              <a href="#top-picks">Top picks</a>
+              <a href="#deals">All {brand.name} products</a>
+              <a href="#guide">Buying guide</a>
+              <a href="#faq">FAQ</a>
+            </nav>
+            <h2 style={{ fontSize: 26, marginBottom: 8 }}>
+              The best {brand.name} products to buy right now
+            </h2>
+            <p className="muted" style={{ marginBottom: 16 }}>
+              Our top {Math.min(10, picks.length)} {brand.name} picks, ranked by real discounts and owner ratings, with key
+              specs, price point, and reasons to buy or avoid each one. Use the filters to narrow by category, budget, or
+              sale price.
+            </p>
+            <RankedPicks picks={picks} categories={pickCategories} label={brand.name} />
+          </div>
+        </section>
+      ) : null}
+
       <section className="section-tight" id="deals">
         <div className="container">
-          <h2 className="sr-only">All {brand.name} deals</h2>
+          <h2 style={{ fontSize: 24, marginBottom: 16 }}>All {brand.name} products</h2>
           {deals.length > 0 ? (
             <>
               <CategoryLinks brand={brand} deals={deals} />
-              <DealBrowser deals={deals.slice(0, 96)} label={brand.name} showCategoryFilter={false} />
+              <DealBrowser deals={deals.slice(0, 96)} label={brand.name} />
               <JsonLd data={itemListLd(`${brand.name} deals`, deals.map((d) => ({ name: d.name, path: d.path })))} />
             </>
           ) : (
@@ -124,7 +155,9 @@ export default async function BrandPage({ params }: Props) {
         <div className="container with-aside">
           <div>
             <div className="prose">
-              <h2 className="mt-0">About {brand.name} discounts and promos</h2>
+              <h2 className="mt-0" id="guide">
+                About {brand.name} discounts and promos
+              </h2>
               <p>{brand.intro}</p>
               {brand.overview.map((p) => (
                 <p key={p.slice(0, 32)}>{p}</p>
@@ -157,7 +190,7 @@ export default async function BrandPage({ params }: Props) {
                 For a deeper walkthrough, read our <Link href="/blog/gaming-pc-deals-guide">gaming PC deals guide</Link>{" "}
                 and the <Link href="/blog/prebuilt-gaming-pc-buying-guide">prebuilt buying guide</Link>.
               </p>
-              <h2>Frequently asked questions</h2>
+              <h2 id="faq">Frequently asked questions</h2>
             </div>
             <div style={{ marginTop: 16 }}>
               <Faq items={faqs} />

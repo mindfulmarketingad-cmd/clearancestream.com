@@ -8,7 +8,8 @@ import { itemListLd, pageMetadata } from "@/lib/seo";
 
 
 export const metadata = pageMetadata({
-  title: "Gaming PC Brands: Deals by Manufacturer",
+  title: "Gaming Clearances Discounts and Promotions By Brand",
+  absoluteTitle: true,
   description:
     "Browse discounts and promos from the biggest gaming brands: gaming PCs, laptops, mice, keyboards, headsets, and controllers, with buying advice for each.",
   path: "/brands",
@@ -21,7 +22,7 @@ export default async function BrandsPage() {
     <>
       <PageHeader
         crumbs={[{ name: "Brands", path: "/brands" }]}
-        title="Discounts and promos by brand"
+        title="Gaming Clearances Discounts and Promotions By Brand"
         lede="Each brand page tracks every product we follow from that manufacturer, split into categories, with the product lines and buying tips that matter when you buy on sale."
       />
       <section className="section-tight">

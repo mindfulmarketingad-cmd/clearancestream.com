@@ -12,7 +12,10 @@ import { BRANDS } from "@/lib/brands";
 import { CATEGORIES, getCategory } from "@/lib/categories";
 import { getAllDeals } from "@/lib/deals";
 import { formatChecked, lowerName } from "@/lib/format";
-import { liveLists } from "@/lib/lists";
+import { defaultRank, liveLists } from "@/lib/lists";
+import { listInsights } from "@/lib/list-insights";
+import { RankedPicks } from "@/components/RankedPicks";
+import { toPickDeal } from "@/components/PickItem";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
 export const dynamicParams = false;
@@ -46,6 +49,11 @@ export default async function CategoryPage({ params }: Props) {
   const brandCounts = BRANDS.map((b) => ({ b, n: deals.filter((d) => d.brandSlug === b.slug).length })).filter((x) => x.n > 0);
   const lists = liveLists(all).filter((l) => l.def.category.slug === category.slug && l.indexable);
   const prices = deals.map((d) => d.price);
+  // Ranked top picks across every brand in the category.
+  const pool = deals.filter((d) => d.inStock).sort(defaultRank).slice(0, 80);
+  const insights = listInsights(pool);
+  const picks = pool.map((d, i) => ({ deal: toPickDeal(d), info: insights.get(d.asin)!, rank: i + 1 }));
+  const pickBrands = [...new Set(pool.map((d) => d.brandName))].sort();
 
   const faqs = [
     {
@@ -94,8 +102,29 @@ export default async function CategoryPage({ params }: Props) {
         </header>
       </div>
 
-      <section className="section-tight">
+      {picks.length > 0 ? (
+        <section className="section-tight" id="top-picks">
+          <div className="container" style={{ maxWidth: 960 }}>
+            <nav aria-label="On this page" className="page-toc">
+              <a href="#top-picks">Top picks</a>
+              <a href="#deals">All {lowerName(category.plural)}</a>
+              <a href="#guide">Buying guide</a>
+              <a href="#faq">FAQ</a>
+            </nav>
+            <h2 style={{ fontSize: 26, marginBottom: 8 }}>The best {lowerName(category.plural)} to buy right now</h2>
+            <p className="muted" style={{ marginBottom: 16 }}>
+              Our top {Math.min(10, picks.length)} {lowerName(category.plural)} across every brand we track, ranked by real
+              discounts and owner ratings, with key specs, price point, and reasons to buy or avoid each one. Filter by
+              brand, budget, or sale price.
+            </p>
+            <RankedPicks picks={picks} brands={pickBrands} label={category.noun} />
+          </div>
+        </section>
+      ) : null}
+
+      <section className="section-tight" id="deals">
         <div className="container">
+          <h2 style={{ fontSize: 24, marginBottom: 16 }}>All {lowerName(category.plural)}</h2>
           {brandCounts.length > 0 ? (
             <nav aria-label={`${category.plural} by brand`} className="category-links">
               <ul className="chip-list">
@@ -110,7 +139,6 @@ export default async function CategoryPage({ params }: Props) {
               </ul>
             </nav>
           ) : null}
-          <h2 className="sr-only">{category.plural}</h2>
           {deals.length > 0 ? (
             <>
               <DealBrowser deals={deals.slice(0, SHOWN)} label={category.noun} showCategoryFilter={false} />
@@ -154,13 +182,15 @@ export default async function CategoryPage({ params }: Props) {
       <section className="section-tight">
         <div className="container" style={{ maxWidth: 880 }}>
           <div className="prose">
-            <h2 className="mt-0">How to buy {lowerName(category.plural)} on sale</h2>
+            <h2 className="mt-0" id="guide">
+              How to buy {lowerName(category.plural)} on sale
+            </h2>
             <ul>
               {category.tips.map((t) => (
                 <li key={t.slice(0, 30)}>{t}</li>
               ))}
             </ul>
-            <h2>Frequently asked questions</h2>
+            <h2 id="faq">Frequently asked questions</h2>
           </div>
           <div style={{ marginTop: 16 }}>
             <Faq items={faqs} />

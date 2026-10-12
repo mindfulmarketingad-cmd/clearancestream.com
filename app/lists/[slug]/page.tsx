@@ -4,13 +4,14 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { DealsUnavailable } from "@/components/DealsUnavailable";
 import { Faq } from "@/components/Faq";
-import { ArrowRight, CheckIcon, ClockIcon, ExternalIcon, TagIcon } from "@/components/Icons";
+import { ArrowRight, ClockIcon, TagIcon } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
 import { getAllDeals } from "@/lib/deals";
 import { formatChecked, lowerName } from "@/lib/format";
 import { LISTS, getListDef, liveLists, resolveAll, type ResolvedList } from "@/lib/lists";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { listInsights } from "@/lib/list-insights";
+import { PickCompare, PickItem, toPickDeal } from "@/components/PickItem";
 import { getBrand, type Brand } from "@/lib/brands";
 import { ListDirectory } from "@/components/ListLinks";
 import { FEATURED_SIZE, listImagePath } from "@/lib/featured-image";
@@ -151,140 +152,10 @@ export default async function ListPage({ params }: Props) {
           ) : (
             <>
               <h2 style={{ fontSize: 20, marginBottom: 12 }}>Compare the picks</h2>
-              <div className="table-scroll">
-                <table className="spec-table list-glance list-compare">
-                  <caption className="sr-only">Ranked products compared</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Product</th>
-                      <th scope="col">Price</th>
-                      <th scope="col">Rating</th>
-                      <th scope="col">Key specs</th>
-                      <th scope="col">Best for</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {items.map((d, i) => {
-                      const info = insights.get(d.asin)!;
-                      return (
-                        <tr key={d.asin}>
-                          <td>{i + 1}</td>
-                          <td>
-                            <a href={`#item-${i + 1}`}>{d.name}</a>
-                          </td>
-                          <td>
-                            <span className={d.savingsPercent ? "price-deal" : undefined}>{d.priceDisplay}</span>
-                            {d.savingsPercent ? <span className="pill-off">{d.savingsPercent}% OFF</span> : null}
-                          </td>
-                          <td>{d.rating ? `${d.rating.toFixed(1)} / 5` : "Not rated"}</td>
-                          <td>{info.specs.slice(0, 2).map(([, v]) => v).join(", ") || "See listing"}</td>
-                          <td>{info.bestFor}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-
+              <PickCompare items={items.map((d) => ({ deal: toPickDeal(d), info: insights.get(d.asin)! }))} />
               <ol className="list-items">
                 {items.map((d, i) => (
-                  <li key={d.asin} id={`item-${i + 1}`} className="list-item">
-                    <div className="list-rank" aria-hidden="true">
-                      {i + 1}
-                    </div>
-                    <Link href={d.path} className="list-media" tabIndex={-1} aria-hidden="true">
-                      {d.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={d.image.url} alt="" width={d.image.width} height={d.image.height} loading={i < 2 ? "eager" : "lazy"} referrerPolicy="no-referrer" />
-                      ) : null}
-                      {d.savingsPercent ? <span className="badge badge-discount">{d.savingsPercent}% OFF</span> : null}
-                    </Link>
-                    <div className="list-body">
-                      <span className="deal-brand">{d.brandName}</span>
-                      <h2 className="list-title">
-                        <span className="sr-only">{i + 1}. </span>
-                        <Link href={d.path}>{d.name}</Link>
-                      </h2>
-                      <div className="deal-price">
-                        <span className={d.savingsPercent ? "price price-deal" : "price"}>{d.priceDisplay}</span>
-                        {d.listPriceDisplay ? <s className="price">{d.listPriceDisplay}</s> : null}
-                      </div>
-                      {(() => {
-                        const info = insights.get(d.asin)!;
-                        return (
-                          <>
-                            <p className="list-bestfor">
-                              <b>Best for:</b> {info.bestFor}
-                            </p>
-                            {info.specs.length > 0 ? (
-                              <>
-                                <h3 className="list-sub">Key specs</h3>
-                                <dl className="list-specs">
-                                  {info.specs.map(([k, v]) => (
-                                    <div key={k}>
-                                      <dt>{k}</dt>
-                                      <dd>{v}</dd>
-                                    </div>
-                                  ))}
-                                </dl>
-                              </>
-                            ) : null}
-                            {info.features.length > 0 ? (
-                              <>
-                                <h3 className="list-sub">Standout features</h3>
-                                <ul className="list-plain">
-                                  {info.features.map((f) => (
-                                    <li key={f}>{f}</li>
-                                  ))}
-                                </ul>
-                              </>
-                            ) : null}
-                            <h3 className="list-sub">Price point</h3>
-                            <p className="list-price-point">{info.pricePoint}</p>
-                            <div className="list-proscons">
-                              {info.pros.length > 0 ? (
-                                <div>
-                                  <h3 className="list-sub">Reasons to buy</h3>
-                                  <ul className="feature-list">
-                                    {info.pros.map((r) => (
-                                      <li key={r}>
-                                        <CheckIcon />
-                                        <span>{r}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              ) : null}
-                              {info.cons.length > 0 ? (
-                                <div>
-                                  <h3 className="list-sub">Reasons to avoid</h3>
-                                  <ul className="feature-list list-cons">
-                                    {info.cons.map((r) => (
-                                      <li key={r}>
-                                        <span className="con-mark" aria-hidden="true">
-                                          &times;
-                                        </span>
-                                        <span>{r}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              ) : null}
-                            </div>
-                          </>
-                        );
-                      })()}
-                      <div className="list-actions">
-                        <Link href={d.path} className="btn btn-primary btn-sm">
-                          View Deal <ArrowRight />
-                        </Link>
-                        <a href={d.buyUrl} className="btn btn-secondary btn-sm" target="_blank" rel="sponsored nofollow noopener">
-                          Check price <ExternalIcon />
-                        </a>
-                      </div>
-                    </div>
-                  </li>
+                  <PickItem key={d.asin} deal={toPickDeal(d)} info={insights.get(d.asin)!} rank={i + 1} eager={i < 2} />
                 ))}
               </ol>
               <JsonLd data={itemListLd(list.title, items.map((d) => ({ name: d.name, path: d.path })))} />

@@ -329,7 +329,7 @@ export function getListDef(slug: string) {
 }
 
 /** Default ranking: real discounts first, then rating weighted by review count. */
-function defaultRank(a: Deal, b: Deal) {
+export function defaultRank(a: Deal, b: Deal) {
   const score = (d: Deal) => (d.savingsPercent ?? 0) * 2 + (d.rating ?? 0) * Math.log10((d.reviewCount ?? 0) + 10);
   return score(b) - score(a) || a.price - b.price;
 }

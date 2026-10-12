@@ -2942,3 +2942,39 @@ a.card:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- Brand pillar pages ---------- */
+
+.page-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 14.5px;
+}
+.page-toc a {
+  color: var(--blue);
+  font-weight: 500;
+}
+.picks-toolbar {
+  flex-wrap: wrap;
+  align-items: center;
+}
+.picks-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.picks-reset {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}

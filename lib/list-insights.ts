@@ -204,7 +204,7 @@ function pricePointFor(d: Deal, s: ListStats): string {
   const range = s.maxPrice - s.minPrice;
   const pos = range > 0 ? (d.price - s.minPrice) / range : 0.5;
   const tier =
-    d.asin === s.cheapest ? "the lowest price on this list" : pos <= 0.25 ? "a budget pick for this list" : pos >= 0.75 ? "a premium pick for this list" : "mid-range for this list";
+    d.asin === s.cheapest ? "the lowest price among these picks" : pos <= 0.25 ? "a budget option among these picks" : pos >= 0.75 ? "a premium option among these picks" : "mid-range among these picks";
   const saving = d.savingsPercent && d.listPriceDisplay ? ` It is ${d.savingsPercent}% below its ${d.listPriceLabel?.toLowerCase() ?? "reference price"} of ${d.listPriceDisplay}.` : "";
   return `${d.priceDisplay}, ${tier} (picks range from ${money(s.minPrice)} to ${money(s.maxPrice)}).${saving}`;
 }
@@ -216,7 +216,7 @@ function prosFor(d: Deal, s: ListStats, specs: [string, string][]): string[] {
   if (d.rating && d.rating >= 4.5 && (d.reviewCount ?? 0) >= 500)
     pros.push(`Strong owner feedback: ${d.rating.toFixed(1)} out of 5 from ${d.reviewCount!.toLocaleString("en-US")} reviews`);
   else if (d.rating && d.rating >= 4.3 && (d.reviewCount ?? 0) >= 100) pros.push(`Well reviewed at ${d.rating.toFixed(1)} out of 5`);
-  if (d.price <= s.medianPrice * 0.8) pros.push("Costs less than most picks on this list");
+  if (d.price <= s.medianPrice * 0.8) pros.push("Costs less than most of these picks");
   if (d.attrs.includes("wireless")) pros.push("Wireless, so no cable to manage");
   if (d.attrs.includes("hot-swap")) pros.push("Hot-swappable switches you can change later without soldering");
   if (d.attrs.includes("lightweight")) pros.push("Lightweight build for fast, low-fatigue aiming");
@@ -236,9 +236,9 @@ function consFor(d: Deal, s: ListStats, specs: [string, string][]): string[] {
   const cons: string[] = [];
   const spec = (k: string) => specs.find(([key]) => key === k)?.[1];
   if (!d.savingsPercent) cons.push("Not discounted right now, so you pay the regular price");
-  if (d.price >= s.medianPrice * 1.3 && d.asin !== s.cheapest) cons.push("Costs more than most picks on this list");
+  if (d.price >= s.medianPrice * 1.3 && d.asin !== s.cheapest) cons.push("Costs more than most of these picks");
   if ((d.reviewCount ?? 0) < 50) cons.push("Few reviews so far, so less of a track record");
-  else if (d.rating && s.avgRating && d.rating < s.avgRating - 0.2) cons.push(`Rated a little lower (${d.rating.toFixed(1)}) than most picks here`);
+  else if (d.rating && s.avgRating && d.rating < s.avgRating - 0.2) cons.push(`Rated a little lower (${d.rating.toFixed(1)}) than most of these picks`);
   if (spec("Condition") || /\b(renewed|refurbished)\b/i.test(d.title)) cons.push("Renewed rather than new: check the warranty and return window");
   if (d.attrs.includes("wired") && !d.attrs.includes("wireless") && ["mice", "keyboards", "headsets", "controllers"].includes(d.categorySlug))
     cons.push("Wired only");
@@ -255,7 +255,7 @@ function consFor(d: Deal, s: ListStats, specs: [string, string][]): string[] {
 function bestForFor(d: Deal, s: ListStats, specs: [string, string][], shared: Set<string>): string {
   // Ignore traits every pick shares (e.g. "PS5" on a PS5 list): they do not tell picks apart.
   const has = (a: string) => d.attrs.includes(a) && !shared.has(a);
-  if (d.asin === s.biggestDiscount) return "Bargain hunters who want the biggest real discount on this list";
+  if (d.asin === s.biggestDiscount) return "Bargain hunters who want the biggest real discount among these picks";
   if (d.asin === s.bestRated) return "Buyers who want the most proven, best-reviewed pick";
   if (d.asin === s.cheapest) return "Tight budgets";
   const spec = (k: string) => specs.find(([key]) => key === k)?.[1];
