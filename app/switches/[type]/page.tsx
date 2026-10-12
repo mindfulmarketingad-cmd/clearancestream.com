@@ -83,6 +83,8 @@ export default async function SwitchTypePage({ params }: Props) {
       <div className="container" style={{ paddingTop: 20 }}>
         <Breadcrumbs
           items={[
+            { name: "Categories", path: "/categories" },
+            { name: "Gaming Keyboards", path: "/categories/keyboards" },
             { name: "Switches", path: "/switches" },
             { name: type.short, path: `/switches/${type.slug}` },
           ]}

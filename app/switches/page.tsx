@@ -44,7 +44,11 @@ export default async function SwitchesHub() {
   return (
     <>
       <PageHeader
-        crumbs={[{ name: "Switches", path: "/switches" }]}
+        crumbs={[
+          { name: "Categories", path: "/categories" },
+          { name: "Gaming Keyboards", path: "/categories/keyboards" },
+          { name: "Switches", path: "/switches" },
+        ]}
         title="Best mechanical keyboards by switch type"
         lede="The switch decides how a keyboard feels, sounds, and performs. Pick the switch type that suits how you play, then compare live deals on keyboards that use it."
       />
