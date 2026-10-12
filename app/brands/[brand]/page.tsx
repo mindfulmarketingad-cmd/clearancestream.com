@@ -86,7 +86,7 @@ export default async function BrandPage({ params }: Props) {
             {brand.name} &middot; Discounts &amp; promos
           </span>
           <h1>
-            {brand.name} <span>Discounts and Promos</span>
+            {brand.name} <span>Discounts and Promos {new Date().getFullYear()} Clearance List</span>
           </h1>
           <p className="lede">
             Live prices on every {brand.name} product we track, with current discounts first. Refreshed weekly.

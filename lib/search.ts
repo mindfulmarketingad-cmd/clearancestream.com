@@ -13,6 +13,7 @@ const STATIC_PAGES: Omit<SearchDoc, "haystack">[] = [
   { type: "page", title: "All Gaming PC Deals", description: "Every live gaming PC deal we track, ranked by discount.", path: "/deals" },
   { type: "page", title: "Gaming PC Brands", description: "Browse gaming PC deals by manufacturer.", path: "/brands" },
   { type: "page", title: "Gaming PC Deal Guides", description: "Guides to buying gaming PCs and finding real discounts.", path: "/blog" },
+  { type: "page", title: "PC Part Picker", description: "Build a gaming PC with compatibility checks, estimated wattage, and live prices.", path: "/pc-builder" },
   { type: "page", title: "About ClearanceStream", description: "How we find and verify gaming PC deals.", path: "/about" },
   { type: "page", title: "Contact", description: "Get in touch with the ClearanceStream team.", path: "/contact" },
   { type: "page", title: "Affiliate Disclaimer", description: "How ClearanceStream earns money and how prices are shown.", path: "/disclaimer" },

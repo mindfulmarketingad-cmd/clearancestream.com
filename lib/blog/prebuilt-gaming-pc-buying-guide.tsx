@@ -275,7 +275,8 @@ function Body() {
       </ol>
       <p>
         Once you know what you want, <Link href="/search">search our tracked deals</Link> for the GPU or model name, or
-        browse <Link href="/brands">deals by brand</Link>.
+        browse <Link href="/brands">deals by brand</Link>. To compare a prebuilt with the cost of its parts, price the same
+        configuration in our <Link href="/pc-builder">PC Builder</Link>.
       </p>
     </>
   );

@@ -121,6 +121,8 @@ That is why desktops tend to cost less per year of good gaming, even when the in
 Choose a **gaming desktop** if you play in one place and want the most performance, the quietest operation, and the longest life for your money. Choose a **gaming laptop** if you need to game in more than one place or want a single device for everything.
 
 Whichever you choose, the GPU is the part that decides how well games run, and discounts are most common on the previous generation. Compare what is on sale right now on our [gaming PCs](/categories/gaming-pcs) and [gaming laptops](/categories/laptops) pages, and check our [guide to the best time to buy a gaming PC](/blog/best-time-to-buy-a-gaming-pc) before you commit.
+
+If you choose a desktop, you can price every part and check compatibility in our [PC Builder](/pc-builder).
 `;
 
 export const gamingLaptopVsGamingPc: Post = {

@@ -128,6 +128,8 @@ Laptops with integrated or entry-level graphics can share system memory with the
 For a new gaming PC, buy **32GB of RAM in dual channel** if your budget allows, and treat **16GB** as the minimum. Only consider 64GB if you also do heavy creative or professional work. After that, spend your budget on the graphics card, which matters most for how games run.
 
 Ready to compare? See today's prices on our [gaming PCs page](/categories/gaming-pcs) and [gaming laptops page](/categories/laptops), or read [which graphics card you need](/blog/what-graphics-card-do-i-need) for your monitor.
+
+Planning a full build? Our [PC Builder](/pc-builder) only shows memory that matches your motherboard's DDR4 or DDR5 slots.
 `;
 
 export const howMuchRamForGaming: Post = {

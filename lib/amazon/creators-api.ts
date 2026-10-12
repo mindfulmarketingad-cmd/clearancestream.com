@@ -46,6 +46,13 @@ type Config = {
   marketplace: string;
 };
 
+/** Base URL for the multi-item add-to-cart form, with the Associates tag. */
+export function cartFormBase() {
+  const tag = process.env.AMAZON_PARTNER_TAG?.trim() || DEFAULT_PARTNER_TAG;
+  const host = process.env.AMAZON_MARKETPLACE?.trim() || "www.amazon.com";
+  return `https://${host}/gp/aws/cart/add.html?AssociateTag=${encodeURIComponent(tag)}`;
+}
+
 export function getConfig(): Config | null {
   const credentialId = process.env.AMAZON_CREDENTIAL_ID?.trim();
   const credentialSecret = process.env.AMAZON_CREDENTIAL_SECRET?.trim();

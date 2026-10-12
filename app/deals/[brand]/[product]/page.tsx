@@ -8,7 +8,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { getBrand } from "@/lib/brands";
 import { getCategory } from "@/lib/categories";
 import { liveLists } from "@/lib/lists";
-import { getAllDeals, getDeal, relatedDeals, type Deal } from "@/lib/deals";
+import { brandCouponDeals } from "@/lib/coupons";
+import { getAllDeals, getDeal, relatedDeals, similarDeals, type Deal } from "@/lib/deals";
 import { formatChecked, lowerName } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
@@ -16,6 +17,19 @@ import { asinFromSlug } from "@/lib/slug";
 
 // Every product page is prebuilt at deploy time; unknown products 404.
 export const dynamicParams = false;
+
+/** The buying guide most relevant to each category. */
+const CATEGORY_GUIDE: Record<string, { slug: string; title: string }> = {
+  "gaming-pcs": { slug: "gaming-pc-deals-guide", title: "guide to judging gaming PC deals" },
+  laptops: { slug: "gaming-laptop-vs-gaming-pc", title: "gaming laptop vs. gaming PC breakdown" },
+  keyboards: { slug: "mechanical-keyboard-switches-explained", title: "mechanical keyboard switch guide" },
+  mice: { slug: "wireless-vs-wired-gaming-mouse", title: "wireless vs. wired gaming mouse guide" },
+  monitors: { slug: "oled-vs-ips-gaming-monitor", title: "OLED vs. IPS gaming monitor guide" },
+  controllers: { slug: "are-pro-controllers-worth-it", title: "guide to pro controllers" },
+  components: { slug: "what-graphics-card-do-i-need", title: "guide to choosing a graphics card" },
+};
+const DEFAULT_GUIDE = CATEGORY_GUIDE["gaming-pcs"];
+const BUILDER_CATEGORIES = new Set(["components", "monitors", "gaming-pcs"]);
 
 type Props = { params: Promise<{ brand: string; product: string }> };
 
@@ -82,6 +96,9 @@ export default async function ProductPage(props: Props) {
   const category = getCategory(deal.categorySlug);
   const { deals } = await getAllDeals();
   const related = relatedDeals(deal, deals);
+  const similar = similarDeals(deal, deals);
+  const guide = CATEGORY_GUIDE[deal.categorySlug] ?? DEFAULT_GUIDE;
+  const hasCoupons = brandCouponDeals(deals, brand.slug).length > 0;
   const featuredIn = liveLists(deals).filter((l) => l.indexable && l.items.some((d) => d.asin === deal.asin));
 
   const rows: [string, string][] = [
@@ -203,7 +220,7 @@ export default async function ProductPage(props: Props) {
                   : "Check whether the reference is a list price or a recent typical price, and compare against similar models before buying. Discounts tied to a limited-time deal can end without notice."}
               </p>
               <p>
-                Read our <Link href="/blog/gaming-pc-deals-guide">guide to judging gaming PC deals</Link> or compare
+                Read our <Link href={`/blog/${guide.slug}`}>{guide.title}</Link> or compare
                 every {category ? (
                   <Link href={`/brands/${brand.slug}/${category.slug}`}>
                     {brand.name} {lowerName(category.name)} deal
@@ -219,6 +236,50 @@ export default async function ProductPage(props: Props) {
               We may earn a commission when you buy through links on this page, at no extra cost to you.
             </p>
           </div>
+        </div>
+      </section>
+
+      <section className="section-tight">
+        <div className="container">
+          <h2 style={{ fontSize: 22, marginBottom: 16 }}>Keep shopping</h2>
+          <ul className="chip-list">
+            {category ? (
+              <li>
+                <Link href={`/categories/${category.slug}`} className="chip">
+                  All {lowerName(category.name)} deals
+                </Link>
+              </li>
+            ) : null}
+            <li>
+              <Link href={`/brands/${brand.slug}`} className="chip">
+                {brand.name} discounts
+              </Link>
+            </li>
+            {hasCoupons ? (
+              <li>
+                <Link href={`/coupons/${brand.slug}`} className="chip">
+                  {brand.name} coupons
+                </Link>
+              </li>
+            ) : null}
+            {BUILDER_CATEGORIES.has(deal.categorySlug) ? (
+              <li>
+                <Link href="/pc-builder" className="chip">
+                  PC Part Picker
+                </Link>
+              </li>
+            ) : null}
+            <li>
+              <Link href={`/blog/${guide.slug}`} className="chip">
+                Buying guide
+              </Link>
+            </li>
+            <li>
+              <Link href="/lists" className="chip">
+                Top 10 lists
+              </Link>
+            </li>
+          </ul>
         </div>
       </section>
 
@@ -252,6 +313,20 @@ export default async function ProductPage(props: Props) {
               </Link>
             </div>
             <DealGrid deals={related} />
+          </div>
+        </section>
+      ) : null}
+
+      {similar.length > 0 && category ? (
+        <section className="section-tight">
+          <div className="container">
+            <div className="section-head">
+              <h2>Similar {lowerName(category.name)} from other brands</h2>
+              <Link href={`/categories/${category.slug}`} className="text-link">
+                All {lowerName(category.name)} deals <ArrowRight />
+              </Link>
+            </div>
+            <DealGrid deals={similar} />
           </div>
         </section>
       ) : null}

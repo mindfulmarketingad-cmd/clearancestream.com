@@ -126,6 +126,8 @@ To get the full refresh rate, your monitor and graphics card need a fast enough 
 ## The bottom line {#bottom-line}
 
 OLED is the best gaming picture you can buy, but IPS remains the best value and the safest choice for mixed use. Pick your panel, then match resolution and refresh rate to your graphics card. Compare current prices on our [gaming monitors page](/categories/monitors), our [gaming monitors under $300](/lists/10-best-gaming-monitors-under-300) list, and our [biggest monitor discounts](/lists/10-biggest-gaming-monitor-discounts-right-now).
+
+Building a new PC around your monitor? Add every part, including the monitor, in our [PC Builder](/pc-builder).
 `;
 
 export const oledVsIpsGamingMonitor: Post = {

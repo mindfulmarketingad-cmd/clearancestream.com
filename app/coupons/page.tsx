@@ -5,14 +5,15 @@ import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
 import { ArrowRight } from "@/components/Icons";
 import { BRAND_GROUPS } from "@/lib/brands";
-import { couponMonth, couponSummaries } from "@/lib/coupons";
+import { couponSummaries } from "@/lib/coupons";
 import { getAllDeals } from "@/lib/deals";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
 
 export function generateMetadata(): Metadata {
   return pageMetadata({
-    title: `Tech Coupons & Deals (${couponMonth()})`,
+    title: `Tech Coupon Discount Codes ${new Date().getFullYear()}`,
+    absoluteTitle: true,
     description:
       "Coupons and verified deals from the biggest gaming and tech brands: gaming PCs, laptops, mice, keyboards, headsets, monitors, and controllers. No codes to copy; the discount is already applied.",
     path: "/coupons",
@@ -28,7 +29,7 @@ export default async function CouponsHub() {
     <>
       <PageHeader
         crumbs={[{ name: "Coupons", path: "/coupons" }]}
-        title="Tech coupons and deals"
+        title={`Tech Coupon Discount Codes ${new Date().getFullYear()}`}
         lede={`${total > 0 ? `${total.toLocaleString("en-US")} verified deals` : "Verified deals"} from the biggest gaming and tech brands. Pick a brand, unlock a deal, and the discount is already applied at the retailer. No codes to copy.`}
       />
       <section className="section-tight">

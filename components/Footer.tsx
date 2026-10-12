@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CATEGORIES } from "@/lib/categories";
 import { AFFILIATE_DISCLOSURE, FOOTER_NAV, SITE } from "@/lib/site";
 import { FacebookIcon, InstagramIcon, XIcon } from "./Icons";
 import { Logo } from "./Logo";
@@ -34,6 +35,22 @@ export function Footer() {
             ))}
           </ul>
         </div>
+        <nav className="footer-cats" aria-label="Deal categories">
+          <h2>Shop deals by category</h2>
+          <ul>
+            {CATEGORIES.map((c) => (
+              <li key={c.slug}>
+                <Link href={`/categories/${c.slug}`}>{c.hubTitle}</Link>
+              </li>
+            ))}
+            <li>
+              <Link href="/pc-builder">PC Part Picker</Link>
+            </li>
+            <li>
+              <Link href="/coupons">Coupon Codes</Link>
+            </li>
+          </ul>
+        </nav>
         <div className="footer-bottom">
           <p>
             {AFFILIATE_DISCLOSURE} Prices and availability are accurate as of the time shown and are subject to change.

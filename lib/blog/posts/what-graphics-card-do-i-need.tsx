@@ -112,6 +112,8 @@ This check stops you spending money on the wrong upgrade.
 Match the GPU to your monitor: entry to mid-range for 1080p, upper mid-range for 1440p, and high-end or flagship for 4K. Look for at least 12GB of VRAM for 1440p and 16GB for 4K if you plan to keep the system for years. Then compare current and previous-generation systems at your budget to find the best value.
 
 See every system currently tracked on our [gaming PCs page](/categories/gaming-pcs), sorted by discount, or start with a budget on our [gaming PCs under $1500](/lists/10-best-gaming-pcs-under-1500) list.
+
+You can also check a graphics card against the rest of your parts, with an estimated power draw, in our [PC Builder](/pc-builder).
 `;
 
 export const whatGraphicsCardDoINeed: Post = {

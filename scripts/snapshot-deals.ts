@@ -10,6 +10,7 @@ import { dirname } from "node:path";
 import { getConfig } from "../lib/amazon/creators-api";
 import { BRANDS } from "../lib/brands";
 import { SNAPSHOT_FILE, fetchBrandLive } from "../lib/deals";
+import { PARTS_FILE, fetchParts } from "../lib/pc-parts-data";
 
 async function main() {
   if (!getConfig()) {
@@ -34,6 +35,16 @@ async function main() {
   mkdirSync(dirname(SNAPSHOT_FILE), { recursive: true });
   writeFileSync(SNAPSHOT_FILE, JSON.stringify({ generatedAt: new Date().toISOString(), brands }));
   console.info(`[snapshot] Wrote ${count} deals from ${Object.keys(brands).length} brands in ${Math.round((Date.now() - started) / 1000)}s`);
+
+  // PC Builder parts catalog.
+  try {
+    const parts = await fetchParts((m) => console.info(m));
+    writeFileSync(PARTS_FILE, JSON.stringify(parts));
+    const total = Object.values(parts.parts).reduce((n, list) => n + list.length, 0);
+    console.info(`[snapshot] Wrote ${total} PC Builder parts`);
+  } catch (err) {
+    console.error("[snapshot] PC Builder parts failed; the builder will show no parts:", (err as Error).message);
+  }
 }
 
 main().catch((err) => {

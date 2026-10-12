@@ -302,6 +302,23 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="section-tight">
+        <div className="container">
+          <div className="builder-band">
+            <div>
+              <h2>Build your own gaming PC</h2>
+              <p>
+                Pick a CPU, motherboard, memory, video card, and more on one page. We check compatibility, estimate power
+                draw, and total the price, with one click to buy every part.
+              </p>
+            </div>
+            <Link href="/pc-builder" className="btn btn-primary">
+              Open the PC Builder <ArrowRight />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="section">
         <div className="container">
           <div className="section-head">

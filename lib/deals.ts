@@ -352,12 +352,28 @@ export async function getDeal(asin: string): Promise<Deal | null> {
   }
 }
 
+/**
+ * Same-brand picks for a product page. Takes the products that follow this one
+ * in the brand's own ranking (wrapping around), so every product, not just the
+ * top sellers, is linked from its neighbours.
+ */
 export function relatedDeals(deal: Deal, all: Deal[], limit = 4): Deal[] {
-  const others = all.filter((d) => d.asin !== deal.asin);
-  const score = (d: Deal) => (d.brandSlug === deal.brandSlug ? 2 : 0) + (d.categorySlug === deal.categorySlug ? 1 : 0);
-  return others
-    .map((d, i) => ({ d, i }))
-    .sort((a, b) => score(b.d) - score(a.d) || a.i - b.i)
-    .slice(0, limit)
-    .map(({ d }) => d);
+  const brand = all.filter((d) => d.brandSlug === deal.brandSlug);
+  const rotate = (list: Deal[]) => {
+    const i = list.findIndex((d) => d.asin === deal.asin);
+    return [...list.slice(i + 1), ...list.slice(0, Math.max(i, 0))].filter((d) => d.asin !== deal.asin);
+  };
+  const sameCategory = rotate(brand.filter((d) => d.categorySlug === deal.categorySlug));
+  const rest = rotate(brand).filter((d) => d.categorySlug !== deal.categorySlug);
+  return [...sameCategory, ...rest].slice(0, limit);
+}
+
+/** In-stock products from other brands in the same category, closest in price first. */
+export function similarDeals(deal: Deal, all: Deal[], limit = 4): Deal[] {
+  const seen = new Set<string>();
+  return all
+    .filter((d) => d.brandSlug !== deal.brandSlug && d.categorySlug === deal.categorySlug && d.inStock)
+    .sort((a, b) => Math.abs(a.price - deal.price) - Math.abs(b.price - deal.price))
+    .filter((d) => !seen.has(d.brandSlug) && seen.add(d.brandSlug))
+    .slice(0, limit);
 }

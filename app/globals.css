@@ -1492,6 +1492,33 @@ a.card:hover {
   width: 16px;
   height: 16px;
 }
+.footer-cats {
+  border-top: 1px solid var(--line);
+  padding: 20px 0;
+}
+.footer-cats h2 {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+  margin: 0 0 10px;
+}
+.footer-cats ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+.footer-cats a {
+  color: var(--muted);
+}
+.footer-cats a:hover {
+  color: var(--ink);
+}
 .footer-bottom {
   border-top: 1px solid var(--line);
   padding: 20px 0 28px;
@@ -2977,4 +3004,420 @@ a.card:hover {
   font: inherit;
   font-size: 14px;
   cursor: pointer;
+}
+
+/* ---------- PC Builder ---------- */
+
+.pcb-status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  color: var(--white);
+  font-size: 15px;
+}
+.pcb-status.is-ok {
+  background: #16a34a;
+}
+.pcb-status.is-warn {
+  background: #b45309;
+}
+.pcb-status.is-error {
+  background: #b42318;
+}
+.pcb-watts span {
+  opacity: 0.85;
+}
+.pcb-empty {
+  margin: 16px 0;
+  color: var(--muted);
+}
+.pcb-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.pcb-table thead th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+  font-weight: 600;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.pcb-table tbody th,
+.pcb-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+  text-align: left;
+}
+.pcb-table tbody th {
+  width: 150px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--blue-ink);
+}
+.pcb-table tbody th small {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--faint);
+}
+.pcb-table tr.has-error {
+  background: #fef3f2;
+}
+.pcb-table tr.has-warn {
+  background: #fffbeb;
+}
+.pcb-pick {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.pcb-pick img,
+.pcb-results img {
+  flex: none;
+  object-fit: contain;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--white);
+  padding: 4px;
+}
+.pcb-noimg {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  background: var(--blue-50);
+}
+.pcb-name {
+  display: block;
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.pcb-name:hover {
+  color: var(--blue);
+}
+.pcb-specs {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.pcb-price {
+  white-space: nowrap;
+  font-weight: 600;
+}
+.pcb-price .pill-off {
+  margin-left: 6px;
+}
+.pcb-actions {
+  white-space: nowrap;
+  text-align: right !important;
+}
+.pcb-buy {
+  background: #16a34a;
+  color: var(--white);
+  border: 0;
+}
+.pcb-buy:hover {
+  background: #15803d;
+  color: var(--white);
+}
+.pcb-remove {
+  margin-left: 8px;
+  border: 0;
+  background: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--faint);
+  cursor: pointer;
+  vertical-align: middle;
+}
+.pcb-remove:hover {
+  color: #b42318;
+}
+.pcb-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+}
+.pcb-total {
+  display: flex;
+  gap: 24px;
+  align-items: baseline;
+  font-size: 16px;
+  color: var(--muted);
+}
+.pcb-total b {
+  font-size: 24px;
+  color: var(--ink);
+}
+.pcb-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pcb-checks {
+  margin-top: 28px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.pcb-checks h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.pcb-checks ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  font-size: 14.5px;
+}
+.pcb-checks li {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border-left: 4px solid;
+}
+.pcb-checks li.is-error {
+  border-color: #b42318;
+  background: #fef3f2;
+}
+.pcb-checks li.is-warn {
+  border-color: #b45309;
+  background: #fffbeb;
+}
+.pcb-checks li.is-note {
+  border-color: var(--blue);
+  background: var(--blue-50);
+}
+.pcb-fine {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--faint);
+}
+.pcb-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(12, 22, 52, 0.55);
+}
+.pcb-dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(980px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 0 24px 16px;
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: 0 30px 80px rgba(12, 22, 52, 0.35);
+}
+.pcb-dialog-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0 10px;
+  background: var(--white);
+}
+.pcb-dialog-head h2 {
+  font-size: 22px;
+}
+.pcb-close {
+  border: 0;
+  background: none;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+}
+.pcb-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.pcb-filters select,
+.pcb-search input {
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--white);
+  font: inherit;
+  font-size: 14px;
+  padding: 0 12px;
+}
+.pcb-search {
+  position: relative;
+  flex: 1 1 220px;
+}
+.pcb-search svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  color: var(--faint);
+}
+.pcb-search input {
+  width: 100%;
+  padding-left: 36px;
+}
+.pcb-count {
+  margin: 12px 0 4px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.pcb-count .text-link {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+.pcb-results {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pcb-results li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.pcb-results li.is-incompatible {
+  opacity: 0.6;
+}
+.pcb-result-info b {
+  display: block;
+  font-size: 15px;
+  color: var(--ink);
+}
+.pcb-rating {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: #f59e0b;
+}
+.pcb-rating span {
+  color: var(--muted);
+}
+.pcb-result-price {
+  text-align: right;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pcb-result-price s {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--faint);
+}
+@media (max-width: 640px) {
+  .pcb-results li {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+  .pcb-result-price {
+    text-align: left;
+  }
+  .pcb-dialog {
+    padding: 0 16px 12px;
+  }
+}
+/* Phones: each part becomes a stacked card instead of a wide table row. */
+@media (max-width: 640px) {
+  .pcb .table-scroll {
+    overflow: visible;
+  }
+  .pcb-table {
+    min-width: 0;
+  }
+  .pcb-table thead {
+    display: none;
+  }
+  .pcb-table,
+  .pcb-table tbody {
+    display: block;
+  }
+  .pcb-table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 14px 4px;
+    border-bottom: 1px solid var(--line);
+  }
+  .pcb-table tbody th,
+  .pcb-table td {
+    display: block;
+    padding: 0;
+    border: 0;
+    width: auto;
+  }
+  .pcb-table tbody th,
+  .pcb-table td:first-of-type {
+    grid-column: 1 / -1;
+  }
+  .pcb-table td:first-of-type .btn {
+    width: 100%;
+  }
+  .pcb-total {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .pcb-buttons,
+  .pcb-buttons .btn {
+    width: 100%;
+  }
+}
+.builder-band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  padding: 28px 32px;
+  border-radius: 18px;
+  background: linear-gradient(110deg, var(--blue-ink), var(--blue));
+  color: var(--white);
+}
+.builder-band h2 {
+  color: var(--white);
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+.builder-band p {
+  max-width: 620px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.builder-band .btn-primary {
+  background: var(--white);
+  color: var(--blue-ink);
 }

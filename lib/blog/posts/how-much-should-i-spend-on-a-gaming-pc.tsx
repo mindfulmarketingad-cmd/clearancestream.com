@@ -118,6 +118,8 @@ Factor these into the price when you compare systems. A slightly more expensive 
 Spend **$1,000 to $1,500** if you want the best long-term value for 1080p and 1440p gaming. Go **under $1,000** if you mainly play esports or lighter games. Go **above $2,000** only if you have a 4K or very high-refresh monitor and games that will use the extra performance. Then let discounts work for you by watching for higher-tier systems that drop into your budget.
 
 See every system we track, sorted by the biggest current discount, on our [gaming PCs page](/categories/gaming-pcs).
+
+To see what your budget buys part by part, price a build in our [PC Builder](/pc-builder) and compare it with prebuilt deals.
 `;
 
 export const howMuchShouldISpendOnAGamingPc: Post = {

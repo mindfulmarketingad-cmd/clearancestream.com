@@ -17,6 +17,25 @@ import { listInsights } from "@/lib/list-insights";
 import { RankedPicks } from "@/components/RankedPicks";
 import { toPickDeal } from "@/components/PickItem";
 import { itemListLd, pageMetadata } from "@/lib/seo";
+import { getPost } from "@/lib/blog";
+
+/** Buying guides worth reading before shopping each category. */
+const CATEGORY_GUIDES: Record<string, string[]> = {
+  "gaming-pcs": [
+    "prebuilt-gaming-pc-buying-guide",
+    "gaming-pc-deals-guide",
+    "how-much-should-i-spend-on-a-gaming-pc",
+    "best-time-to-buy-a-gaming-pc",
+    "refurbished-gaming-pc-worth-it",
+    "how-much-ram-for-gaming",
+  ],
+  laptops: ["gaming-laptop-vs-gaming-pc", "how-much-ram-for-gaming", "refurbished-gaming-pc-worth-it", "best-time-to-buy-a-gaming-pc"],
+  keyboards: ["mechanical-keyboard-switches-explained"],
+  mice: ["wireless-vs-wired-gaming-mouse"],
+  monitors: ["oled-vs-ips-gaming-monitor", "what-graphics-card-do-i-need"],
+  controllers: ["are-pro-controllers-worth-it"],
+  components: ["what-graphics-card-do-i-need", "how-much-ram-for-gaming", "how-much-should-i-spend-on-a-gaming-pc"],
+};
 
 export const dynamicParams = false;
 
@@ -43,6 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CategoryPage({ params }: Props) {
   const category = getCategory((await params).category);
   if (!category) notFound();
+  const guides = (CATEGORY_GUIDES[category.slug] ?? []).map(getPost).filter((p) => p !== undefined);
   const { deals: all, fetchedAt } = await getAllDeals();
   const deals = all.filter((d) => d.categorySlug === category.slug);
   const discounted = deals.filter((d) => d.savingsPercent).length;
@@ -81,7 +101,7 @@ export default async function CategoryPage({ params }: Props) {
             Category &middot; All brands
           </span>
           <h1>
-            {category.hubTitle.replace(/ Deals$/, "")} <span>Deals</span>
+            {category.hubTitle.replace(/ Deals$/, "")} <span>Deals {new Date().getFullYear()} - Clearance List</span>
           </h1>
           <p className="lede">
             {category.blurb}
@@ -165,6 +185,36 @@ export default async function CategoryPage({ params }: Props) {
                 <li key={l.def.slug}>
                   <Link href={`/lists/${l.def.slug}`} className="chip">
                     {l.shortTitle}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
+
+      {["components", "gaming-pcs", "monitors"].includes(category.slug) ? (
+        <section className="section-tight">
+          <div className="container">
+            <p className="callout-link">
+              {category.slug === "gaming-pcs" ? "Would building your own cost less? " : "Planning a new build? "}
+              <Link href="/pc-builder" className="text-link">
+                Price a full build in the PC Builder <ArrowRight />
+              </Link>
+            </p>
+          </div>
+        </section>
+      ) : null}
+
+      {guides.length > 0 ? (
+        <section className="section-tight">
+          <div className="container">
+            <h2 style={{ fontSize: 22, marginBottom: 16 }}>{category.name} buying guides</h2>
+            <ul className="chip-list">
+              {guides.map((g) => (
+                <li key={g.slug}>
+                  <Link href={`/blog/${g.slug}`} className="chip">
+                    {g.title}
                   </Link>
                 </li>
               ))}

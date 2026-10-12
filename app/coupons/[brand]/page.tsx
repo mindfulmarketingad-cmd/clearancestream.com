@@ -10,7 +10,7 @@ import { Faq } from "@/components/Faq";
 import { ArrowRight, ClockIcon, TagIcon } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
 import { BRANDS, getBrand } from "@/lib/brands";
-import { brandCouponDeals, couponMonth, toCoupon } from "@/lib/coupons";
+import { brandCouponDeals, toCoupon } from "@/lib/coupons";
 import { getAllDeals } from "@/lib/deals";
 import { formatChecked } from "@/lib/format";
 import { itemListLd, pageMetadata } from "@/lib/seo";
@@ -34,7 +34,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { brand, coupons } = await load(params);
   const best = coupons[0]?.savingsPercent;
   return pageMetadata({
-    title: `${brand.name} Coupons & Deals (${couponMonth()})`,
+    title: `${brand.name} Coupons & Deals ${new Date().getFullYear()}`,
+    absoluteTitle: true,
     description: coupons.length
       ? `${coupons.length} verified ${brand.name} deals, up to ${best}% off ${brand.sells}. No code needed: the discount is already applied at the retailer. Updated weekly.`
       : `Verified ${brand.name} coupons and deals on ${brand.sells}, checked weekly by ClearanceStream.`,
@@ -75,7 +76,7 @@ export default async function BrandCouponsPage({ params }: Props) {
           <BrandLogo brand={brand} size={88} />
           <div>
             <h1>
-              {brand.name} Coupons <span>&amp; Deals</span>
+              {brand.name} Coupons <span>&amp; Deals {new Date().getFullYear()}</span>
             </h1>
             <p className="lede">
               {coupons.length > 0

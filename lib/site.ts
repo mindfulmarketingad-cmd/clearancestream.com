@@ -21,6 +21,7 @@ export const MAIN_NAV = [
   { href: "/categories", label: "Categories" },
   { href: "/lists", label: "Lists" },
   { href: "/coupons", label: "Coupons" },
+  { href: "/pc-builder", label: "PC Builder" },
   { href: "/about", label: "About" },
   { href: "/search", label: "Search" },
 ] as const;

@@ -32,6 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ),
     entry("/lists", dealsUpdated, "weekly", 0.8),
     entry("/coupons", dealsUpdated, "weekly", 0.8),
+    entry("/pc-builder", dealsUpdated, "weekly", 0.9),
     ...couponSummaries(deals)
       .filter((c) => c.count > 0)
       .map((c) => entry(`/coupons/${c.brand.slug}`, dealsUpdated, "weekly", 0.8)),
