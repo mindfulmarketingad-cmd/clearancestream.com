@@ -2867,3 +2867,78 @@ a.card:hover {
   background: var(--blue-50);
   font-size: 15px;
 }
+
+/* ---------- List buyer's-guide detail ---------- */
+
+.list-compare td {
+  font-size: 14px;
+}
+.list-compare td:nth-child(2) {
+  min-width: 200px;
+}
+.list-compare td:last-child {
+  min-width: 170px;
+  color: var(--muted);
+}
+.list-bestfor {
+  align-self: flex-start;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: var(--blue-50);
+  color: var(--blue-ink);
+  font-size: 14px;
+}
+.list-specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  margin: 2px 0 0;
+}
+.list-specs div {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.list-specs dt {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--faint);
+}
+.list-specs dd {
+  margin: 2px 0 0;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.list-plain {
+  margin: 2px 0 0;
+  padding-left: 18px;
+  font-size: 14.5px;
+  color: var(--muted);
+  display: grid;
+  gap: 6px;
+}
+.list-price-point {
+  font-size: 14.5px;
+  color: var(--muted);
+}
+.list-proscons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.list-cons .con-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  color: #b42318;
+  font-weight: 700;
+  line-height: 1;
+}
+@media (max-width: 720px) {
+  .list-proscons {
+    grid-template-columns: 1fr;
+  }
+}

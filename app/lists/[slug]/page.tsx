@@ -6,10 +6,11 @@ import { DealsUnavailable } from "@/components/DealsUnavailable";
 import { Faq } from "@/components/Faq";
 import { ArrowRight, CheckIcon, ClockIcon, ExternalIcon, TagIcon } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
-import { getAllDeals, type Deal } from "@/lib/deals";
+import { getAllDeals } from "@/lib/deals";
 import { formatChecked, lowerName } from "@/lib/format";
-import { LISTS, getListDef, liveLists, resolveAll, specSummary, type ResolvedList } from "@/lib/lists";
+import { LISTS, getListDef, liveLists, resolveAll, type ResolvedList } from "@/lib/lists";
 import { itemListLd, pageMetadata } from "@/lib/seo";
+import { listInsights } from "@/lib/list-insights";
 import { getBrand, type Brand } from "@/lib/brands";
 import { ListDirectory } from "@/components/ListLinks";
 import { FEATURED_SIZE, listImagePath } from "@/lib/featured-image";
@@ -64,27 +65,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-function reasons(d: Deal, list: ResolvedList): string[] {
-  const out: string[] = [];
-  if (d.savingsPercent && d.savingsDisplay) out.push(`${d.savingsPercent}% below its ${d.listPriceLabel?.toLowerCase() ?? "reference price"} (save ${d.savingsDisplay})`);
-  if (d.rating && d.reviewCount) out.push(`Rated ${d.rating.toFixed(1)} out of 5 from ${d.reviewCount.toLocaleString("en-US")} reviews`);
-  const under = list.def.qualifier.match(/under \$\d+/);
-  if (list.def.kind === "price" && under) out.push(`Priced ${under[0]} at ${d.priceDisplay}`);
-  if (d.categorySlug === "gaming-pcs" || d.categorySlug === "laptops") {
-    const spec = specSummary(d);
-    if (spec.length > 0) out.push(spec.join(", "));
-  }
-  if (d.attrs.includes("wireless")) out.push("Wireless");
-  const gpu = d.attrs.find((a) => a.startsWith("gpu:"));
-  if (gpu) out.push(`${gpu.slice(4).toUpperCase().replace(/-/g, " ").replace(" TI", " Ti").replace(" SUPER", " Super")} graphics`);
-  if (d.dealBadge) out.push(d.dealBadge);
-  return out.slice(0, 4);
-}
-
 export default async function ListPage({ params }: Props) {
   const { list, deals, fetchedAt } = await load(params);
   const { def, items } = list;
   const s = summary(list);
+  const insights = listInsights(items);
   const allLists = liveLists(deals);
   const related = allLists.filter((l) => l.def.category.slug === def.category.slug && l.def.slug !== def.slug && l.indexable).slice(0, 12);
   const path = `/lists/${def.slug}`;
@@ -165,31 +150,42 @@ export default async function ListPage({ params }: Props) {
             <DealsUnavailable scope={def.category.noun} />
           ) : (
             <>
-              <h2 style={{ fontSize: 20, marginBottom: 12 }}>The list at a glance</h2>
-              <table className="spec-table list-glance">
-                <caption className="sr-only">Ranked products</caption>
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Product</th>
-                    <th scope="col">Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((d, i) => (
-                    <tr key={d.asin}>
-                      <td>{i + 1}</td>
-                      <td>
-                        <a href={`#item-${i + 1}`}>{d.name}</a>
-                      </td>
-                      <td>
-                        <span className={d.savingsPercent ? "price-deal" : undefined}>{d.priceDisplay}</span>
-                        {d.savingsPercent ? <span className="pill-off">{d.savingsPercent}% OFF</span> : null}
-                      </td>
+              <h2 style={{ fontSize: 20, marginBottom: 12 }}>Compare the picks</h2>
+              <div className="table-scroll">
+                <table className="spec-table list-glance list-compare">
+                  <caption className="sr-only">Ranked products compared</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Product</th>
+                      <th scope="col">Price</th>
+                      <th scope="col">Rating</th>
+                      <th scope="col">Key specs</th>
+                      <th scope="col">Best for</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {items.map((d, i) => {
+                      const info = insights.get(d.asin)!;
+                      return (
+                        <tr key={d.asin}>
+                          <td>{i + 1}</td>
+                          <td>
+                            <a href={`#item-${i + 1}`}>{d.name}</a>
+                          </td>
+                          <td>
+                            <span className={d.savingsPercent ? "price-deal" : undefined}>{d.priceDisplay}</span>
+                            {d.savingsPercent ? <span className="pill-off">{d.savingsPercent}% OFF</span> : null}
+                          </td>
+                          <td>{d.rating ? `${d.rating.toFixed(1)} / 5` : "Not rated"}</td>
+                          <td>{info.specs.slice(0, 2).map(([, v]) => v).join(", ") || "See listing"}</td>
+                          <td>{info.bestFor}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
 
               <ol className="list-items">
                 {items.map((d, i) => (
@@ -214,21 +210,71 @@ export default async function ListPage({ params }: Props) {
                         <span className={d.savingsPercent ? "price price-deal" : "price"}>{d.priceDisplay}</span>
                         {d.listPriceDisplay ? <s className="price">{d.listPriceDisplay}</s> : null}
                       </div>
-                      <h3 className="list-sub">Why it made the list</h3>
-                      <ul className="feature-list">
-                        {reasons(d, list).map((r) => (
-                          <li key={r}>
-                            <CheckIcon />
-                            <span>{r}</span>
-                          </li>
-                        ))}
-                        {d.features.slice(0, 2).map((f) => (
-                          <li key={f}>
-                            <CheckIcon />
-                            <span>{f.length > 160 ? `${f.slice(0, 157)}...` : f}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      {(() => {
+                        const info = insights.get(d.asin)!;
+                        return (
+                          <>
+                            <p className="list-bestfor">
+                              <b>Best for:</b> {info.bestFor}
+                            </p>
+                            {info.specs.length > 0 ? (
+                              <>
+                                <h3 className="list-sub">Key specs</h3>
+                                <dl className="list-specs">
+                                  {info.specs.map(([k, v]) => (
+                                    <div key={k}>
+                                      <dt>{k}</dt>
+                                      <dd>{v}</dd>
+                                    </div>
+                                  ))}
+                                </dl>
+                              </>
+                            ) : null}
+                            {info.features.length > 0 ? (
+                              <>
+                                <h3 className="list-sub">Standout features</h3>
+                                <ul className="list-plain">
+                                  {info.features.map((f) => (
+                                    <li key={f}>{f}</li>
+                                  ))}
+                                </ul>
+                              </>
+                            ) : null}
+                            <h3 className="list-sub">Price point</h3>
+                            <p className="list-price-point">{info.pricePoint}</p>
+                            <div className="list-proscons">
+                              {info.pros.length > 0 ? (
+                                <div>
+                                  <h3 className="list-sub">Reasons to buy</h3>
+                                  <ul className="feature-list">
+                                    {info.pros.map((r) => (
+                                      <li key={r}>
+                                        <CheckIcon />
+                                        <span>{r}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              ) : null}
+                              {info.cons.length > 0 ? (
+                                <div>
+                                  <h3 className="list-sub">Reasons to avoid</h3>
+                                  <ul className="feature-list list-cons">
+                                    {info.cons.map((r) => (
+                                      <li key={r}>
+                                        <span className="con-mark" aria-hidden="true">
+                                          &times;
+                                        </span>
+                                        <span>{r}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              ) : null}
+                            </div>
+                          </>
+                        );
+                      })()}
                       <div className="list-actions">
                         <Link href={d.path} className="btn btn-primary btn-sm">
                           View Deal <ArrowRight />
