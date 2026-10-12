@@ -5,6 +5,7 @@ import { BRANDS } from "@/lib/brands";
 import { CATEGORIES } from "@/lib/categories";
 import { liveLists } from "@/lib/lists";
 import { couponSummaries } from "@/lib/coupons";
+import { SWITCH_TYPES, keyboardsWithSwitch } from "@/lib/switches";
 import { getAllDeals } from "@/lib/deals";
 import { POPULAR_SEARCHES, runSearch } from "@/lib/search";
 import { absoluteUrl } from "@/lib/site";
@@ -32,6 +33,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ),
     entry("/lists", dealsUpdated, "weekly", 0.8),
     entry("/coupons", dealsUpdated, "weekly", 0.8),
+    entry("/switches", dealsUpdated, "weekly", 0.8),
+    ...SWITCH_TYPES.filter((t) => keyboardsWithSwitch(deals, t.slug).length > 0).map((t) =>
+      entry(`/switches/${t.slug}`, dealsUpdated, "weekly", 0.7),
+    ),
     ...couponSummaries(deals)
       .filter((c) => c.count > 0)
       .map((c) => entry(`/coupons/${c.brand.slug}`, dealsUpdated, "weekly", 0.8)),

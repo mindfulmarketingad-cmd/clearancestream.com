@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SwitchLinks } from "@/components/SwitchLinks";
 import { BrandDirectory } from "@/components/BrandDirectory";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
@@ -45,6 +46,11 @@ export default async function BrandsPage() {
               place.
             </p>
           </div>
+        </div>
+      </section>
+      <section className="section-tight">
+        <div className="container">
+          <SwitchLinks />
         </div>
       </section>
       <JsonLd data={itemListLd("Gaming brands", BRANDS.map((b) => ({ name: brandTitle(b), path: `/brands/${b.slug}` })))} />

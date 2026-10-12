@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { AUTHORS, POSTS, authorPath } from "@/lib/blog";
 import { BRANDS } from "@/lib/brands";
+import { SWITCH_TYPES } from "@/lib/switches";
 import { CATEGORIES } from "@/lib/categories";
 import { liveLists } from "@/lib/lists";
 import { getAllDeals } from "@/lib/deals";
@@ -68,6 +69,15 @@ export default async function SitemapPage() {
               <li><Link href="/lists">All lists</Link></li>
               {liveLists(deals).filter((l) => l.indexable).map((l) => (
                 <li key={l.def.slug}><Link href={`/lists/${l.def.slug}`}>{l.shortTitle}</Link></li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2>Keyboard switches</h2>
+            <ul>
+              <li><Link href="/switches">All switch types</Link></li>
+              {SWITCH_TYPES.map((t) => (
+                <li key={t.slug}><Link href={`/switches/${t.slug}`}>{t.heading}</Link></li>
               ))}
             </ul>
           </div>

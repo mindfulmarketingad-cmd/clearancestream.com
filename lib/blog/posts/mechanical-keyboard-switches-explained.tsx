@@ -128,7 +128,7 @@ Two keyboards with the same switches can sound very different. Foam inside the c
 
 ## The bottom line {#bottom-line}
 
-Linear switches are the go-to for gaming, tactile switches are a great all-rounder, and clicky switches are best kept for solo typing. If you are not sure, buy a hot-swappable keyboard so you can experiment. Compare current prices on our [gaming keyboards page](/categories/keyboards), our [mechanical gaming keyboards](/lists/10-best-mechanical-gaming-keyboards) list, and our [gaming keyboards under $100](/lists/10-best-gaming-keyboards-under-100) list.
+Linear switches are the go-to for gaming, tactile switches are a great all-rounder, and clicky switches are best kept for solo typing. To compare live deals on each type, see our [keyboards by switch type](/switches) hub, including [linear](/switches/linear), [tactile](/switches/tactile), [Hall effect](/switches/hall-effect), and [rapid trigger](/switches/rapid-trigger) keyboards. If you are not sure, buy a hot-swappable keyboard so you can experiment. Compare current prices on our [gaming keyboards page](/categories/keyboards), our [mechanical gaming keyboards](/lists/10-best-mechanical-gaming-keyboards) list, and our [gaming keyboards under $100](/lists/10-best-gaming-keyboards-under-100) list.
 `;
 
 export const mechanicalKeyboardSwitchesExplained: Post = {
