@@ -29,6 +29,8 @@ export function RankedPicks({
   brands = [],
   label,
   show = 10,
+  more = 0,
+  discountFilter = false,
 }: {
   picks: Pick[];
   categories?: { slug: string; name: string }[];
@@ -36,6 +38,10 @@ export function RankedPicks({
   brands?: string[];
   label: string;
   show?: number;
+  /** When set, a "Show more" button reveals this many more picks at a time. */
+  more?: number;
+  /** Adds a minimum-discount filter. */
+  discountFilter?: boolean;
 }) {
   const [category, setCategory] = useState("");
   const [brand, setBrand] = useState("");
@@ -43,26 +49,31 @@ export function RankedPicks({
   const [onSale, setOnSale] = useState(false);
   const [wireless, setWireless] = useState(false);
   const [sort, setSort] = useState<SortKey>("best");
+  const [minOff, setMinOff] = useState(0);
+  const [limit, setLimit] = useState(show);
 
   const maxPrice = Math.max(...picks.map((p) => p.deal.price));
   const caps = PRICE_CAPS.filter((c) => c < maxPrice);
   const hasWireless = picks.some((p) => p.deal.attrs.includes("wireless"));
 
-  const results = useMemo(
+  const matching = useMemo(
     () =>
       picks
         .filter((p) => !category || p.deal.categorySlug === category)
         .filter((p) => !brand || p.deal.brandName === brand)
         .filter((p) => !cap || p.deal.price < cap)
         .filter((p) => !onSale || (p.deal.savingsPercent ?? 0) > 0)
+        .filter((p) => !minOff || (p.deal.savingsPercent ?? 0) >= minOff)
         .filter((p) => !wireless || p.deal.attrs.includes("wireless"))
-        .sort(SORTS[sort].fn)
-        .slice(0, show),
-    [picks, category, brand, cap, onSale, wireless, sort, show],
+        .sort(SORTS[sort].fn),
+    [picks, category, brand, cap, onSale, minOff, wireless, sort],
   );
+  const results = matching.slice(0, more ? limit : show);
 
-  const filtered = category || brand || cap || onSale || wireless || sort !== "best";
+  const filtered = category || brand || cap || onSale || minOff || wireless || sort !== "best";
   const reset = () => {
+    setMinOff(0);
+    setLimit(show);
     setCategory("");
     setBrand("");
     setCap(0);
@@ -104,6 +115,16 @@ export function RankedPicks({
             ))}
           </select>
         ) : null}
+        {discountFilter ? (
+          <select aria-label="Discount" value={minOff} onChange={(e) => setMinOff(Number(e.target.value))}>
+            <option value={0}>Any discount</option>
+            {[10, 20, 30, 50].map((n) => (
+              <option key={n} value={n}>
+                {n}% off or more
+              </option>
+            ))}
+          </select>
+        ) : null}
         <select aria-label="Sort" value={sort} onChange={(e) => setSort(e.target.value as SortKey)}>
           {Object.entries(SORTS).map(([key, s]) => (
             <option key={key} value={key}>
@@ -133,7 +154,8 @@ export function RankedPicks({
       ) : (
         <>
           <p className="muted" style={{ fontSize: 14, margin: "12px 0 16px" }} aria-live="polite">
-            Showing {results.length} {results.length === 1 ? "pick" : "picks"}
+            Showing {results.length}
+            {more && matching.length > results.length ? ` of ${matching.length}` : ""} {results.length === 1 ? "pick" : "picks"}
             {filtered ? " matching your filters" : ""}.
           </p>
           <PickCompare items={results} />
@@ -142,6 +164,13 @@ export function RankedPicks({
               <PickItem key={p.deal.asin} deal={p.deal} info={p.info} rank={i + 1} eager={i < 2} />
             ))}
           </ol>
+          {more && matching.length > results.length ? (
+            <div style={{ textAlign: "center", marginTop: 24 }}>
+              <button type="button" className="btn btn-secondary" onClick={() => setLimit((n) => n + more)}>
+                Show {Math.min(more, matching.length - results.length)} more deals
+              </button>
+            </div>
+          ) : null}
         </>
       )}
     </>

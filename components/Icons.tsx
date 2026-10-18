@@ -26,6 +26,9 @@ export const CheckIcon = (p: P) => (
 export const ClockIcon = (p: P) => (
   <svg {...base} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
 );
+export const CalendarIcon = (p: P) => (
+  <svg {...base} {...p}><rect x="3.5" y="5" width="17" height="15" rx="2" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
+);
 export const ShieldIcon = (p: P) => (
   <svg {...base} {...p}><path d="M12 3 4.5 6v6c0 4.5 3.2 7.8 7.5 9 4.3-1.2 7.5-4.5 7.5-9V6L12 3Z" /><path d="m9 12 2 2 4-4" /></svg>
 );

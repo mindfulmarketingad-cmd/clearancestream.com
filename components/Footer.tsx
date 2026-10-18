@@ -44,6 +44,9 @@ export function Footer() {
               </li>
             ))}
             <li>
+              <Link href="/deals/today">Today’s Tech Deals</Link>
+            </li>
+            <li>
               <Link href="/pc-builder">PC Part Picker</Link>
             </li>
             <li>

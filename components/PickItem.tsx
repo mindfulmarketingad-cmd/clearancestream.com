@@ -43,6 +43,7 @@ export const toPickDeal = (d: Deal): PickDeal => ({
 
 /** Comparison table for a ranked set of picks. */
 export function PickCompare({ items }: { items: { deal: PickDeal; info: Insight }[] }) {
+  const rated = items.some(({ deal }) => deal.rating);
   return (
     <div className="table-scroll">
       <table className="spec-table list-glance list-compare">
@@ -52,7 +53,7 @@ export function PickCompare({ items }: { items: { deal: PickDeal; info: Insight 
             <th scope="col">#</th>
             <th scope="col">Product</th>
             <th scope="col">Price</th>
-            <th scope="col">Rating</th>
+            {rated ? <th scope="col">Rating</th> : null}
             <th scope="col">Key specs</th>
             <th scope="col">Best for</th>
           </tr>
@@ -68,11 +69,11 @@ export function PickCompare({ items }: { items: { deal: PickDeal; info: Insight 
                 <span className={d.savingsPercent ? "price-deal" : undefined}>{d.priceDisplay}</span>
                 {d.savingsPercent ? <span className="pill-off">{d.savingsPercent}% OFF</span> : null}
               </td>
-              <td>{d.rating ? `${d.rating.toFixed(1)} / 5` : "Not rated"}</td>
-              <td>
+              {rated ? <td>{d.rating ? `${d.rating.toFixed(1)} / 5` : "Not rated"}</td> : null}
+              <td className="cmp-specs">
                 {info.specs
                   .slice(0, 2)
-                  .map(([, v]) => v)
+                  .map(([k, v]) => (v === "Yes" ? k : v))
                   .join(", ") || "See listing"}
               </td>
               <td>{info.bestFor}</td>

@@ -32,6 +32,9 @@ export default async function DealsPage() {
           <span>
             <RefreshIcon /> Refreshed weekly
           </span>
+          <Link href="/deals/today" className="text-link">
+            Today’s tech deals <ArrowRight />
+          </Link>
           {fetchedAt ? (
             <span>
               <ClockIcon /> Last checked <time dateTime={fetchedAt}>{formatChecked(fetchedAt)}</time>

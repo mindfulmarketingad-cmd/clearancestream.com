@@ -2903,6 +2903,21 @@ a.card:hover {
 .list-compare td:nth-child(2) {
   min-width: 200px;
 }
+.list-compare td:nth-child(3) {
+  white-space: nowrap;
+}
+.list-compare td:nth-child(3) .price-deal {
+  display: block;
+  font-weight: 600;
+}
+.list-compare .pill-off {
+  height: auto;
+  margin: 4px 0 0;
+  padding: 2px 8px;
+  font-size: 11.5px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
 .list-compare td:last-child {
   min-width: 170px;
   color: var(--muted);

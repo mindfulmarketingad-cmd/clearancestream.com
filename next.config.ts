@@ -54,7 +54,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       // /deals/[brand] has no page of its own; the brand page is the canonical listing.
-      { source: "/deals/:brand", destination: "/brands/:brand", permanent: true },
+      { source: "/deals/:brand((?!today$)[^/]+)", destination: "/brands/:brand", permanent: true },
       { source: "/author", destination: "/blog", permanent: true },
       { source: "/category", destination: "/categories", permanent: true },
       { source: "/category/:slug", destination: "/categories/:slug", permanent: true },

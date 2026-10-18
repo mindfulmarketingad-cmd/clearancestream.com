@@ -92,7 +92,7 @@ export default async function HomePage() {
               }))}
             />
             <p className="hero-links">
-              Or <Link href="/deals">browse all deals</Link> &middot; <Link href="/brands">shop by brand</Link>
+              Or see <Link href="/deals/today">today’s tech deals</Link> &middot; <Link href="/deals">browse all deals</Link> &middot; <Link href="/brands">shop by brand</Link>
             </p>
             <ul className="hero-facts">
               <li>
@@ -190,6 +190,11 @@ export default async function HomePage() {
               </div>
             </div>
             <DealPicks pool={pool} builtAt={new Date().toISOString()} />
+            <p style={{ marginTop: 16 }}>
+              <Link href="/deals/today" className="text-link">
+                See all of today’s tech deals <ArrowRight />
+              </Link>
+            </p>
           </div>
         </section>
       ) : null}
