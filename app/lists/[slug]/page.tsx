@@ -11,7 +11,9 @@ import { formatChecked, lowerName } from "@/lib/format";
 import { LISTS, getListDef, liveLists, resolveAll, type ResolvedList } from "@/lib/lists";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 import { listInsights } from "@/lib/list-insights";
-import { PickCompare, PickItem, toPickDeal } from "@/components/PickItem";
+import { PickItem, toPickDeal } from "@/components/PickItem";
+import { CategoryTable } from "@/components/CategoryTable";
+import { dealTable } from "@/lib/deal-table";
 import { getBrand, type Brand } from "@/lib/brands";
 import { ListDirectory } from "@/components/ListLinks";
 import { FEATURED_SIZE, listImagePath } from "@/lib/featured-image";
@@ -71,6 +73,7 @@ export default async function ListPage({ params }: Props) {
   const { def, items } = list;
   const s = summary(list);
   const insights = listInsights(items);
+  const table = dealTable(items);
   const allLists = liveLists(deals);
   const related = allLists.filter((l) => l.def.category.slug === def.category.slug && l.def.slug !== def.slug && l.indexable).slice(0, 12);
   const path = `/lists/${def.slug}`;
@@ -137,9 +140,10 @@ export default async function ListPage({ params }: Props) {
       </div>
 
       <section className="section-tight">
-        <div className="container" style={{ maxWidth: 960 }}>
+        <div className="container">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
+            style={{ maxWidth: 960, display: "block", marginInline: "auto" }}
             className="featured-image"
             src={listImagePath(def.slug)}
             alt={list.title}
@@ -152,12 +156,15 @@ export default async function ListPage({ params }: Props) {
           ) : (
             <>
               <h2 style={{ fontSize: 20, marginBottom: 12 }}>Compare the picks</h2>
-              <PickCompare items={items.map((d) => ({ deal: toPickDeal(d), info: insights.get(d.asin)! }))} />
-              <ol className="list-items">
-                {items.map((d, i) => (
-                  <PickItem key={d.asin} deal={toPickDeal(d)} info={insights.get(d.asin)!} rank={i + 1} eager={i < 2} />
-                ))}
-              </ol>
+              <CategoryTable rows={table.rows} columns={table.columns} facets={table.facets} noun={def.category.noun} ranked />
+              <div style={{ maxWidth: 960, marginInline: "auto" }}>
+                <h2 style={{ fontSize: 24, margin: "48px 0 0" }}>The picks in detail</h2>
+                <ol className="list-items">
+                  {items.map((d, i) => (
+                    <PickItem key={d.asin} deal={toPickDeal(d)} info={insights.get(d.asin)!} rank={i + 1} eager={i < 2} />
+                  ))}
+                </ol>
+              </div>
               <JsonLd data={itemListLd(list.title, items.map((d) => ({ name: d.name, path: d.path })))} />
             </>
           )}

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CategoryLinks } from "@/components/CategoryLinks";
-import { DealBrowser } from "@/components/DealBrowser";
+import { CategoryTable } from "@/components/CategoryTable";
+import { dealTable } from "@/lib/deal-table";
 import { DealsUnavailable } from "@/components/DealsUnavailable";
 import { Faq } from "@/components/Faq";
 import { ArrowRight, ClockIcon, RefreshIcon, TagIcon } from "@/components/Icons";
@@ -55,6 +56,7 @@ export default async function BrandPage({ params }: Props) {
   const pool = deals.filter((d) => d.inStock).sort(defaultRank).slice(0, 60);
   const insights = listInsights(pool);
   const picks = pool.map((d, i) => ({ deal: toPickDeal(d), info: insights.get(d.asin)!, rank: i + 1 }));
+  const table = dealTable([...deals].sort(defaultRank));
   const pickCategories = CATEGORIES.filter((c) => pool.some((d) => d.categorySlug === c.slug)).map((c) => ({ slug: c.slug, name: c.plural }));
   const guides = (GROUP_GUIDES[brand.group] ?? []).map(getPost).filter((p): p is Post => !!p);
   const searches = POPULAR_SEARCHES.filter((s) => s.label.toLowerCase().includes(brand.name.toLowerCase()));
@@ -108,15 +110,32 @@ export default async function BrandPage({ params }: Props) {
         </header>
       </div>
 
+      <section className="section-tight" id="deals">
+        <div className="container">
+          <nav aria-label="On this page" className="page-toc">
+            <a href="#deals">All {brand.name} products</a>
+            {picks.length > 0 ? <a href="#top-picks">Top picks</a> : null}
+            <a href="#guide">Buying guide</a>
+            <a href="#faq">FAQ</a>
+          </nav>
+          <h2 className="sr-only">All {brand.name} products</h2>
+          {deals.length > 0 ? (
+            <>
+              <CategoryTable rows={table.rows} columns={table.columns} facets={table.facets} noun={`${brand.name} product`} />
+              <div style={{ marginTop: 32 }}>
+                <CategoryLinks brand={brand} deals={deals} />
+              </div>
+              <JsonLd data={itemListLd(`${brand.name} deals`, deals.slice(0, 100).map((d) => ({ name: d.name, path: d.path })))} />
+            </>
+          ) : (
+            <DealsUnavailable scope={brand.name} />
+          )}
+        </div>
+      </section>
+
       {picks.length > 0 ? (
         <section className="section-tight" id="top-picks">
           <div className="container" style={{ maxWidth: 960 }}>
-            <nav aria-label="On this page" className="page-toc">
-              <a href="#top-picks">Top picks</a>
-              <a href="#deals">All {brand.name} products</a>
-              <a href="#guide">Buying guide</a>
-              <a href="#faq">FAQ</a>
-            </nav>
             <h2 style={{ fontSize: 26, marginBottom: 8 }}>
               The best {brand.name} products to buy right now
             </h2>
@@ -129,21 +148,6 @@ export default async function BrandPage({ params }: Props) {
           </div>
         </section>
       ) : null}
-
-      <section className="section-tight" id="deals">
-        <div className="container">
-          <h2 style={{ fontSize: 24, marginBottom: 16 }}>All {brand.name} products</h2>
-          {deals.length > 0 ? (
-            <>
-              <CategoryLinks brand={brand} deals={deals} />
-              <DealBrowser deals={deals.slice(0, 96)} label={brand.name} />
-              <JsonLd data={itemListLd(`${brand.name} deals`, deals.map((d) => ({ name: d.name, path: d.path })))} />
-            </>
-          ) : (
-            <DealsUnavailable scope={brand.name} />
-          )}
-        </div>
-      </section>
 
       <section className="section-tight">
         <div className="container">
@@ -163,7 +167,7 @@ export default async function BrandPage({ params }: Props) {
                 <p key={p.slice(0, 32)}>{p}</p>
               ))}
               <p>
-                Use the search box, category filter, and sort options above to narrow the list. Discounts are always measured against a genuine
+                Use the filters, search box, and sortable columns above to narrow the list. Discounts are always measured against a genuine
                 reference price, and new {brand.name} markdowns appear as soon as
                 our weekly check finds them.
               </p>

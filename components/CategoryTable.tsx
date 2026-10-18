@@ -63,7 +63,21 @@ function FilterGroup({
  * Part-picker style product table for a category: filter sidebar, sortable
  * spec columns, and pages of 50. Everything runs in the browser.
  */
-export function CategoryTable({ rows, columns, facets, noun }: { rows: TableRow[]; columns: string[]; facets: Facet[]; noun: string }) {
+export function CategoryTable({
+  rows,
+  columns,
+  facets,
+  noun,
+  ranked = false,
+}: {
+  rows: TableRow[];
+  columns: string[];
+  facets: Facet[];
+  noun: string;
+  /** Show each row's rank (its position in `rows`) and link it to the write-up at #item-N. */
+  ranked?: boolean;
+}) {
+  const rankOf = useMemo(() => new Map(rows.map((r, i) => [r.asin, i + 1])), [rows]);
   const brands = useMemo(() => {
     const counts = new Map<string, number>();
     for (const r of rows) counts.set(r.brand, (counts.get(r.brand) ?? 0) + 1);
@@ -325,6 +339,11 @@ export function CategoryTable({ rows, columns, facets, noun }: { rows: TableRow[
               <caption className="sr-only">{noun} prices and specs</caption>
               <thead>
                 <tr>
+                  {ranked ? (
+                    <th scope="col" className="ct-rank">
+                      #
+                    </th>
+                  ) : null}
                   <Th k="name" className="ct-name-h">
                     Name
                   </Th>
@@ -346,6 +365,11 @@ export function CategoryTable({ rows, columns, facets, noun }: { rows: TableRow[
               <tbody>
                 {visible.map((r) => (
                   <tr key={r.asin}>
+                    {ranked ? (
+                      <td className="ct-rank">
+                        <a href={`#item-${rankOf.get(r.asin)}`}>{rankOf.get(r.asin)}</a>
+                      </td>
+                    ) : null}
                     <td className="ct-name">
                       <Link href={r.path}>
                         {r.image ? (

@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { DealBrowser } from "@/components/DealBrowser";
+import { CategoryTable } from "@/components/CategoryTable";
+import { dealTable } from "@/lib/deal-table";
 import { DealsUnavailable } from "@/components/DealsUnavailable";
-import { ArrowRight, ClockIcon, RefreshIcon } from "@/components/Icons";
+import { ArrowRight, ClockIcon } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
 import { BRANDS } from "@/lib/brands";
-import { gamingPcsFirst, getAllDeals } from "@/lib/deals";
+import { getAllDeals } from "@/lib/deals";
+import { defaultRank } from "@/lib/lists";
 import { formatChecked } from "@/lib/format";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
@@ -20,18 +22,17 @@ export const metadata = pageMetadata({
 
 export default async function DealsPage() {
   const { deals, fetchedAt } = await getAllDeals();
+  // Every product, best real discounts and reviews first.
+  const table = dealTable([...deals].sort(defaultRank), { maxColumns: 3 });
 
   return (
     <>
       <PageHeader
         crumbs={[{ name: "All Deals", path: "/deals" }]}
         title="All gaming PC deals"
-        lede="The biggest live discounts across every brand we track, from complete gaming PCs to mice and controllers. Live prices, refreshed every week."
+        lede="Every product we track across every brand, from complete gaming PCs to mice and controllers. Filter by category, brand, price, and discount, and sort any column."
       >
         <div className="page-meta">
-          <span>
-            <RefreshIcon /> Refreshed weekly
-          </span>
           <Link href="/deals/today" className="text-link">
             Today’s tech deals <ArrowRight />
           </Link>
@@ -45,22 +46,23 @@ export default async function DealsPage() {
 
       <section className="section-tight">
         <div className="container">
-          <div className="toolbar">
-            <span>Shop by brand</span>
-            <ul className="chip-list" aria-label="Brands">
-              {BRANDS.map((b) => (
-                <li key={b.slug}>
-                  <Link href={`/brands/${b.slug}`} className="chip">
-                    {b.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
           {deals.length > 0 ? (
             <>
-              <DealBrowser deals={gamingPcsFirst(deals.filter((d) => d.savingsPercent)).slice(0, 96)} label="gaming PC" />
-              <JsonLd data={itemListLd("Gaming PC deals", deals.map((d) => ({ name: d.name, path: d.path })))} />
+              <h2 className="sr-only">Every deal we track</h2>
+              <CategoryTable rows={table.rows} columns={table.columns} facets={table.facets} noun="deal" />
+              <div className="toolbar" style={{ marginTop: 32 }}>
+                <span>Shop by brand</span>
+                <ul className="chip-list" aria-label="Brands">
+                  {BRANDS.map((b) => (
+                    <li key={b.slug}>
+                      <Link href={`/brands/${b.slug}`} className="chip">
+                        {b.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <JsonLd data={itemListLd("Gaming PC deals", deals.slice(0, 100).map((d) => ({ name: d.name, path: d.path })))} />
             </>
           ) : (
             <DealsUnavailable />

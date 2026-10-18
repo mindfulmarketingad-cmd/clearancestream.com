@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CategoryLinks } from "@/components/CategoryLinks";
-import { DealBrowser } from "@/components/DealBrowser";
+import { CategoryTable } from "@/components/CategoryTable";
+import { dealTable } from "@/lib/deal-table";
 import { DealsUnavailable } from "@/components/DealsUnavailable";
 import { Faq } from "@/components/Faq";
 import { ArrowRight, ClockIcon, RefreshIcon, TagIcon } from "@/components/Icons";
@@ -35,12 +36,13 @@ async function load(params: Props["params"]) {
   const { deals: all, fetchedAt } = await getAllDeals();
   const brandDeals = all.filter((d) => d.brandSlug === brand.slug);
   const deals = brandDeals.filter((d) => d.categorySlug === category.slug);
+  const table = dealTable(deals);
   // Same category from other brands, for cross-linking.
   const otherBrands = BRANDS.filter(
     (b) => b.slug !== brand.slug && all.some((d) => d.brandSlug === b.slug && d.categorySlug === category.slug),
   );
   const lists = listsForBrand(liveLists(all), brand.slug, category.slug).slice(0, 12);
-  return { brand, category, deals, brandDeals, otherBrands, lists, fetchedAt };
+  return { brand, category, deals, brandDeals, otherBrands, lists, fetchedAt, table };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -55,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BrandCategoryPage({ params }: Props) {
-  const { brand, category, deals, brandDeals, otherBrands, lists, fetchedAt } = await load(params);
+  const { brand, category, deals, brandDeals, otherBrands, lists, fetchedAt, table } = await load(params);
   const path = `/brands/${brand.slug}/${category.slug}`;
 
   const faqs = [
@@ -115,7 +117,7 @@ export default async function BrandCategoryPage({ params }: Props) {
           <CategoryLinks brand={brand} deals={brandDeals} current={category.slug} />
           {deals.length > 0 ? (
             <>
-              <DealBrowser deals={deals.slice(0, 150)} label={`${brand.name} ${category.noun}`} showCategoryFilter={false} />
+              <CategoryTable rows={table.rows} columns={table.columns} facets={table.facets} noun={`${brand.name} ${category.noun}`} />
               <JsonLd
                 data={itemListLd(
                   `${brand.name} ${category.name} deals`,
