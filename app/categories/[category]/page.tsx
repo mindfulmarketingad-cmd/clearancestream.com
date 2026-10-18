@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { DealBrowser } from "@/components/DealBrowser";
 import { DealsUnavailable } from "@/components/DealsUnavailable";
 import { Faq } from "@/components/Faq";
 import { ArrowRight, ClockIcon, TagIcon } from "@/components/Icons";
@@ -13,7 +12,8 @@ import { CATEGORIES, getCategory } from "@/lib/categories";
 import { getAllDeals } from "@/lib/deals";
 import { formatChecked, lowerName } from "@/lib/format";
 import { defaultRank, liveLists } from "@/lib/lists";
-import { listInsights } from "@/lib/list-insights";
+import { listInsights, specsFor } from "@/lib/list-insights";
+import { CategoryTable, type Facet, type TableRow } from "@/components/CategoryTable";
 import { RankedPicks } from "@/components/RankedPicks";
 import { toPickDeal } from "@/components/PickItem";
 import { itemListLd, pageMetadata } from "@/lib/seo";
@@ -39,9 +39,28 @@ const CATEGORY_GUIDES: Record<string, string[]> = {
 
 export const dynamicParams = false;
 
-// Hub pages show the top of the category; every product is still reachable
-// through the brand category pages and lists.
-const SHOWN = 96;
+/** Spec columns shown in the table: the specs most products in the category state. */
+function tableColumns(rows: TableRow[]): string[] {
+  const counts = new Map<string, number>();
+  for (const r of rows) for (const k of Object.keys(r.specs)) counts.set(k, (counts.get(k) ?? 0) + 1);
+  return [...counts]
+    .filter(([, n]) => n >= Math.max(2, rows.length * 0.1))
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([k]) => k);
+}
+
+/** Filterable specs: those with a short list of distinct values. */
+function tableFacets(rows: TableRow[], columns: string[]): Facet[] {
+  const keys = [...new Set([...columns, "Condition"])];
+  return keys
+    .map((key) => {
+      const counts = new Map<string, number>();
+      for (const r of rows) if (r.specs[key]) counts.set(r.specs[key], (counts.get(r.specs[key]) ?? 0) + 1);
+      return { key, values: [...counts].map(([value, count]) => ({ value, count })).sort((a, b) => b.count - a.count) };
+    })
+    .filter((f) => f.values.length >= 2 && f.values.length <= 20);
+}
 
 type Props = { params: Promise<{ category: string }> };
 
@@ -74,6 +93,23 @@ export default async function CategoryPage({ params }: Props) {
   const insights = listInsights(pool);
   const picks = pool.map((d, i) => ({ deal: toPickDeal(d), info: insights.get(d.asin)!, rank: i + 1 }));
   const pickBrands = [...new Set(pool.map((d) => d.brandName))].sort();
+  const rows: TableRow[] = [...deals].sort(defaultRank).map((d) => ({
+    asin: d.asin,
+    name: d.name,
+    path: d.path,
+    buyUrl: d.buyUrl,
+    image: d.image?.url ?? null,
+    brand: d.brandName,
+    price: d.price,
+    priceDisplay: d.priceDisplay,
+    listPriceDisplay: d.listPriceDisplay,
+    savingsPercent: d.savingsPercent,
+    rating: d.rating,
+    reviewCount: d.reviewCount,
+    specs: Object.fromEntries(specsFor(d)),
+  }));
+  const columns = tableColumns(rows);
+  const facets = tableFacets(rows, columns);
 
   const faqs = [
     {
@@ -122,15 +158,46 @@ export default async function CategoryPage({ params }: Props) {
         </header>
       </div>
 
+      <section className="section-tight" id="deals">
+        <div className="container">
+          <nav aria-label="On this page" className="page-toc">
+            <a href="#deals">All {lowerName(category.plural)}</a>
+            {picks.length > 0 ? <a href="#top-picks">Top picks</a> : null}
+            <a href="#guide">Buying guide</a>
+            <a href="#faq">FAQ</a>
+          </nav>
+          <h2 className="sr-only">All {lowerName(category.plural)}</h2>
+          {rows.length > 0 ? (
+            <>
+              <CategoryTable rows={rows} columns={columns} facets={facets} noun={category.noun} />
+              {brandCounts.length > 0 ? (
+                <nav aria-label={`${category.plural} by brand`} className="category-links" style={{ marginTop: 32 }}>
+                  <h3 className="sub-head" style={{ marginBottom: 12 }}>
+                    {category.plural} by brand
+                  </h3>
+                  <ul className="chip-list">
+                    {brandCounts.map(({ b, n }) => (
+                      <li key={b.slug}>
+                        <Link href={`/brands/${b.slug}/${category.slug}`} className="chip">
+                          {b.name}
+                          <span className="chip-count">{n}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              ) : null}
+              <JsonLd data={itemListLd(category.hubTitle, rows.slice(0, 100).map((d) => ({ name: d.name, path: d.path })))} />
+            </>
+          ) : (
+            <DealsUnavailable scope={category.noun} />
+          )}
+        </div>
+      </section>
+
       {picks.length > 0 ? (
         <section className="section-tight" id="top-picks">
           <div className="container" style={{ maxWidth: 960 }}>
-            <nav aria-label="On this page" className="page-toc">
-              <a href="#top-picks">Top picks</a>
-              <a href="#deals">All {lowerName(category.plural)}</a>
-              <a href="#guide">Buying guide</a>
-              <a href="#faq">FAQ</a>
-            </nav>
             <h2 style={{ fontSize: 26, marginBottom: 8 }}>The best {lowerName(category.plural)} to buy right now</h2>
             <p className="muted" style={{ marginBottom: 16 }}>
               Our top {Math.min(10, picks.length)} {lowerName(category.plural)} across every brand we track, ranked by real
@@ -141,40 +208,6 @@ export default async function CategoryPage({ params }: Props) {
           </div>
         </section>
       ) : null}
-
-      <section className="section-tight" id="deals">
-        <div className="container">
-          <h2 style={{ fontSize: 24, marginBottom: 16 }}>All {lowerName(category.plural)}</h2>
-          {brandCounts.length > 0 ? (
-            <nav aria-label={`${category.plural} by brand`} className="category-links">
-              <ul className="chip-list">
-                {brandCounts.map(({ b, n }) => (
-                  <li key={b.slug}>
-                    <Link href={`/brands/${b.slug}/${category.slug}`} className="chip">
-                      {b.name}
-                      <span className="chip-count">{n}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ) : null}
-          {deals.length > 0 ? (
-            <>
-              <DealBrowser deals={deals.slice(0, SHOWN)} label={category.noun} showCategoryFilter={false} />
-              {deals.length > SHOWN ? (
-                <p className="muted mt-md" style={{ fontSize: 14 }}>
-                  Showing the top {SHOWN} of {deals.length}. Pick a brand above to see every {category.noun} from that
-                  brand.
-                </p>
-              ) : null}
-              <JsonLd data={itemListLd(category.hubTitle, deals.slice(0, SHOWN).map((d) => ({ name: d.name, path: d.path })))} />
-            </>
-          ) : (
-            <DealsUnavailable scope={category.noun} />
-          )}
-        </div>
-      </section>
 
       {lists.length > 0 ? (
         <section className="section-tight">

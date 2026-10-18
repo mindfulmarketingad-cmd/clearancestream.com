@@ -86,7 +86,7 @@ function match(text: string, re: RegExp) {
 }
 
 /** Key specs stated in the listing, by category. */
-function specsFor(d: Deal): [string, string][] {
+export function specsFor(d: Deal): [string, string][] {
   const title = d.title;
   const text = `${d.title} ${d.features.join(" ")}`;
   const out: [string, string][] = [];
@@ -181,10 +181,40 @@ function specsFor(d: Deal): [string, string][] {
       break;
     }
     default:
+      add("Type", productType(title));
       add("Connection", connection);
   }
   add("Condition", d.condition && !/^new$/i.test(d.condition) ? d.condition : /\brenewed|refurbished\b/i.test(title) ? "Renewed" : null);
   return out.slice(0, 6);
+}
+
+const PRODUCT_TYPES: [RegExp, string][] = [
+  [/\b(graphics card|geforce|radeon rx|rtx \d{4}|gpu)\b/i, "Graphics card"],
+  [/\b(cpu cooler|air cooler|liquid cooler|aio|heatsink)\b/i, "CPU cooler"],
+  [/\b(ryzen|core i[3579]|core ultra)\b.*\bprocessor\b|\bdesktop processor\b/i, "Processor"],
+  [/\bmotherboard\b/i, "Motherboard"],
+  [/\b(ddr[45]|desktop memory|ram kit)\b/i, "Memory"],
+  [/\b(ssd|nvme|hard drive|hdd)\b/i, "Storage"],
+  [/\b(power supply|psu)\b/i, "Power supply"],
+  [/\b(case fans?|fan kit|\d+ ?mm fans?)\b/i, "Case fans"],
+  [/\b(tower|pc case|chassis|mid-tower|full-tower)\b/i, "PC case"],
+  [/\b(microphone|mic\b)/i, "Microphone"],
+  [/\bwebcam\b/i, "Webcam"],
+  [/\bcapture card\b/i, "Capture card"],
+  [/\b(stream deck|stream controller)\b/i, "Stream controller"],
+  [/\b(key light|ring light|light panel|lighting)\b/i, "Lighting"],
+  [/\b(mouse ?pad|desk mat)\b/i, "Mouse pad"],
+  [/\b(chair)\b/i, "Gaming chair"],
+  [/\b(desk)\b/i, "Gaming desk"],
+  [/\b(headset stand|headphone stand)\b/i, "Headset stand"],
+  [/\b(charging|charger|dock)\b/i, "Charging"],
+  [/\b(wrist rest)\b/i, "Wrist rest"],
+  [/\b(cable|adapter|hub)\b/i, "Cables & hubs"],
+  [/\b(speakers?|soundbar)\b/i, "Speakers"],
+];
+
+function productType(title: string): string | null {
+  return PRODUCT_TYPES.find(([re]) => re.test(title))?.[1] ?? null;
 }
 
 /** Feature bullets worth surfacing, trimmed and de-marketed. */
