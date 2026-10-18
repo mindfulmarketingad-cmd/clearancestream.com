@@ -5,6 +5,12 @@ import { MenuIcon, SearchIcon } from "./Icons";
 import { Logo } from "./Logo";
 import { NavLink } from "./NavLink";
 
+const DEALS_MENU = [
+  { href: "/deals/today", label: "Today’s Tech Deals" },
+  { href: "/deals", label: "All deals" },
+  { href: "/coupons", label: "Coupon codes" },
+];
+
 function SearchForm({ id }: { id: string }) {
   return (
     <form className="header-search" action="/search" method="get" role="search">
@@ -47,6 +53,17 @@ export function Header() {
                     </div>
                   </div>
                 </li>
+              ) : item.href === "/deals" ? (
+                <li key={item.href} className="has-menu">
+                  <NavLink href={item.href}>{item.label}</NavLink>
+                  <ul className="submenu">
+                    {DEALS_MENU.map((d) => (
+                      <li key={d.href}>
+                        <Link href={d.href}>{d.label}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
               ) : (
                 <li key={item.href}>
                   <NavLink href={item.href}>{item.label}</NavLink>
@@ -65,6 +82,13 @@ export function Header() {
                 {MAIN_NAV.map((item) => (
                   <li key={item.href}>
                     <Link href={item.href}>{item.label}</Link>
+                    {item.href === "/deals" ? (
+                      <ul className="sub">
+                        <li>
+                          <Link href="/deals/today">Today’s Tech Deals</Link>
+                        </li>
+                      </ul>
+                    ) : null}
                   </li>
                 ))}
               </ul>
