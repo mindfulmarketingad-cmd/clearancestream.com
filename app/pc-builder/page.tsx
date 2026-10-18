@@ -11,7 +11,7 @@ import { absoluteUrl } from "@/lib/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "PC Part Picker - ClearanceStream Deals and Promotions",
+  title: "PC Part Picker – Compare PC Components & Deals | ClearanceStream",
   absoluteTitle: true,
   description:
     "Build a gaming PC part by part: choose a CPU, cooler, motherboard, memory, storage, video card, case, power supply, operating system, and monitor, with compatibility checks, estimated wattage, and live prices.",
