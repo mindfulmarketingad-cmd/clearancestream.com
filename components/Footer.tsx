@@ -50,6 +50,9 @@ export function Footer() {
               <Link href="/pc-builder">PC Part Picker</Link>
             </li>
             <li>
+              <Link href="/pc-builds">PC Builds</Link>
+            </li>
+            <li>
               <Link href="/coupons">Coupon Codes</Link>
             </li>
           </ul>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "@/components/Icons";
 import { Faq } from "@/components/Faq";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
@@ -8,6 +9,8 @@ import { formatChecked } from "@/lib/format";
 import { readParts } from "@/lib/pc-parts-data";
 import { PART_TYPES } from "@/lib/pc-parts";
 import { absoluteUrl } from "@/lib/site";
+import { BUILD_DEFS, money } from "@/lib/pc-builds";
+import { loadBuilds } from "@/lib/pc-builds-data";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -99,6 +102,7 @@ export default function PcBuilderPage() {
   const snap = readParts();
   const counts = PART_TYPES.map((t) => snap?.parts[t.id]?.length ?? 0);
   const total = counts.reduce((a, b) => a + b, 0);
+  const { builds } = loadBuilds();
 
   const appLd = {
     "@context": "https://schema.org",
@@ -123,6 +127,32 @@ export default function PcBuilderPage() {
           <PcBuilder cartBase={cartFormBase()} />
         </div>
       </section>
+
+      {builds.length > 0 ? (
+        <section className="section-tight">
+          <div className="container">
+            <div className="section-head">
+              <div>
+                <h2>Start from a complete build</h2>
+                <p>Compatibility-checked part lists from current deals. Open one to buy it or customize it here.</p>
+              </div>
+              <Link href="/pc-builds" className="text-link">
+                All PC builds <ArrowRight />
+              </Link>
+            </div>
+            <ul className="pcb-start">
+              {builds.map((g) => (
+                <li key={g.def.slug}>
+                  <Link href={`/pc-builds/${g.def.slug}`}>
+                    <b>{g.def.name}</b>
+                    <span>{money(g.total)}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
 
       <section className="section-tight">
         <div className="container" style={{ maxWidth: 880 }}>
@@ -181,6 +211,23 @@ export default function PcBuilderPage() {
                 <li key={href}>
                   <Link href={href} className="chip">
                     {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <h2 className="sub-head" style={{ marginBottom: 16 }}>
+              Complete PC builds
+            </h2>
+            <ul className="chip-list">
+              <li>
+                <Link href="/pc-builds" className="chip">
+                  All PC builds
+                </Link>
+              </li>
+              {BUILD_DEFS.map((d) => (
+                <li key={d.slug}>
+                  <Link href={`/pc-builds/${d.slug}`} className="chip">
+                    {d.name}
                   </Link>
                 </li>
               ))}

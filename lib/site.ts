@@ -20,7 +20,7 @@ export const MAIN_NAV = [
   { href: "/brands", label: "Brands" },
   { href: "/categories", label: "Categories" },
   { href: "/lists", label: "Lists" },
-  { href: "/coupons", label: "Coupons" },
+  { href: "/pc-builds", label: "PC Builds" },
   { href: "/pc-builder", label: "PC Builder" },
   { href: "/about", label: "About" },
   { href: "/search", label: "Search" },

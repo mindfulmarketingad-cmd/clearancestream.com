@@ -7,6 +7,7 @@ import { liveLists } from "@/lib/lists";
 import { getAllDeals } from "@/lib/deals";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { pageMetadata } from "@/lib/seo";
+import { BUILD_DEFS } from "@/lib/pc-builds";
 
 
 export const metadata = pageMetadata({
@@ -77,6 +78,10 @@ export default async function SitemapPage() {
               <li><Link href="/coupons">All coupons</Link></li>
               <li><Link href="/deals/today">Today’s Tech Deals</Link></li>
               <li><Link href="/pc-builder">PC Builder</Link></li>
+              <li><Link href="/pc-builds">PC Builds</Link></li>
+              {BUILD_DEFS.map((d) => (
+                <li key={d.slug}><Link href={`/pc-builds/${d.slug}`}>{d.name}</Link></li>
+              ))}
               {BRANDS.map((b) => (
                 <li key={b.slug}><Link href={`/coupons/${b.slug}`}>{b.name} coupons</Link></li>
               ))}

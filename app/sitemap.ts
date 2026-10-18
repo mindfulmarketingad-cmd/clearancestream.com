@@ -8,6 +8,7 @@ import { couponSummaries } from "@/lib/coupons";
 import { getAllDeals } from "@/lib/deals";
 import { POPULAR_SEARCHES, runSearch } from "@/lib/search";
 import { absoluteUrl } from "@/lib/site";
+import { BUILD_DEFS } from "@/lib/pc-builds";
 
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -34,6 +35,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry("/coupons", dealsUpdated, "weekly", 0.8),
     entry("/deals/today", dealsUpdated, "daily", 0.9),
     entry("/pc-builder", dealsUpdated, "weekly", 0.9),
+    entry("/pc-builds", dealsUpdated, "weekly", 0.9),
+    ...BUILD_DEFS.map((d) => entry(`/pc-builds/${d.slug}`, dealsUpdated, "weekly", 0.8)),
     ...couponSummaries(deals)
       .filter((c) => c.count > 0)
       .map((c) => entry(`/coupons/${c.brand.slug}`, dealsUpdated, "weekly", 0.8)),

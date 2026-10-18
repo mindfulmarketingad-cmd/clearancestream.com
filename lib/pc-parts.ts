@@ -80,7 +80,7 @@ export const PART_TYPES: PartType[] = [
     searches: [{ keywords: "AMD Ryzen desktop processor" }, { keywords: "Intel Core desktop processor" }, { keywords: "Intel Core Ultra desktop processor" }],
     include: /\b(ryzen\s+[3579]|core\s+i[3579]|core\s+ultra\s+[3579])\b/i,
     // "with Wraith Cooler" is fine; a CPU cooler product is not a CPU.
-    exclude: /\b(cpu cooler|air cooler|liquid cooler|aio|motherboard|combo|bundle|bracket|thermal paste|laptop|desktop computer|gaming pc|mini pc|renewed|refurbished)\b/i,
+    exclude: /\b(cpu cooler|air cooler|liquid cooler|aio|motherboard|combo|bundle|bracket|thermal paste|laptop|desktop computer|gaming pc|mini pc|renewed|refurbished|ssd|omnidesk|optiplex|all-in-one|windows 1[01]|(?:desktop|business|slim|micro)\s+(?:tower|desktop|pc)|tower\s+desktop|\d+\s?gb\s+(?:ram|ddr[45]|memory))\b/i,
   },
   {
     id: "cooler",
@@ -403,6 +403,11 @@ export function recommendedPsu(watts: number) {
   return watts ? Math.max(450, Math.ceil((watts * 1.4) / 50) * 50) : 0;
 }
 
+/** LGA1851 uses the same cooler mounting as LGA1700, so LGA1700 coolers fit both. */
+export function coolerFits(sockets: string[], socket: string) {
+  return sockets.includes(socket) || (socket === "LGA1851" && sockets.includes("LGA1700"));
+}
+
 export function checkBuild(build: Build): Check[] {
   const checks: Check[] = [];
   const { cpu, cooler, motherboard: mb, memory, gpu, case: pcCase, psu } = build;
@@ -421,7 +426,7 @@ export function checkBuild(build: Build): Check[] {
   }
   if (cpu && cooler) {
     if (cpu.specs.socket && cooler.specs.sockets) {
-      if (!cooler.specs.sockets.includes(cpu.specs.socket))
+      if (!coolerFits(cooler.specs.sockets, cpu.specs.socket))
         checks.push({ level: "error", message: `The cooler lists support for ${cooler.specs.sockets.join(", ")}, not ${cpu.specs.socket}.`, parts: ["cooler", "cpu"] });
     } else checks.push({ level: "note", message: "The cooler listing does not say which sockets it supports. Confirm it fits your CPU socket.", parts: ["cooler"] });
   }
