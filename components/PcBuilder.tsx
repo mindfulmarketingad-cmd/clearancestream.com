@@ -14,6 +14,7 @@ import {
   type PartTypeId,
 } from "@/lib/pc-parts";
 import { CheckIcon, ExternalIcon, SearchIcon } from "./Icons";
+import { HotTag } from "./HotDeal";
 
 type Catalog = { generatedAt: string | null; parts: Partial<Record<PartTypeId, Part[]>> };
 type Selection = Partial<Record<PartTypeId, string>>;
@@ -205,6 +206,7 @@ export function PcBuilder({ cartBase }: { cartBase: string }) {
                       <>
                         <span className={part.savingsPercent ? "price-deal" : undefined}>{part.priceDisplay}</span>
                         {part.savingsPercent ? <span className="pill-off">{part.savingsPercent}% OFF</span> : null}
+                        <HotTag percent={part.savingsPercent} />
                       </>
                     ) : null}
                   </td>

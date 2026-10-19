@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Deal } from "@/lib/deals";
 import { formatChecked } from "@/lib/format";
 import { ArrowRight, CheckIcon, ClockIcon, ExternalIcon } from "./Icons";
+import { DiscountBadge } from "./HotDeal";
 
 /** Large feature card used for the homepage Deal of the Day and Deal of the Week. */
 export function DealSpotlight({ deal, label, note }: { deal: Deal; label: string; note: string }) {
@@ -17,7 +18,7 @@ export function DealSpotlight({ deal, label, note }: { deal: Deal; label: string
             // eslint-disable-next-line @next/next/no-img-element
             <img src={deal.image.url} alt="" width={deal.image.width} height={deal.image.height} loading="lazy" referrerPolicy="no-referrer" />
           ) : null}
-          {deal.savingsPercent ? <span className="badge badge-discount">{deal.savingsPercent}% OFF</span> : null}
+          <DiscountBadge percent={deal.savingsPercent} />
         </Link>
         <div className="spotlight-info">
           <span className="deal-brand">{deal.brandName}</span>

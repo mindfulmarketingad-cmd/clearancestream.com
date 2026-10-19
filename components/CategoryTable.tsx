@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ExternalIcon, SearchIcon } from "./Icons";
+import { HotTag } from "./HotDeal";
 
 export type TableRow = {
   asin: string;
@@ -247,6 +248,7 @@ export function CategoryTable({
               {n}% off or more
             </option>
           ))}
+          <option value={41}>Hot deals (over 40% off)</option>
         </select>
       </fieldset>
       {brands.length > 1 ? (
@@ -399,7 +401,14 @@ export function CategoryTable({
                       </td>
                     ) : null}
                     <td data-label="Discount">
-                      {r.savingsPercent ? <span className="ct-off">{r.savingsPercent}% off</span> : <span className="ct-none">—</span>}
+                      {r.savingsPercent ? (
+                        <>
+                          <span className="ct-off">{r.savingsPercent}% off</span>
+                          <HotTag percent={r.savingsPercent} />
+                        </>
+                      ) : (
+                        <span className="ct-none">—</span>
+                      )}
                     </td>
                     <td className="ct-pricecell" data-label="Price">
                       <span className={r.savingsPercent ? "price-deal" : undefined}>{r.priceDisplay}</span>

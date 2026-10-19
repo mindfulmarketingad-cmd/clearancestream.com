@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CardDeal } from "@/lib/search-core";
 import { formatChecked } from "@/lib/format";
 import { ArrowRight, ClockIcon, ShieldIcon } from "./Icons";
+import { DiscountBadge } from "./HotDeal";
 
 type Props = { deal: CardDeal; priority?: boolean; hidden?: boolean };
 
@@ -22,7 +23,7 @@ export function DealCard({ deal, priority = false, hidden = false }: Props) {
             referrerPolicy="no-referrer"
           />
         ) : null}
-        {deal.savingsPercent ? <span className="badge badge-discount">{deal.savingsPercent}% OFF</span> : null}
+        <DiscountBadge percent={deal.savingsPercent} />
         {deal.dealBadge ? <span className="badge badge-soft">{deal.dealBadge}</span> : null}
       </Link>
       <div className="deal-body">

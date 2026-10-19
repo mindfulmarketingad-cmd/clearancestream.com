@@ -4219,3 +4219,44 @@ a.card:hover {
     width: 60px;
   }
 }
+
+/* ---------- HOT DEAL (over 40% off) ---------- */
+
+.badge-hot {
+  background: linear-gradient(135deg, #f97316, #dc2626);
+  color: #fff;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.35);
+}
+.hot-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f97316, #dc2626);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.ct-table .hot-tag,
+.list-compare .hot-tag {
+  display: flex;
+  width: max-content;
+  margin: 4px 0 0;
+}
+.deal-media .badge-hot ~ .badge-soft {
+  top: 44px;
+}
+.ct-name {
+  min-width: 200px !important;
+}
+.ct-table td,
+.ct-table th button {
+  padding-left: 6px;
+  padding-right: 6px;
+}

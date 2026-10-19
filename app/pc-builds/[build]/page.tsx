@@ -100,7 +100,9 @@ function description(g: GeneratedBuild, others: GeneratedBuild[]) {
       );
     else if (cpuIncludesCooler(cpu))
       body.push(
-        "This CPU includes a cooler in the box, which is plenty for office and everyday work, so no separate cooler is needed.",
+        g.def.gpu
+          ? "This CPU includes a cooler in the box that handles it at stock settings, so no separate cooler is needed. A tower cooler is an easy upgrade later if you want it quieter."
+          : "This CPU includes a cooler in the box, which is plenty for office and everyday work, so no separate cooler is needed.",
       );
     sections.push({ title: cooler ? "CPU and Cooler" : "CPU", body });
   }
@@ -123,7 +125,9 @@ function description(g: GeneratedBuild, others: GeneratedBuild[]) {
           ).{" "}
           {(memory.specs.capacityGb ?? 0) >= 32
             ? "32GB is the comfortable amount for modern games with a browser, voice chat, and streaming software running in the background."
-            : "16GB handles office apps, dozens of browser tabs, and video calls comfortably."}{" "}
+            : g.def.gpu
+              ? "16GB is enough for 1080p gaming with a browser and voice chat open, and a second kit can be added later."
+              : "16GB handles office apps, dozens of browser tabs, and video calls comfortably."}{" "}
           See our guide to{" "}
           <Link href="/blog/how-much-ram-for-gaming">
             how much RAM you need
@@ -186,6 +190,8 @@ function description(g: GeneratedBuild, others: GeneratedBuild[]) {
         `We estimate this build draws about ${g.watts}W at full load, so we recommend at least ${g.recommendedPsu}W. The ${psu.name} provides ${psu.specs.capacity}W${psu.specs.efficiency ? ` and is ${psu.specs.efficiency} rated` : ""}, which leaves headroom for upgrades and keeps the fan quiet.`,
       ],
     });
+
+  for (const extra of g.def.guide ?? []) sections.push({ title: extra.title, body: extra.body });
 
   if (others.length > 0)
     sections.push({
@@ -266,6 +272,7 @@ export default async function BuildPage({ params }: Props) {
   const notes = g.checks.filter((c) => c.level !== "error");
 
   const faqs = [
+    ...(def.faqs ?? []),
     {
       q: `How much does the ${def.name} cost?`,
       a: `${money(g.total)} for all ${parts.length} parts at current prices${g.savings > 1 ? `, which is ${money(g.savings)} below their combined reference prices` : ""}. Prices change, so the total is updated with every refresh.`,
@@ -538,6 +545,13 @@ export default async function BuildPage({ params }: Props) {
                   All PC builds
                 </Link>
               </li>
+              {(def.links ?? []).map(([href, label]) => (
+                <li key={href}>
+                  <Link href={href} className="chip">
+                    {label}
+                  </Link>
+                </li>
+              ))}
               <li>
                 <Link href="/pc-builder" className="chip">
                   PC Part Picker

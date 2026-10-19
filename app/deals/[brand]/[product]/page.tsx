@@ -14,6 +14,7 @@ import { formatChecked, lowerName } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import { asinFromSlug } from "@/lib/slug";
+import { DiscountBadge, HotTag } from "@/components/HotDeal";
 
 // Every product page is prebuilt at deploy time; unknown products 404.
 export const dynamicParams = false;
@@ -147,7 +148,7 @@ export default async function ProductPage(props: Props) {
                   {category.name}
                 </Link>
               ) : null}
-              {deal.savingsPercent ? <span className="badge badge-discount">{deal.savingsPercent}% off</span> : null}
+              <DiscountBadge percent={deal.savingsPercent} />
               {deal.dealBadge ? <span className="badge badge-neutral">{deal.dealBadge}</span> : null}
             </div>
             <h1>{deal.name} Discount</h1>
@@ -161,6 +162,7 @@ export default async function ProductPage(props: Props) {
                   </s>
                 ) : null}
                 {deal.savingsPercent ? <span className="pill-off">{deal.savingsPercent}% OFF</span> : null}
+                <HotTag percent={deal.savingsPercent} />
               </div>
               {deal.savingsDisplay ? (
                 <p className="deal-save" style={{ marginTop: 6, fontSize: 15 }}>

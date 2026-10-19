@@ -123,6 +123,7 @@ export function RankedPicks({
                 {n}% off or more
               </option>
             ))}
+            <option value={41}>Hot deals (over 40% off)</option>
           </select>
         ) : null}
         <select aria-label="Sort" value={sort} onChange={(e) => setSort(e.target.value as SortKey)}>

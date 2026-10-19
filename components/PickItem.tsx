@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Deal } from "@/lib/deals";
 import type { Insight } from "@/lib/list-insights";
 import { ArrowRight, CheckIcon, ExternalIcon } from "./Icons";
+import { DiscountBadge, HotTag } from "./HotDeal";
 
 /** Fields a ranked pick needs; small enough to send to the browser for filtering. */
 export type PickDeal = Pick<
@@ -68,6 +69,7 @@ export function PickCompare({ items }: { items: { deal: PickDeal; info: Insight 
               <td>
                 <span className={d.savingsPercent ? "price-deal" : undefined}>{d.priceDisplay}</span>
                 {d.savingsPercent ? <span className="pill-off">{d.savingsPercent}% OFF</span> : null}
+                <HotTag percent={d.savingsPercent} />
               </td>
               {rated ? <td>{d.rating ? `${d.rating.toFixed(1)} / 5` : "Not rated"}</td> : null}
               <td className="cmp-specs">
@@ -97,7 +99,7 @@ export function PickItem({ deal: d, info, rank, eager = false }: { deal: PickDea
           // eslint-disable-next-line @next/next/no-img-element
           <img src={d.image.url} alt="" width={d.image.width} height={d.image.height} loading={eager ? "eager" : "lazy"} referrerPolicy="no-referrer" />
         ) : null}
-        {d.savingsPercent ? <span className="badge badge-discount">{d.savingsPercent}% OFF</span> : null}
+        <DiscountBadge percent={d.savingsPercent} />
       </Link>
       <div className="list-body">
         <span className="deal-brand">{d.brandName}</span>

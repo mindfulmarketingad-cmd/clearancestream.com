@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EmailSignup, SUBSCRIBED_KEY } from "./EmailSignup";
 import { CheckIcon, ClockIcon, ExternalIcon } from "./Icons";
+import { HotTag } from "./HotDeal";
 
 export type Coupon = {
   asin: string;
@@ -80,6 +81,7 @@ export function CouponList({ coupons, brandName, logo }: { coupons: Coupon[]; br
                 {logo}
                 <div className="coupon-info">
                   <p className="coupon-off">{c.percent}% off</p>
+                  <HotTag percent={c.percent} />
                   <div className="coupon-tags">
                     <span className="coupon-tag coupon-tag-dark">DEAL</span>
                     <span className="coupon-tag coupon-tag-ok">

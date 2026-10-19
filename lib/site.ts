@@ -23,7 +23,6 @@ export const MAIN_NAV = [
   { href: "/pc-builds", label: "PC Builds" },
   { href: "/pc-builder", label: "PC Builder" },
   { href: "/about", label: "About" },
-  { href: "/search", label: "Search" },
 ] as const;
 
 export const FOOTER_NAV = [
