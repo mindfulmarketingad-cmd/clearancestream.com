@@ -161,6 +161,7 @@ export function PcBuilder({ cartBase }: { cartBase: string }) {
             <tr>
               <th scope="col">Component</th>
               <th scope="col">Selection</th>
+              <th scope="col">Availability</th>
               <th scope="col">Price</th>
               <th scope="col">
                 <span className="sr-only">Actions</span>
@@ -200,6 +201,15 @@ export function PcBuilder({ cartBase }: { cartBase: string }) {
                         {t.label}
                       </button>
                     )}
+                  </td>
+                  <td className="pcb-avail">
+                    {part ? (
+                      <span className="pcb-stock">
+                        <span className="pcb-dot" aria-hidden="true" /> In stock
+                      </span>
+                    ) : selection[t.id] && catalog ? (
+                      <span className="pcb-stock is-out">Unavailable</span>
+                    ) : null}
                   </td>
                   <td className="pcb-price">
                     {part ? (

@@ -3403,6 +3403,12 @@ a.card:hover {
   .pcb-table td:first-of-type .btn {
     width: 100%;
   }
+  .pcb-table td.pcb-avail {
+    grid-column: 1 / -1;
+  }
+  .pcb-table td.pcb-avail:empty {
+    display: none;
+  }
   .pcb-total {
     width: 100%;
     justify-content: space-between;
@@ -4343,4 +4349,25 @@ a.card:hover {
   font-size: 12px;
   font-weight: 400;
   color: var(--faint);
+}
+.pcb-avail {
+  white-space: nowrap;
+}
+.pcb-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #15803d;
+}
+.pcb-stock.is-out {
+  color: var(--faint);
+}
+.pcb-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
 }
