@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { BRAND_GROUPS, brandsInGroup } from "@/lib/brands";
 import { MAIN_NAV } from "@/lib/site";
-import { MenuIcon, SearchIcon } from "./Icons";
+import { MenuIcon } from "./Icons";
+import { LiveSearch } from "./LiveSearch";
 import { Logo } from "./Logo";
 import { NavLink } from "./NavLink";
 
@@ -11,24 +12,12 @@ const DEALS_MENU = [
   { href: "/coupons", label: "Coupon codes" },
 ];
 
-function SearchForm({ id }: { id: string }) {
-  return (
-    <form className="header-search" action="/search" method="get" role="search">
-      <label htmlFor={id} className="sr-only">
-        Search gaming PC deals
-      </label>
-      <SearchIcon />
-      <input id={id} name="q" type="search" placeholder="Search deals, GPUs, models" maxLength={80} autoComplete="off" />
-    </form>
-  );
-}
-
 export function Header() {
   return (
     <header className="site-header">
       <div className="container header-inner">
         <Logo />
-        <SearchForm id="header-q" />
+        <LiveSearch id="header-q" />
         <nav className="main-nav" aria-label="Main">
           <ul>
             {MAIN_NAV.map((item) =>
@@ -93,7 +82,7 @@ export function Header() {
                 ))}
               </ul>
             </nav>
-            <SearchForm id="mobile-q" />
+            <LiveSearch id="mobile-q" />
           </div>
         </details>
       </div>
