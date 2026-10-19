@@ -7,7 +7,7 @@ import { ArrowRight } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
 import { FEATURED_SIZE, blogImagePath } from "@/lib/featured-image";
-import { POSTS, authorPath, getPost, postAuthor } from "@/lib/blog";
+import { GUIDE_POSTS, POSTS, authorPath, getPost, postAuthor } from "@/lib/blog";
 import { BRANDS } from "@/lib/brands";
 import { getAllDeals } from "@/lib/deals";
 import { formatDate } from "@/lib/format";
@@ -47,8 +47,8 @@ export default async function PostPage({ params }: Props) {
   const topDeals = deals.slice(0, 4);
   // Same author first, then everything else.
   const others = [
-    ...POSTS.filter((p) => p.slug !== post.slug && p.author === post.author),
-    ...POSTS.filter((p) => p.slug !== post.slug && p.author !== post.author),
+    ...GUIDE_POSTS.filter((p) => p.slug !== post.slug && p.author === post.author),
+    ...GUIDE_POSTS.filter((p) => p.slug !== post.slug && p.author !== post.author),
   ].slice(0, 4);
   const { Body } = post;
   const author = postAuthor(post);

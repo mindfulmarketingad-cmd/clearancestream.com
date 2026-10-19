@@ -14,6 +14,7 @@ import { brandCouponDeals, toCoupon } from "@/lib/coupons";
 import { getAllDeals } from "@/lib/deals";
 import { formatChecked } from "@/lib/format";
 import { itemListLd, pageMetadata } from "@/lib/seo";
+import { brandGuideSlug } from "@/lib/blog";
 
 export const dynamicParams = false;
 
@@ -113,6 +114,12 @@ export default async function BrandCouponsPage({ params }: Props) {
             See every {brand.name} product, discounted or not, on our{" "}
             <Link href={`/brands/${brand.slug}`} className="text-link">
               {brand.name} discounts page <ArrowRight />
+            </Link>
+          </p>
+          <p className="mt-md muted" style={{ fontSize: 15 }}>
+            New to {brand.name} deals? Read{" "}
+            <Link href={`/blog/${brandGuideSlug(brand)}`} className="text-link">
+              how to find discounts for {brand.name} products <ArrowRight />
             </Link>
           </p>
 

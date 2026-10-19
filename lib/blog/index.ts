@@ -12,6 +12,7 @@ import { wirelessVsWiredGamingMouse } from "./posts/wireless-vs-wired-gaming-mou
 import { gamingPcDealsGuide } from "./gaming-pc-deals-guide";
 import { prebuiltBuyingGuide } from "./prebuilt-gaming-pc-buying-guide";
 import { getAuthor, type Author } from "./authors";
+import { BRAND_GUIDE_POSTS } from "./brand-guides";
 import type { Post } from "./types";
 
 export type { Author, Post };
@@ -33,7 +34,12 @@ export const POSTS: Post[] = [
   wirelessVsWiredGamingMouse,
   areProControllersWorthIt,
   refurbishedGamingPcWorthIt,
+  ...BRAND_GUIDE_POSTS,
 ];
+
+/** Editorial guides, without the per-brand discount guides. */
+export const GUIDE_POSTS: Post[] = POSTS.filter((p) => !BRAND_GUIDE_POSTS.includes(p));
+export { BRAND_GUIDE_POSTS, brandGuideSlug, BRAND_GUIDE_ICON } from "./brand-guides";
 
 
 export function getPost(slug: string): Post | undefined {

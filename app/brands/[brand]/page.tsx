@@ -10,7 +10,7 @@ import { Faq } from "@/components/Faq";
 import { ArrowRight, ClockIcon, RefreshIcon, TagIcon } from "@/components/Icons";
 import { JsonLd } from "@/components/JsonLd";
 import { ValueBar } from "@/components/ValueBar";
-import { getPost, type Post } from "@/lib/blog";
+import { brandGuideSlug, getPost, type Post } from "@/lib/blog";
 import { BRANDS, brandDescription, brandTitle, getBrand } from "@/lib/brands";
 import { getAllDeals, getBrandDeals } from "@/lib/deals";
 import { defaultRank, listsForBrand, liveLists } from "@/lib/lists";
@@ -203,6 +203,12 @@ export default async function BrandPage({ params }: Props) {
               <Faq items={faqs} />
             </div>
 
+            <p className="callout-link">
+              New to finding {brand.name} deals?{" "}
+              <Link href={`/blog/${brandGuideSlug(brand)}`} className="text-link">
+                How to find discounts for {brand.name} products <ArrowRight />
+              </Link>
+            </p>
             <p className="callout-link">
               Looking for {brand.name} coupons?{" "}
               <Link href={`/coupons/${brand.slug}`} className="text-link">
