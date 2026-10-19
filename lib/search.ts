@@ -21,6 +21,7 @@ const STATIC_PAGES: Omit<SearchDoc, "haystack">[] = [
   { type: "page", title: "Streaming PC Build For Beginners", description: "Gaming and streaming PC part list with NVENC video card, prices, and OBS setup tips.", path: "/pc-builds/streaming-pc-build" },
   { type: "page", title: "Linus Tech PC Build", description: "High-end enthusiast gaming PC part list with an X3D processor, with prices.", path: "/pc-builds/linus-tech-pc-build" },
   { type: "page", title: "Budget Home Office PC Build", description: "Low-cost home office desktop part list with prices.", path: "/pc-builds/home-office-build" },
+  { type: "page", title: "Corsair Warthog Build", description: "Real Corsair Warthog PC build with a Ryzen 9 9950X3D and RTX 5080: full part list and photos.", path: "/pc-builds/corsair-warthog-build" },
   { type: "page", title: "PC Part Picker", description: "Build a gaming PC with compatibility checks, estimated wattage, and live prices.", path: "/pc-builder" },
   { type: "page", title: "About ClearanceStream", description: "How we find and verify gaming PC deals.", path: "/about" },
   { type: "page", title: "Contact", description: "Get in touch with the ClearanceStream team.", path: "/contact" },

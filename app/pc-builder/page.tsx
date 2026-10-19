@@ -225,6 +225,11 @@ export default function PcBuilderPage() {
                   All PC builds
                 </Link>
               </li>
+              <li>
+                <Link href="/pc-builds/corsair-warthog-build" className="chip">
+                  Corsair Warthog Build
+                </Link>
+              </li>
               {BUILD_DEFS.map((d) => (
                 <li key={d.slug}>
                   <Link href={`/pc-builds/${d.slug}`} className="chip">

@@ -4328,3 +4328,19 @@ a.card:hover {
     display: none;
   }
 }
+.pcbd-photos {
+  display: grid;
+  gap: 8px;
+}
+.pcbd-photos img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+}
+.pcbd-each {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--faint);
+}

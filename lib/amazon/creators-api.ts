@@ -53,6 +53,20 @@ export function cartFormBase() {
   return `https://${host}/gp/aws/cart/add.html?AssociateTag=${encodeURIComponent(tag)}`;
 }
 
+/** Product page link with the Associates tag, for items not in the catalog snapshot. */
+export function productLink(asin: string) {
+  const tag = process.env.AMAZON_PARTNER_TAG?.trim() || DEFAULT_PARTNER_TAG;
+  const host = process.env.AMAZON_MARKETPLACE?.trim() || "www.amazon.com";
+  return `https://${host}/dp/${encodeURIComponent(asin)}?tag=${encodeURIComponent(tag)}`;
+}
+
+/** Product search link with the Associates tag, for parts without an exact listing. */
+export function searchLink(keywords: string) {
+  const tag = process.env.AMAZON_PARTNER_TAG?.trim() || DEFAULT_PARTNER_TAG;
+  const host = process.env.AMAZON_MARKETPLACE?.trim() || "www.amazon.com";
+  return `https://${host}/s?k=${encodeURIComponent(keywords)}&tag=${encodeURIComponent(tag)}`;
+}
+
 export function getConfig(): Config | null {
   const credentialId = process.env.AMAZON_CREDENTIAL_ID?.trim();
   const credentialSecret = process.env.AMAZON_CREDENTIAL_SECRET?.trim();

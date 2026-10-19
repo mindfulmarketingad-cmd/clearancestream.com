@@ -6,6 +6,7 @@ import { formatChecked } from "@/lib/format";
 import { BUILD_ORDER, money, partLabel } from "@/lib/pc-builds";
 import { loadBuilds } from "@/lib/pc-builds-data";
 import { itemListLd, pageMetadata } from "@/lib/seo";
+import { SHOWCASE_BUILDS } from "@/lib/showcase-builds";
 
 export const metadata = pageMetadata({
   title: `PC Build Deals New ${new Date().getFullYear()}`,
@@ -82,6 +83,30 @@ export default function PcBuildsHub() {
           ) : (
             <p>Builds are being updated. Check back after the next price refresh, or build your own in the PC Builder.</p>
           )}
+
+          <h2 style={{ fontSize: 24, margin: "40px 0 8px" }}>Real builds</h2>
+          <p className="muted" style={{ marginBottom: 16 }}>
+            Finished PCs with their exact part lists and photos.
+          </p>
+          <ul className="pcb-hub">
+            {SHOWCASE_BUILDS.map((b) => (
+              <li key={b.slug} className="pcb-hub-card">
+                <Link href={`/pc-builds/${b.slug}`} className="pcb-hub-media" tabIndex={-1} aria-hidden="true">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={b.photos[1].src} alt="" loading="lazy" />
+                </Link>
+                <div className="pcb-hub-body">
+                  <h2>
+                    <Link href={`/pc-builds/${b.slug}`}>{b.title}</Link>
+                  </h2>
+                  <p className="muted">{b.description}</p>
+                  <Link href={`/pc-builds/${b.slug}`} className="btn btn-primary btn-sm">
+                    View build <ArrowRight />
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ul>
 
           <div className="card" style={{ marginTop: 32 }}>
             <h2 style={{ fontSize: 20, marginBottom: 8 }}>Want to pick every part yourself?</h2>

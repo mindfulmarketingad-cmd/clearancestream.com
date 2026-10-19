@@ -11,6 +11,7 @@ import { getConfig } from "../lib/amazon/creators-api";
 import { BRANDS } from "../lib/brands";
 import { SNAPSHOT_FILE, fetchBrandLive } from "../lib/deals";
 import { PARTS_FILE, fetchParts } from "../lib/pc-parts-data";
+import { SHOWCASE_FILE, fetchShowcasePrices } from "../lib/showcase-prices";
 
 async function main() {
   if (!getConfig()) {
@@ -44,6 +45,15 @@ async function main() {
     console.info(`[snapshot] Wrote ${total} PC Builder parts`);
   } catch (err) {
     console.error("[snapshot] PC Builder parts failed; the builder will show no parts:", (err as Error).message);
+  }
+
+  // Prices for hand-built showcase PCs.
+  try {
+    const prices = await fetchShowcasePrices();
+    writeFileSync(SHOWCASE_FILE, JSON.stringify({ generatedAt: new Date().toISOString(), prices }));
+    console.info(`[snapshot] Wrote ${Object.keys(prices).length} showcase part prices`);
+  } catch (err) {
+    console.error("[snapshot] Showcase prices failed:", (err as Error).message);
   }
 }
 

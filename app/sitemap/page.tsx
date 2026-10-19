@@ -8,6 +8,7 @@ import { getAllDeals } from "@/lib/deals";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { pageMetadata } from "@/lib/seo";
 import { BUILD_DEFS } from "@/lib/pc-builds";
+import { SHOWCASE_BUILDS } from "@/lib/showcase-builds";
 
 
 export const metadata = pageMetadata({
@@ -79,6 +80,9 @@ export default async function SitemapPage() {
               <li><Link href="/deals/today">Today’s Tech Deals</Link></li>
               <li><Link href="/pc-builder">PC Builder</Link></li>
               <li><Link href="/pc-builds">PC Builds</Link></li>
+              {SHOWCASE_BUILDS.map((b) => (
+                <li key={b.slug}><Link href={`/pc-builds/${b.slug}`}>{b.name}</Link></li>
+              ))}
               {BUILD_DEFS.map((d) => (
                 <li key={d.slug}><Link href={`/pc-builds/${d.slug}`}>{d.name}</Link></li>
               ))}
