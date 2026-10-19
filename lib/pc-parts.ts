@@ -38,6 +38,8 @@ export type PartSpecs = {
   panel?: string;
   edition?: string;
   modular?: string;
+  /** Case can hang on a wall (open-frame wall-mount designs). */
+  wallMount?: boolean;
 };
 
 export type Part = {
@@ -132,7 +134,13 @@ export const PART_TYPES: PartType[] = [
     label: "Case",
     article: "a",
     required: true,
-    searches: [{ keywords: "ATX mid tower PC case" }, { keywords: "micro ATX PC case" }, { keywords: "mini ITX PC case" }],
+    searches: [
+      { keywords: "ATX mid tower PC case" },
+      { keywords: "micro ATX PC case" },
+      { keywords: "mini ITX PC case" },
+      { keywords: "wall mount PC case open frame" },
+      { keywords: "Thermaltake Core P3 wall mount case" },
+    ],
     include: /\b(case|chassis|tower)\b/i,
     exclude: /\b(phone|carrying|travel|bag|sleeve|keyboard|headset|controller|airpods|hard case|storage case|case fans?\b(?! included)|fan kit|dust filter|stand)\b/i,
   },
@@ -305,7 +313,10 @@ function caseSpecs(title: string): PartSpecs {
         : /\batx\b|\bmid[- ]?tower\b/i.test(title)
           ? ["ATX", "Micro-ATX", "Mini-ITX"]
           : undefined;
-  return { fits: ff, formFactor: ff?.[0] as PartSpecs["formFactor"] };
+  const wallMount = /\bwall[- ]?mount(?:able|ed|ing)?\b|\bcore p[368]\b/i.test(title) || undefined;
+  // Wall-mount open-frame cases take full ATX boards even when the title says only "open frame".
+  const fits = ff ?? (wallMount ? ["ATX", "Micro-ATX", "Mini-ITX"] : undefined);
+  return { fits, formFactor: fits?.[0] as PartSpecs["formFactor"], wallMount };
 }
 
 function psuSpecs(title: string): PartSpecs {
@@ -374,7 +385,7 @@ export function highlights(type: PartTypeId, s: PartSpecs): string[] {
               : type === "gpu"
                 ? [s.gpuModel, s.vram, s.watts ? `~${s.watts}W` : undefined]
                 : type === "case"
-                  ? [s.fits ? `Fits ${s.fits[0]}` : undefined]
+                  ? [s.fits ? `Fits ${s.fits[0]}` : undefined, s.wallMount ? "Wall-mountable" : undefined]
                   : type === "psu"
                     ? [s.capacity ? `${s.capacity}W` : undefined, s.efficiency, s.modular]
                     : type === "os"

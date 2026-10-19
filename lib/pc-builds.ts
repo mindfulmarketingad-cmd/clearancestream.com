@@ -30,6 +30,12 @@ export type BuildDef = {
   faqs?: { q: string; a: string }[];
   /** Extra related links: [href, label]. */
   links?: [string, string][];
+  /** Budget build: choose the strongest video card and processor whose full build fits under this total. */
+  budget?: number;
+  /** Only cases matching this (e.g. wall-mountable). */
+  caseFilter?: (p: Part) => boolean;
+  /** Preferred cooler type; falls back to air when none fits. */
+  coolerType?: "Air" | "Liquid";
 };
 
 const isAmd = (p: Part) => /^AM[45]$/.test(p.specs.socket ?? "");
@@ -244,6 +250,184 @@ export const BUILD_DEFS: BuildDef[] = [
       },
     ],
   },
+  {
+    slug: "best-pc-build-for-gaming-under-1200",
+    title: "Best PC Build for Gaming Under $1200",
+    name: "Best Gaming PC Build Under $1200",
+    summary:
+      "The strongest gaming PC we can put together for under $1,200 from current deals: as much video card as the budget allows, a six-core-or-better processor to match, a fast NVMe SSD, and a quality power supply.",
+    audience: "high settings at 1080p and smooth 1440p gaming in current releases, with room to upgrade later",
+    cpu: (p) => /^(AM4|AM5|LGA1700|LGA1851)$/.test(p.specs.socket ?? "") && (p.specs.cores ?? 0) >= 6,
+    cpuPick: "cheapest",
+    minMemoryGb: 16,
+    gpu: (p) => vram(p) >= 8,
+    storage: { minGb: 1000, nvme: true },
+    cooler: false,
+    psuEfficiency: /bronze|gold|platinum/i,
+    budget: 1200,
+    related: ["best-pc-build-for-gaming-under-1500", "entry-level-pc-build", "amd-gaming-build"],
+    guide: [
+      {
+        title: "How we picked the parts",
+        body: [
+          "For a gaming PC under $1,200, the video card does most of the work, so we start with the strongest card that still lets the whole build come in under budget. The processor is chosen next, capped at about three quarters of the video card's price so it never eats into graphics performance. Memory, storage, the case, and the power supply are the lowest-cost compatible parts that do the job well.",
+          "Because the build is recalculated from current listings every time we refresh prices, the exact parts and total change when deals change. The build always stays under $1,200 and always passes our compatibility check.",
+        ],
+      },
+      {
+        title: "What to expect at this budget",
+        body: [
+          "Expect high settings at 1080p in nearly every current game and smooth 1440p in most, especially with upscaling like DLSS or FSR turned on. Esports titles run at very high frame rates, which pairs well with a 144Hz or faster monitor.",
+        ],
+      },
+      {
+        title: "Where to upgrade first",
+        body: [
+          "The video card has the biggest effect on gaming performance, so it is the best first upgrade. Moving to 32GB of memory is the next step if you stream or keep many apps open while you play.",
+        ],
+      },
+    ],
+    faqs: [
+      { q: "Can you build a good gaming PC for $1,200?", a: "Yes. $1,200 buys a gaming PC that runs current games at high settings at 1080p and handles 1440p well, as long as most of the budget goes to the video card." },
+      { q: "Is it cheaper to build or buy a gaming PC under $1,200?", a: "Often it is close. Compare this build's total with prebuilt gaming PC deals that have the same video card; a discounted prebuilt can win when it includes Windows and assembly." },
+    ],
+  },
+  {
+    slug: "best-pc-build-for-gaming-under-1500",
+    title: "Best PC Build for Gaming Under $1500",
+    name: "Best Gaming PC Build Under $1500",
+    summary:
+      "The strongest gaming PC we can build for under $1,500 from current deals: as much video card as the budget allows, a modern processor to match, a fast NVMe SSD, and a quality power supply.",
+    audience: "high settings at 1440p and high refresh rate 1080p gaming in current releases",
+    cpu: (p) => /^(AM4|AM5|LGA1700|LGA1851)$/.test(p.specs.socket ?? "") && (p.specs.cores ?? 0) >= 6,
+    cpuPick: "cheapest",
+    minMemoryGb: 16,
+    gpu: (p) => vram(p) >= 8,
+    storage: { minGb: 1000, nvme: true },
+    cooler: false,
+    psuEfficiency: /gold|platinum|titanium/i,
+    budget: 1500,
+    related: ["best-pc-build-for-gaming-under-1200", "best-pc-build-for-gaming-under-3000", "amd-gaming-build"],
+    guide: [
+      {
+        title: "How we picked the parts",
+        body: [
+          "We start with the strongest video card that fits a complete build under $1,500, then pick the best processor that keeps the build balanced, capped at about three quarters of the video card's price. The rest are the lowest-cost compatible parts that meet our standards: at least 16GB of memory, a fast NVMe SSD, and an 80 Plus Gold or better power supply sized with headroom. Memory prices are high right now, so the build puts that money into the video card instead, which matters far more for frame rates.",
+          "The build is recalculated from current listings each time we refresh prices, so it always reflects the best value available, stays under $1,500, and passes our compatibility check.",
+        ],
+      },
+      {
+        title: "What to expect at this budget",
+        body: [
+          "$1,500 is the sweet spot for 1440p gaming. Expect high settings at 1440p in current releases and very high frame rates at 1080p, plus enough headroom for streaming or recording on the side.",
+        ],
+      },
+      {
+        title: "Where to upgrade first",
+        body: [
+          "Add storage as your game library grows; a second NVMe SSD is the easiest upgrade. For more frames, the video card is the next step, and the power supply in this build is sized with room for it.",
+        ],
+      },
+    ],
+    faqs: [
+      { q: "Is $1,500 enough for a 1440p gaming PC?", a: "Yes. $1,500 is the sweet spot for 1440p gaming, with enough for a strong video card and a modern processor." },
+      { q: "Is 16GB of RAM enough for this build?", a: "For gaming, yes. 16GB runs current games well, and with memory prices high the money does more in the video card. Add a second kit for 32GB later if you stream or multitask heavily." },
+      { q: "Should I spend more on the CPU or GPU?", a: "The GPU, for gaming. This build caps the processor at about three quarters of the video card's price so most of the budget goes to graphics performance." },
+    ],
+  },
+  {
+    slug: "best-pc-build-for-gaming-under-3000",
+    title: "Best PC Build for Gaming Under $3000",
+    name: "Best Gaming PC Build Under $3000",
+    summary:
+      "The strongest gaming PC we can build for under $3,000 from current deals: a flagship-class video card, a top gaming processor, 32GB of DDR5, 2TB of fast storage, and a premium power supply.",
+    audience: "4K gaming and high refresh rate 1440p at high settings, plus streaming, editing, and heavy multitasking",
+    cpu: (p) => /^(AM5|LGA1851|LGA1700)$/.test(p.specs.socket ?? "") && (p.specs.cores ?? 0) >= 8,
+    cpuPick: "cheapest",
+    minMemoryGb: 32,
+    gpu: (p) => vram(p) >= 12,
+    storage: { minGb: 2000, nvme: true },
+    cooler: true,
+    coolerType: "Liquid",
+    psuEfficiency: /gold|platinum|titanium/i,
+    budget: 3000,
+    related: ["best-pc-build-for-gaming-under-1500", "linus-tech-pc-build", "streaming-pc-build"],
+    guide: [
+      {
+        title: "How we picked the parts",
+        body: [
+          "At $3,000 we start with the strongest video card that fits a complete build, then pick the fastest eight-core-or-better processor that keeps the build balanced. Memory is 32GB of DDR5, storage is a 2TB NVMe SSD, cooling is a 240mm or larger liquid cooler where one fits, and the power supply is 80 Plus Gold or better with generous headroom.",
+          "The build is recalculated from current listings every time we refresh prices, so the parts change with the best deals while the total stays under $3,000 and the build passes our compatibility check.",
+        ],
+      },
+      {
+        title: "What to expect at this budget",
+        body: [
+          "Expect 4K gaming at high settings in most current games, especially with upscaling, and very high frame rates at 1440p for high refresh rate monitors. The processor and memory also handle streaming, video editing, and heavy multitasking alongside games.",
+        ],
+      },
+      {
+        title: "Is it worth spending this much?",
+        body: [
+          "If you game at 4K or on a 240Hz 1440p monitor, yes. For 1080p or 60Hz screens, our $1,500 build gets you most of the experience for half the price.",
+        ],
+      },
+    ],
+    faqs: [
+      { q: "Can a $3,000 PC run games at 4K?", a: "Yes. At this budget most of the money goes to a high-end video card that runs current games at 4K with high settings, especially with DLSS or FSR upscaling." },
+      { q: "Why a liquid cooler?", a: "High-end processors run hot under sustained load, and a 240mm or larger liquid cooler keeps them cool and quiet. When none fits the build, we fall back to a strong air cooler." },
+    ],
+  },
+  {
+    slug: "wall-mounted-pc-build",
+    title: "Wall Mounted PC Build [{price}]",
+    name: "Wall Mounted PC Build",
+    summary:
+      "A showpiece gaming PC that hangs on the wall: a wall-mountable open-frame case, a liquid cooler for a clean look, a modern processor, a 16GB video card, 32GB of DDR5, and a fast NVMe SSD.",
+    audience: "a display-worthy setup that frees desk space while playing current games at high settings at 1440p",
+    cpu: (p) => p.specs.socket === "AM5" && (p.specs.cores ?? 0) >= 6,
+    cpuPick: "cheapest",
+    minMemoryGb: 32,
+    gpu: (p) => vram(p) >= 16,
+    storage: { minGb: 1000, nvme: true },
+    cooler: true,
+    coolerType: "Liquid",
+    psuEfficiency: /gold|platinum|titanium/i,
+    caseFilter: (p) => p.specs.wallMount === true,
+    related: ["amd-gaming-build", "best-pc-build-for-gaming-under-1500", "corsair-warthog-build"],
+    guide: [
+      {
+        title: "Planning a wall-mounted PC",
+        body: [
+          "A wall-mounted PC turns your build into a piece of wall art and frees up the desk, but it needs more planning than a tower. Mount the case into wall studs or with anchors rated well above the weight of the finished build, and plan where the power, display, and USB cables will run down the wall before you hang it.",
+          "Measure cable lengths before you buy. A wall-mounted PC usually sits farther from the monitor and outlet than a desk tower, so longer display and power cables or a cable cover keep things tidy.",
+        ],
+      },
+      {
+        title: "Why a liquid cooler and a vertical video card",
+        body: [
+          "Open-frame wall cases show every part, so a liquid cooler keeps the processor area clean and lets the radiator sit where it can breathe. Most wall-mount cases mount the video card vertically using a PCIe riser cable. Check the case listing to see whether a riser is included; if not, buy a PCIe 4.0 riser of the length the case specifies.",
+        ],
+      },
+      {
+        title: "Dust, noise, and temperatures",
+        body: [
+          "Open-frame cases run cool because nothing traps hot air, but they collect more dust and let more fan noise out. Plan to dust the build every few weeks with compressed air, and set gentle fan curves so the build stays quiet at idle.",
+        ],
+      },
+      {
+        title: "Building it",
+        body: [
+          "Assemble and test the PC with the case lying flat on a table, then hang it once everything works. Connect and route every cable while the case is still on the table, since reaching behind a mounted case is awkward.",
+        ],
+      },
+    ],
+    faqs: [
+      { q: "Is it safe to mount a PC on the wall?", a: "Yes, when the case is designed for wall mounting and is fixed into studs or anchors rated well above the build's weight. Keep it away from heat sources and out of reach of pets and young children." },
+      { q: "Do wall-mounted PCs overheat?", a: "No. Open-frame wall cases usually run cooler than closed towers because hot air escapes freely, though they collect more dust." },
+      { q: "Do I need a riser cable for a wall-mounted PC?", a: "Usually. Most wall-mount cases mount the video card vertically, which requires a PCIe riser cable. Some cases include one; check the case listing." },
+    ],
+  },
 ];
 
 export const getBuildDef = (slug: string) => BUILD_DEFS.find((b) => b.slug === slug);
@@ -283,16 +467,56 @@ const listPrice = (p: Part) => {
 export const money = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 });
 const moneyRound = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
+/**
+ * Approximate relative gaming performance of GPU chips (higher is faster), used
+ * only to rank budget-build candidates. Unknown chips fall back to their price.
+ */
+const GPU_TIERS: [RegExp, number][] = [
+  [/rtx\s?5090/i, 100], [/rtx\s?4090/i, 92], [/rtx\s?5080/i, 82], [/rtx\s?4080/i, 76], [/rx\s?7900\s?xtx/i, 74],
+  [/rtx\s?5070\s?ti/i, 72], [/rx\s?9070\s?xt/i, 70], [/rtx\s?4070\s?ti/i, 64], [/rx\s?7900\s?(xt|gre)/i, 63],
+  [/rx\s?9070\b/i, 62], [/rtx\s?5070\b/i, 60], [/rtx\s?4070/i, 54], [/rx\s?7800\s?xt/i, 55], [/rx\s?7700\s?xt/i, 48],
+  [/rtx\s?5060\s?ti/i, 46], [/rx\s?9060\s?xt/i, 45], [/rtx\s?4060\s?ti/i, 40], [/rtx\s?5060\b/i, 39], [/arc\s?b580/i, 36],
+  [/rtx\s?4060\b/i, 34], [/rx\s?7600/i, 32], [/rtx\s?3060/i, 27], [/arc\s?b570/i, 30], [/rtx\s?3050/i, 16],
+];
+function gpuTier(p: Part) {
+  const name = `${p.specs.gpuModel ?? ""} ${p.name}`;
+  return GPU_TIERS.find(([re]) => re.test(name))?.[1] ?? p.price / 25;
+}
+
 /** Choose parts for a build definition, or null when the snapshot cannot complete it. */
 export function generateBuild(def: BuildDef, parts: Record<PartTypeId, Part[]>): GeneratedBuild | null {
-  const cpus = (parts.cpu ?? []).filter((p) => p.specs.socket && def.cpu(p)).sort(byPrice);
+  if (!def.budget) return assemble(def, parts);
+  // Budget builds: spend first on the video card, then the processor, keeping
+  // the processor at no more than 75% of the card's price for a gaming balance.
+  const gpus = (parts.gpu ?? []).filter((p) => (def.gpu ? def.gpu(p) : true)).sort((a, b) => b.price - a.price);
+  const cpus = (parts.cpu ?? []).filter((p) => p.specs.socket && def.cpu(p)).sort((a, b) => b.price - a.price);
+  // Rank cards by chip performance, not price: two RX 9070 XT cards perform alike, so the cheaper build wins.
+  let best: { g: GeneratedBuild; score: number } | null = null;
+  for (const gpu of gpus) {
+    for (const cpu of cpus) {
+      if (cpu.price > gpu.price * 0.75) continue;
+      const g = assemble(def, parts, { cpu, gpu });
+      if (!g || g.total > def.budget) continue;
+      const score = gpuTier(gpu) * 10000 + cpu.price;
+      if (!best || score > best.score || (score === best.score && g.total < best.g.total)) best = { g, score };
+    }
+  }
+  return best?.g ?? null;
+}
+
+function assemble(def: BuildDef, parts: Record<PartTypeId, Part[]>, forced: { cpu?: Part; gpu?: Part } = {}): GeneratedBuild | null {
+  const cpus = forced.cpu ? [forced.cpu] : (parts.cpu ?? []).filter((p) => p.specs.socket && def.cpu(p)).sort(byPrice);
 
   // Cheapest motherboard + memory pair for a CPU.
   const platformFor = (cpu: Part) => {
     let best: { mb: Part; memory: Part; cost: number } | null = null;
     for (const mb of parts.motherboard ?? []) {
       if (mb.specs.socket !== cpu.specs.socket || !mb.specs.memoryType || !mb.specs.formFactor) continue;
-      const memory = cheapest(parts.memory ?? [], (m) => m.specs.memoryType === mb.specs.memoryType && (m.specs.capacityGb ?? 0) >= def.minMemoryGb);
+      const ok = (m: Part) => m.specs.memoryType === mb.specs.memoryType && (m.specs.capacityGb ?? 0) >= def.minMemoryGb;
+      const single = cheapest(parts.memory ?? [], ok);
+      // Prefer a two-stick kit (dual channel) when it costs little more than a single stick.
+      const kit = cheapest(parts.memory ?? [], (m) => ok(m) && /\b2\s?x\s?\d{1,2}\s?gb\b|\bkit\b/i.test(m.name));
+      const memory = kit && single && kit.price <= single.price * 1.2 ? kit : single;
       if (!memory) continue;
       const cost = mb.price + memory.price;
       if (!best || cost < best.cost) best = { mb, memory, cost };
@@ -325,7 +549,8 @@ export function generateBuild(def: BuildDef, parts: Record<PartTypeId, Part[]>):
 
   const build: Build = { cpu, motherboard: platform.mb, memory: platform.memory };
 
-  if (def.gpu) {
+  if (forced.gpu) build.gpu = forced.gpu;
+  else if (def.gpu) {
     const gpu = cheapest(parts.gpu ?? [], def.gpu) ?? cheapest(parts.gpu ?? [], (p) => vram(p) >= 12);
     if (!gpu) return null;
     build.gpu = gpu;
@@ -339,11 +564,17 @@ export function generateBuild(def: BuildDef, parts: Record<PartTypeId, Part[]>):
   if (!build.storage) return null;
 
   if (def.cooler || !cpuIncludesCooler(cpu)) {
-    build.cooler = cheapest(parts.cooler ?? [], (p) => p.specs.coolerType === "Air" && !!p.specs.sockets && coolerFits(p.specs.sockets, cpu.specs.socket!));
+    const fits = (p: Part, type: "Air" | "Liquid") => p.specs.coolerType === type && !!p.specs.sockets && coolerFits(p.specs.sockets, cpu.specs.socket!);
+    build.cooler =
+      (def.coolerType === "Liquid" ? cheapest(parts.cooler ?? [], (p) => fits(p, "Liquid") && /\b(240|280|360)/.test(p.specs.radiator ?? p.name)) : undefined) ??
+      cheapest(parts.cooler ?? [], (p) => fits(p, "Air"));
   }
 
   const formFactor = platform.mb.specs.formFactor!;
-  build.case = cheapest(parts.case ?? [], (p) => !!p.specs.fits?.includes(formFactor) && (def.gpu ? p.specs.formFactor !== "Mini-ITX" : true));
+  build.case = cheapest(
+    parts.case ?? [],
+    (p) => !!p.specs.fits?.includes(formFactor) && (def.gpu ? p.specs.formFactor !== "Mini-ITX" : true) && (def.caseFilter ? def.caseFilter(p) : true),
+  );
   if (!build.case) return null;
 
   const watts = estimatedWatts(build);
