@@ -391,8 +391,12 @@ export function resolveList(def: ListDef, deals: Deal[]) {
   return {
     def,
     items,
-    // e.g. "10 Best Gaming PCs Under $1500 - 2026 Updated List"
-    title: `${count}${def.label} - ${new Date().getFullYear()} Updated List`,
+    // e.g. "10 Best Gaming PCs Under $1500 - 2026 Updated List";
+    // brand lists: "10 Best Alienware Gaming PCs on Discount 2026 Refreshed Daily"
+    title:
+      def.kind === "brand"
+        ? `${count}${def.label} on Discount ${new Date().getFullYear()} Refreshed Daily`
+        : `${count}${def.label} - ${new Date().getFullYear()} Updated List`,
     shortTitle: `${count}${def.label}`,
     /** Slug of the list this one defers to: a fixed twin, or an earlier list with nearly the same products. */
     canonical: def.canonical as string | undefined,
