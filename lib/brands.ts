@@ -1285,7 +1285,8 @@ export const BRANDS: Brand[] = [
     apiBrand: "Creative",
     aliases: ["creative", "creative labs"],
     searches: [{ keywords: "Creative speakers", searchIndex: "Electronics" }, { keywords: "Creative Sound Blaster", searchIndex: "Computers" }],
-    require: /\b(speakers?|sound ?blaster|soundbar|pebble|webcam|subwoofer)\b/i,
+    // Current speakers and gaming audio only; skips old and used sound cards.
+    require: /\b(speakers?|soundbar|sound bar|pebble|katana|subwoofer|sound blaster (?:gs\d|g\d|x\d|ae-?\d))\b/i,
     include: NO_DESKTOPS,
     exclude: PERIPHERALS,
     sells: "PC speakers, soundbars, and Sound Blaster audio",

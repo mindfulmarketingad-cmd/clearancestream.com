@@ -237,7 +237,7 @@ export const CATEGORIES: Category[] = [
     plural: "Graphics Cards",
     hubTitle: "Video Card Deals",
     blurb: "NVIDIA GeForce RTX, AMD Radeon, and Intel Arc graphics cards from ASUS, MSI, Gigabyte, ZOTAC, Sapphire, XFX, and more.",
-    match: /^(?!.*\b(?:cpu cooler|aio|liquid cooler|air cooler|pc case|computer case|mid-?tower|full-?tower|chassis|power supply|psu|riser|bracket|holder|anti-?sag|support stand|extension cable|cables?)\b).*\b(graphics cards?|video cards?|geforce rtx|geforce gtx|radeon rx|intel arc)\b/i,
+    match: /^(?!.*\b(?:cpu cooler|aio|liquid cooler|air cooler|pc case|computer case|mid-?tower|full-?tower|chassis|power supply|psu|riser|bracket|holder|anti-?sag|support stand|extension cable|cables?)\b).*\b(graphics cards?|video cards?|geforce (?:rtx|gtx|gt)|radeon rx|intel arc|rx\s?\d{3,4}(?:\s?xtx?)?\s+\d{1,2}\s?gb?)\b/i,
     tips: [
       "Pick the GPU chip first (for example RTX 5060 Ti or RX 9060 XT), then compare cards from different brands. Cards with the same chip perform within a few percent of each other.",
       "Check your power supply wattage and connectors before you buy; many newer cards use a 16-pin 12V-2x6 connector.",
