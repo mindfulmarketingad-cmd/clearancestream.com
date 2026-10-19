@@ -1850,9 +1850,9 @@ a.card:hover {
 /* Grouped brand dropdown */
 .submenu.mega {
   display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
   gap: 4px 16px;
-  min-width: 760px;
+  min-width: 880px;
   padding: 16px;
   /* Anchored right so the wide panel never extends past the viewport. */
   left: auto;
@@ -4259,4 +4259,72 @@ a.card:hover {
 .ct-table th button {
   padding-left: 6px;
   padding-right: 6px;
+}
+
+/* ---------- Homepage brand carousel ---------- */
+
+.brand-band .section-head {
+  margin-bottom: 16px;
+}
+.brand-carousel {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.brand-track {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  list-style: none;
+  margin: 0;
+  padding: 8px 0 12px;
+  animation: brand-scroll linear infinite;
+}
+.brand-carousel:hover .brand-track,
+.brand-carousel:focus-within .brand-track {
+  animation-play-state: paused;
+}
+@keyframes brand-scroll {
+  to {
+    transform: translateX(calc(-50% - 7px));
+  }
+}
+.brand-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 120px;
+  padding: 14px 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: center;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.brand-tile:hover,
+.brand-tile:focus-visible {
+  border-color: var(--blue);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.brand-tile .brand-logo img {
+  object-fit: contain;
+  padding: 6px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-carousel {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .brand-track {
+    animation: none;
+  }
+  .brand-track li[aria-hidden="true"] {
+    display: none;
+  }
 }

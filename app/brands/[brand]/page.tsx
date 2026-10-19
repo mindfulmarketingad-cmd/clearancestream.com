@@ -34,6 +34,7 @@ const GROUP_GUIDES: Record<string, string[]> = {
   peripherals: ["wireless-vs-wired-gaming-mouse", "mechanical-keyboard-switches-explained", "gaming-pc-deals-guide"],
   displays: ["oled-vs-ips-gaming-monitor", "what-graphics-card-do-i-need", "gaming-pc-deals-guide"],
   controllers: ["are-pro-controllers-worth-it", "gaming-pc-deals-guide"],
+  parts: ["what-graphics-card-do-i-need", "how-much-ram-for-gaming", "how-much-should-i-spend-on-a-gaming-pc", "gaming-pc-deals-guide"],
 };
 
 export function generateStaticParams() {
@@ -43,7 +44,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const brand = getBrand((await params).brand);
   if (!brand) return {};
-  return pageMetadata({ title: brandTitle(brand), description: brandDescription(brand), path: `/brands/${brand.slug}` });
+  // Until a brand has products, keep its page out of search results.
+  const { deals } = await getBrandDeals(brand.slug);
+  return pageMetadata({ title: brandTitle(brand), description: brandDescription(brand), path: `/brands/${brand.slug}`, noindex: deals.length === 0 });
 }
 
 export default async function BrandPage({ params }: Props) {

@@ -90,6 +90,7 @@ const RELATED: [string, string][] = [
 ];
 
 const GUIDES: [string, string][] = [
+  ["/blog/how-to-find-pc-build-deals", "How to find PC build deals"],
   ["/blog/what-graphics-card-do-i-need", "What graphics card do I need?"],
   ["/blog/how-much-ram-for-gaming", "How much RAM for gaming?"],
   ["/blog/how-much-should-i-spend-on-a-gaming-pc", "How much to spend on a gaming PC"],

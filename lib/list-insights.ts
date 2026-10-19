@@ -1,4 +1,5 @@
 import { specTags } from "./attributes";
+import { parseSpecs } from "./pc-parts";
 import type { Deal } from "./deals";
 
 /**
@@ -178,6 +179,55 @@ export function specsFor(d: Deal): [string, string][] {
       add("Connection", connection);
       add("Sticks", /\b(hall[- ]effect|tmr)\b/i.test(text) ? "Hall effect / magnetic" : null);
       add("Back buttons", /\b(paddles?|back buttons?)\b/i.test(text) ? "Yes" : null);
+      break;
+    }
+    case "motherboards": {
+      const m = parseSpecs("motherboard", title, d.features);
+      add("Socket", m.socket);
+      add("Chipset", m.chipset);
+      add("Form factor", m.formFactor);
+      add("Memory", m.memoryType);
+      add("Wi-Fi", /\bwi-?fi\b/i.test(title) ? "Yes" : null);
+      break;
+    }
+    case "video-cards": {
+      const g = parseSpecs("gpu", title, d.features);
+      add("GPU", g.gpuModel ?? gpuLabel(d));
+      add("Video memory", g.vram);
+      add("Chipmaker", /\b(geforce|rtx|gtx|nvidia)\b/i.test(title) ? "NVIDIA" : /\b(radeon|rx\s?\d{3,4})\b/i.test(title) ? "AMD" : /\barc\b/i.test(title) ? "Intel" : null);
+      add("Memory type", match(title, /\b(GDDR7|GDDR6X|GDDR6|GDDR5)\b/i)?.toUpperCase());
+      break;
+    }
+    case "memory": {
+      const m = parseSpecs("memory", title, d.features);
+      add("Type", m.memoryType);
+      const kit = match(title, /\b(\d\s?x\s?\d{1,3}\s?gb)\b/i);
+      add("Capacity", m.capacityGb ? `${m.capacityGb}GB${kit ? ` (${kit.replace(/\s/g, "").replace("x", " x ").toUpperCase()})` : ""}` : null);
+      add("Speed", m.speed);
+      add("Latency", match(title, /\b(CL\s?\d{2})\b/i)?.replace(/\s/g, "").toUpperCase());
+      add("Format", /\bso-?dimm|laptop\b/i.test(title) ? "Laptop (SO-DIMM)" : "Desktop");
+      add("RGB", /\brgb\b/i.test(title) ? "Yes" : null);
+      break;
+    }
+    case "webcams": {
+      add("Resolution", /\b(4k|2160p|uhd)\b/i.test(text) ? "4K" : /\b1440p|2k\b/i.test(text) ? "1440p" : /\b(1080p|full hd|fhd)\b/i.test(text) ? "1080p" : /\b720p\b/i.test(text) ? "720p" : null);
+      add("Frame rate", match(text, /\b(\d{2,3})\s?fps\b/i)?.concat("fps"));
+      add("Field of view", match(text, /\b(\d{2,3})\s?(?:°|degrees?|-degree)/i)?.concat("°"));
+      add("Autofocus", /\bauto-?focus\b/i.test(text) ? "Yes" : null);
+      add("Connection", /\busb-?c\b/i.test(text) ? "USB-C" : /\busb\b/i.test(text) ? "USB" : null);
+      break;
+    }
+    case "speakers": {
+      add("Type", /\bsound ?bar\b/i.test(title) ? "Soundbar" : /\b2\.1\b|subwoofer/i.test(title) ? "2.1 with subwoofer" : /\b2\.0\b/i.test(title) || /\bspeakers\b/i.test(title) ? "2.0 stereo" : null);
+      const inputs = [
+        /\bbluetooth\b/i.test(text) ? "Bluetooth" : null,
+        /\busb\b/i.test(text) ? "USB" : null,
+        /\b(3\.5\s?mm|aux)\b/i.test(text) ? "3.5mm" : null,
+        /\boptical\b/i.test(text) ? "Optical" : null,
+      ].filter(Boolean);
+      add("Connection", inputs.length ? inputs.join(", ") : null);
+      add("Power", match(text, /\b(\d{1,3})\s?w(?:atts?)?\s?(?:rms|peak)?\b/i)?.concat("W"));
+      add("RGB", /\brgb|lightsync|chroma\b/i.test(text) ? "Yes" : null);
       break;
     }
     default:

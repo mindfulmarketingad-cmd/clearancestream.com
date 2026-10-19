@@ -23,6 +23,15 @@ const RULES: Rule[] = [
   { tag: "curved", test: /\bcurved\b/i },
   { tag: "noise-cancelling", test: /\b(noise[- ]?cancell?ing|anc)\b/i },
   { tag: "rgb", test: /\brgb\b/i },
+  { tag: "ddr5", test: /\bddr5\b/i },
+  { tag: "ddr4", test: /\bddr4\b/i },
+  { tag: "am5", test: /\bam5\b/i },
+  { tag: "am4", test: /\bam4\b/i },
+  { tag: "lga1851", test: /\blga\s?1851\b/i },
+  { tag: "lga1700", test: /\blga\s?1700\b/i },
+  { tag: "wifi", test: /\bwi-?fi\b/i },
+  { tag: "1080p", test: /\b(1080p|full hd|fhd)\b/i },
+  { tag: "subwoofer", test: /\b(subwoofer|2\.1)\b/i },
 ];
 
 const GPU =

@@ -38,6 +38,11 @@ const PRICE_CAPS: Record<string, number[]> = {
   streaming: [50, 100, 200],
   components: [50, 100, 150],
   accessories: [25, 50],
+  webcams: [50, 100, 150],
+  "video-cards": [300, 400, 500, 700, 1000],
+  memory: [75, 100, 150, 300],
+  motherboards: [100, 150, 200, 300],
+  speakers: [50, 100, 200],
 };
 
 const GPUS = [
@@ -57,6 +62,7 @@ const GPUS = [
   "rtx-3050",
   "rx-9070-xt",
   "rx-9070",
+  "rx-9060-xt",
   "rx-7800-xt",
   "rx-7600",
 ];
@@ -125,6 +131,19 @@ const ATTRIBUTE_LISTS: [string, string, string, string][] = [
   ["monitors", "high-refresh", "240Hz+ Gaming Monitors", "240Hz and faster"],
   ["monitors", "curved", "Curved Gaming Monitors", "curved"],
   ["laptops", "oled", "Gaming Laptops With OLED Screens", "OLED"],
+  ["memory", "ddr5", "DDR5 RAM Kits", "DDR5"],
+  ["memory", "ddr4", "DDR4 RAM Kits", "DDR4"],
+  ["memory", "rgb", "RGB RAM Kits", "RGB"],
+  ["motherboards", "am5", "AM5 Motherboards", "AM5 socket"],
+  ["motherboards", "am4", "AM4 Motherboards", "AM4 socket"],
+  ["motherboards", "lga1851", "LGA1851 Motherboards", "LGA1851 socket"],
+  ["motherboards", "lga1700", "LGA1700 Motherboards", "LGA1700 socket"],
+  ["motherboards", "wifi", "Motherboards With Wi-Fi", "with built-in Wi-Fi"],
+  ["webcams", "4k", "4K Webcams", "4K"],
+  ["webcams", "1080p", "1080p Webcams", "1080p"],
+  ["speakers", "wireless", "Bluetooth PC Speakers", "Bluetooth"],
+  ["speakers", "rgb", "RGB Gaming Speakers", "RGB"],
+  ["speakers", "subwoofer", "PC Speakers With Subwoofers", "with a subwoofer"],
 ];
 
 function build(): ListDef[] {
@@ -201,6 +220,18 @@ function build(): ListDef[] {
         filter: has(`gpu:${gpu}`),
       });
     }
+  }
+
+  // Graphics cards by GPU chip.
+  const cards = getCategory("video-cards")!;
+  for (const gpu of GPUS) {
+    add({
+      label: `Best ${gpuName(gpu)} Graphics Cards`,
+      category: cards,
+      kind: "attribute",
+      qualifier: `built on the ${gpuName(gpu)}`,
+      filter: has(`gpu:${gpu}`),
+    });
   }
 
   // Controllers by platform and price.

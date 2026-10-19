@@ -24,6 +24,11 @@ const ICONS: Record<string, string[]> = {
   streaming: ["M26 6h12v26a6 6 0 0 1-12 0z", "M18 26a14 14 0 0 0 28 0", "M32 40v12", "M24 56h16"],
   components: ["M14 14h36v36H14z", "M22 22h20v20H22z", "M22 6v8", "M32 6v8", "M42 6v8", "M22 50v8", "M32 50v8", "M42 50v8"],
   accessories: ["M8 22h48v20H8z", "M16 32h32"],
+  webcams: ["M32 8a18 18 0 1 0 0.01 0", "M32 18a8 8 0 1 0 0.01 0", "M24 44l-6 12h28l-6-12"],
+  "video-cards": ["M4 18h56v26H4z", "M20 31a7 7 0 1 0 0.01 0", "M44 31a7 7 0 1 0 0.01 0", "M10 44v8", "M16 44v6h20v-6"],
+  memory: ["M4 22h56v18H4z", "M10 28h8v6h-8z", "M22 28h8v6h-8z", "M34 28h8v6h-8z", "M46 28h8v6h-8z", "M8 40v6", "M16 40v6", "M48 40v6", "M56 40v6"],
+  motherboards: ["M8 8h48v48H8z", "M18 18h14v14H18z", "M40 16v24", "M46 16v24", "M16 42h24", "M16 48h24"],
+  speakers: ["M14 8h20v48H14z", "M24 20a4 4 0 1 0 0.01 0", "M24 42a8 8 0 1 0 0.01 0", "M42 22h12v34H42z", "M48 44a3 3 0 1 0 0.01 0"],
   deals: ["M34 6H58v24L32 56 8 32z", "M46 18a3 3 0 1 0 0.01 0"],
 };
 
@@ -170,6 +175,7 @@ export const POST_CATEGORY: Record<string, string> = {
   "wireless-vs-wired-gaming-mouse": "mice",
   "are-pro-controllers-worth-it": "controllers",
   "refurbished-gaming-pc-worth-it": "gaming-pcs",
+  "how-to-find-pc-build-deals": "components",
 };
 
 export const blogImagePath = (slug: string) => `/images/blog/${slug}`;

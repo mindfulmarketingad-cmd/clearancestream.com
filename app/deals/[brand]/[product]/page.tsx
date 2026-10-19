@@ -28,9 +28,12 @@ const CATEGORY_GUIDE: Record<string, { slug: string; title: string }> = {
   monitors: { slug: "oled-vs-ips-gaming-monitor", title: "OLED vs. IPS gaming monitor guide" },
   controllers: { slug: "are-pro-controllers-worth-it", title: "guide to pro controllers" },
   components: { slug: "what-graphics-card-do-i-need", title: "guide to choosing a graphics card" },
+  "video-cards": { slug: "what-graphics-card-do-i-need", title: "guide to choosing a graphics card" },
+  memory: { slug: "how-much-ram-for-gaming", title: "guide to how much RAM you need" },
+  motherboards: { slug: "how-much-should-i-spend-on-a-gaming-pc", title: "gaming PC budget guide" },
 };
 const DEFAULT_GUIDE = CATEGORY_GUIDE["gaming-pcs"];
-const BUILDER_CATEGORIES = new Set(["components", "monitors", "gaming-pcs"]);
+const BUILDER_CATEGORIES = new Set(["components", "monitors", "gaming-pcs", "video-cards", "memory", "motherboards"]);
 
 type Props = { params: Promise<{ brand: string; product: string }> };
 

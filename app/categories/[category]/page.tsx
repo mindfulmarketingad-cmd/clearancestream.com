@@ -35,7 +35,12 @@ const CATEGORY_GUIDES: Record<string, string[]> = {
   mice: ["wireless-vs-wired-gaming-mouse"],
   monitors: ["oled-vs-ips-gaming-monitor", "what-graphics-card-do-i-need"],
   controllers: ["are-pro-controllers-worth-it"],
-  components: ["what-graphics-card-do-i-need", "how-much-ram-for-gaming", "how-much-should-i-spend-on-a-gaming-pc"],
+  components: ["how-to-find-pc-build-deals", "what-graphics-card-do-i-need", "how-much-ram-for-gaming", "how-much-should-i-spend-on-a-gaming-pc"],
+  "video-cards": ["how-to-find-pc-build-deals", "what-graphics-card-do-i-need", "how-much-should-i-spend-on-a-gaming-pc", "gaming-pc-deals-guide"],
+  memory: ["how-much-ram-for-gaming", "how-to-find-pc-build-deals", "prebuilt-gaming-pc-buying-guide"],
+  motherboards: ["how-to-find-pc-build-deals", "what-graphics-card-do-i-need", "how-much-ram-for-gaming", "how-much-should-i-spend-on-a-gaming-pc"],
+  webcams: ["gaming-pc-deals-guide"],
+  speakers: ["gaming-pc-deals-guide"],
 };
 
 export const dynamicParams = false;
@@ -49,7 +54,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const category = getCategory((await params).category);
   if (!category) return {};
+  const { deals } = await getAllDeals();
   return pageMetadata({
+    noindex: !deals.some((d) => d.categorySlug === category.slug),
     title: `${category.hubTitle}: Discounts and Promos`,
     description: `${category.blurb} Compare live prices and real discounts across every brand, updated weekly.`,
     path: `/categories/${category.slug}`,
@@ -74,6 +81,7 @@ export default async function CategoryPage({ params }: Props) {
   const { rows, columns, facets } = dealTable([...deals].sort(defaultRank));
 
   const faqs = [
+    ...(category.faqs ?? []),
     {
       q: `How many ${lowerName(category.plural)} do you track?`,
       a: `${deals.length} right now, from ${brandCounts.length} brands${discounted ? `, with ${discounted} currently discounted` : ""}. The count changes weekly as products are added, sell out, or change price.`,
@@ -188,7 +196,7 @@ export default async function CategoryPage({ params }: Props) {
         </section>
       ) : null}
 
-      {["components", "gaming-pcs", "monitors"].includes(category.slug) ? (
+      {["components", "gaming-pcs", "monitors", "video-cards", "memory", "motherboards"].includes(category.slug) ? (
         <section className="section-tight">
           <div className="container">
             <p className="callout-link">
@@ -227,7 +235,25 @@ export default async function CategoryPage({ params }: Props) {
       <section className="section-tight">
         <div className="container" style={{ maxWidth: 880 }}>
           <div className="prose">
-            <h2 className="mt-0" id="guide">
+            {category.intro || category.guide ? (
+              <>
+                <h2 className="mt-0" id="guide">
+                  {category.name} buying guide
+                </h2>
+                {(category.intro ?? []).map((p) => (
+                  <p key={p.slice(0, 40)}>{p}</p>
+                ))}
+                {(category.guide ?? []).map((g) => (
+                  <div key={g.title}>
+                    <h3>{g.title}</h3>
+                    {g.body.map((p) => (
+                      <p key={p.slice(0, 40)}>{p}</p>
+                    ))}
+                  </div>
+                ))}
+              </>
+            ) : null}
+            <h2 className={category.intro || category.guide ? undefined : "mt-0"} id={category.intro || category.guide ? undefined : "guide"}>
               How to buy {lowerName(category.plural)} on sale
             </h2>
             <ul>

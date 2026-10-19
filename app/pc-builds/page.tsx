@@ -8,7 +8,7 @@ import { loadBuilds } from "@/lib/pc-builds-data";
 import { itemListLd, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "PC Builds: Complete Part Lists for Gaming and Home Office PCs",
+  title: `PC Build Deals New ${new Date().getFullYear()}`,
   absoluteTitle: true,
   description:
     "Complete, compatibility-checked PC builds with current prices: AMD and Intel gaming builds and a budget home office PC. Buy every part in one click or customize the build.",
@@ -22,7 +22,7 @@ export default function PcBuildsHub() {
     <>
       <PageHeader
         crumbs={[{ name: "PC Builds", path: "/pc-builds" }]}
-        title="PC Builds"
+        title={`PC Build Deals New ${new Date().getFullYear()}`}
         lede="Complete part lists we put together from current deals. Every build is checked for compatibility and power, priced part by part, and ready to buy in one click or customize in the PC Builder."
       >
         {generatedAt ? (
@@ -91,6 +91,9 @@ export default function PcBuildsHub() {
             </p>
             <Link href="/pc-builder" className="text-link">
               Open the PC Part Picker <ArrowRight />
+            </Link>{" "}
+            <Link href="/blog/how-to-find-pc-build-deals" className="text-link">
+              How to find PC build deals <ArrowRight />
             </Link>
           </div>
         </div>

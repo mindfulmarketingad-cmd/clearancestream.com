@@ -1,10 +1,11 @@
-export type BrandGroup = "pcs" | "peripherals" | "displays" | "controllers";
+export type BrandGroup = "pcs" | "peripherals" | "displays" | "controllers" | "parts";
 
 export const BRAND_GROUPS: { id: BrandGroup; name: string }[] = [
   { id: "pcs", name: "Gaming PCs & Laptops" },
   { id: "peripherals", name: "Mice, Keyboards & Headsets" },
-  { id: "displays", name: "Monitors & Streaming" },
+  { id: "displays", name: "Monitors, Streaming & Audio" },
   { id: "controllers", name: "Controllers & Racing" },
+  { id: "parts", name: "Graphics Cards, Memory & Motherboards" },
 ];
 
 export type Brand = {
@@ -88,6 +89,7 @@ export const BRANDS: Brand[] = [
       { keywords: "Corsair gaming PC", searchIndex: "Computers" },
       { keywords: "Corsair", searchIndex: "Computers" },
       { keywords: "Corsair", searchIndex: "VideoGames" },
+      { keywords: "Corsair Vengeance Dominator DDR5 memory", searchIndex: "Computers" },
     ],
     include: DESKTOP,
     exclude: PERIPHERALS,
@@ -316,6 +318,8 @@ export const BRANDS: Brand[] = [
     searches: [
       { keywords: "ASUS ROG gaming", searchIndex: "Computers" },
       { keywords: "ASUS ROG", searchIndex: "VideoGames" },
+      { keywords: "ASUS ROG Strix TUF graphics card", searchIndex: "Computers" },
+      { keywords: "ASUS ROG Strix TUF Gaming motherboard", searchIndex: "Computers" },
     ],
     require: /\b(rog|tuf gaming|republic of gamers)\b/i,
     include: DESKTOP,
@@ -348,7 +352,11 @@ export const BRANDS: Brand[] = [
     name: "MSI",
     group: "pcs",
     apiBrand: "MSI",
-    searches: [{ keywords: "MSI gaming", searchIndex: "Computers" }],
+    searches: [
+      { keywords: "MSI gaming", searchIndex: "Computers" },
+      { keywords: "MSI graphics card", searchIndex: "Computers" },
+      { keywords: "MSI motherboard", searchIndex: "Computers" },
+    ],
     include: DESKTOP,
     exclude: new RegExp(`${PERIPHERALS.source}|\\b(laptop|notebook)\\b`, "i"),
     sells: "gaming laptops, desktops, monitors, and components",
@@ -446,9 +454,11 @@ export const BRANDS: Brand[] = [
     searches: [
       { keywords: "Logitech G gaming", searchIndex: "VideoGames" },
       { keywords: "Logitech G gaming", searchIndex: "Computers" },
+      { keywords: "Logitech webcam", searchIndex: "Computers" },
+      { keywords: "Logitech G speakers", searchIndex: "Computers" },
     ],
-    // Logitech also sells office gear; only list its gaming lines.
-    require: /\b(logitech g|gaming|lightspeed|astro|g pro|pro x|racing wheel)\b/i,
+    // Logitech also sells office gear; only list its gaming, streaming, and audio lines.
+    require: /\b(logitech g|gaming|lightspeed|astro|g pro|pro x|racing wheel|webcam|streamcam|brio|speakers?)\b/i,
     include: NO_DESKTOPS,
     exclude: PERIPHERALS,
     sells: "gaming mice, keyboards, headsets, and racing wheels",
@@ -482,6 +492,8 @@ export const BRANDS: Brand[] = [
     searches: [
       { keywords: "Razer", searchIndex: "VideoGames" },
       { keywords: "Razer", searchIndex: "Computers" },
+      { keywords: "Razer Kiyo webcam", searchIndex: "Computers" },
+      { keywords: "Razer Nommo Leviathan speakers", searchIndex: "Computers" },
     ],
     include: NO_DESKTOPS,
     exclude: PERIPHERALS,
@@ -992,7 +1004,10 @@ export const BRANDS: Brand[] = [
     name: "Elgato",
     group: "displays",
     apiBrand: "Elgato",
-    searches: [{ keywords: "Elgato", searchIndex: "Computers" }],
+    searches: [
+      { keywords: "Elgato", searchIndex: "Computers" },
+      { keywords: "Elgato Facecam webcam", searchIndex: "Computers" },
+    ],
     include: NO_DESKTOPS,
     exclude: PERIPHERALS,
     sells: "capture cards, Stream Decks, webcams, mics, and lights",
@@ -1016,6 +1031,335 @@ export const BRANDS: Brand[] = [
     faqs: [
       { q: "Is Elgato owned by Corsair?", a: "Yes. Corsair acquired Elgato's gaming division in 2018." },
       { q: "Do I need a capture card to stream?", a: "Only for consoles or a second PC. Streaming from the same PC you play on does not require one." },
+    ],
+  },
+  // ------------------------------------------------- Graphics cards & parts
+  {
+    slug: "gigabyte",
+    name: "Gigabyte",
+    group: "parts",
+    apiBrand: "GIGABYTE",
+    aliases: ["gigabyte", "aorus"],
+    searches: [
+      { keywords: "GIGABYTE graphics card", searchIndex: "Computers" },
+      { keywords: "GIGABYTE AORUS motherboard", searchIndex: "Computers" },
+      { keywords: "GIGABYTE AORUS gaming", searchIndex: "Computers" },
+    ],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "graphics cards, motherboards, gaming monitors, and AORUS gaming gear",
+    intro:
+      "Gigabyte makes graphics cards, motherboards, monitors, and laptops, with AORUS as its premium gaming line.",
+    overview: [
+      "Gigabyte is one of the largest motherboard and graphics card makers in the world. Its graphics cards span the WINDFORCE and GAMING OC models up to the flagship AORUS cards, and its AORUS motherboards are a popular choice for AMD and Intel builds alike.",
+      "Because Gigabyte sells so many models at every price, its cards and boards are discounted often, especially when a new generation replaces the last one.",
+    ],
+    lines: [
+      { name: "Graphics cards", summary: "GeForce RTX and Radeon RX cards from compact WINDFORCE models to triple-fan AORUS flagships." },
+      { name: "AORUS motherboards", summary: "AM5, AM4, LGA1851, and LGA1700 boards from budget B-series to high-end X and Z chipsets." },
+      { name: "Monitors", summary: "Gigabyte and AORUS gaming monitors, including OLED and high refresh rate models." },
+    ],
+    buyingTips: [
+      "Compare cards by GPU chip first; a WINDFORCE and an AORUS card with the same chip perform within a few percent.",
+      "Check card length against your case before buying a triple-fan model.",
+      "For motherboards, confirm the socket, chipset, and memory type match your CPU and RAM.",
+    ],
+    faqs: [
+      { q: "Is AORUS made by Gigabyte?", a: "Yes. AORUS is Gigabyte's premium gaming brand for graphics cards, motherboards, monitors, and laptops." },
+      { q: "Are Gigabyte graphics cards good?", a: "Yes. Gigabyte is one of the largest graphics card makers. Its cards use the same NVIDIA and AMD chips as other brands, with differences in cooling, size, and price." },
+    ],
+  },
+  {
+    slug: "asrock",
+    name: "ASRock",
+    group: "parts",
+    apiBrand: "ASRock",
+    searches: [
+      { keywords: "ASRock motherboard", searchIndex: "Computers" },
+      { keywords: "ASRock Radeon graphics card", searchIndex: "Computers" },
+    ],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "motherboards, Radeon graphics cards, and power supplies",
+    intro:
+      "ASRock makes motherboards for AMD and Intel processors and AMD Radeon graphics cards, known for strong value at every price.",
+    overview: [
+      "ASRock started as a value-focused motherboard maker and now covers everything from budget boards to its high-end Taichi and Phantom Gaming lines. Its Steel Legend boards are a common pick for mainstream gaming builds.",
+      "On graphics cards, ASRock builds AMD Radeon models in its Challenger, Steel Legend, Phantom Gaming, and Taichi lines, often at some of the lowest prices for each chip.",
+    ],
+    lines: [
+      { name: "Motherboards", summary: "AM5, AM4, LGA1851, and LGA1700 boards, from budget M-ATX to Taichi flagships." },
+      { name: "Radeon graphics cards", summary: "Challenger, Steel Legend, Phantom Gaming, and Taichi Radeon RX cards." },
+      { name: "Power supplies", summary: "ATX 3.1 power supplies with modern GPU connectors." },
+    ],
+    buyingTips: [
+      "ASRock's Challenger cards are usually the lowest-priced models for each Radeon chip; compare them before paying more.",
+      "Check whether a motherboard supports DDR4 or DDR5; ASRock sells both for some Intel sockets.",
+      "Confirm BIOS support for your processor generation in the board's CPU support list.",
+    ],
+    faqs: [
+      { q: "Is ASRock a good motherboard brand?", a: "Yes. ASRock is a major motherboard maker with boards at every price, and its mainstream B-series boards are popular in value gaming builds." },
+      { q: "Does ASRock make NVIDIA graphics cards?", a: "Its current graphics cards are AMD Radeon models. For GeForce cards, compare brands like ASUS, MSI, Gigabyte, and ZOTAC." },
+    ],
+  },
+  {
+    slug: "zotac",
+    name: "ZOTAC",
+    group: "parts",
+    apiBrand: "ZOTAC",
+    searches: [{ keywords: "ZOTAC GAMING GeForce graphics card", searchIndex: "Computers" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "GeForce RTX graphics cards and mini PCs",
+    intro: "ZOTAC builds NVIDIA GeForce graphics cards, from compact Twin Edge models to AMP Extreme flagships, plus ZBOX mini PCs.",
+    overview: [
+      "ZOTAC focuses on NVIDIA GeForce graphics cards and is known for compact designs that fit smaller cases, alongside larger Trinity and AMP models for high-end builds.",
+      "ZOTAC cards are frequently among the lower-priced options for each GeForce chip, which makes their discounts worth watching.",
+    ],
+    lines: [
+      { name: "Twin Edge", summary: "Compact dual-fan GeForce cards for small and mid-size cases." },
+      { name: "Trinity and AMP", summary: "Triple-fan cards with larger coolers for high-end GPUs." },
+      { name: "ZBOX", summary: "Mini PCs for home theater, office, and light gaming." },
+    ],
+    buyingTips: [
+      "Twin Edge models are a good choice for small cases; check the listed card length.",
+      "Compare the price per GPU chip: ZOTAC is often the lowest-priced brand for a given GeForce card.",
+      "Confirm your power supply has the connector the card uses.",
+    ],
+    faqs: [
+      { q: "Does ZOTAC make AMD graphics cards?", a: "No. ZOTAC's graphics cards are NVIDIA GeForce models." },
+      { q: "Are ZOTAC cards as fast as other brands?", a: "Yes. Cards with the same GeForce chip perform within a few percent of each other across brands; ZOTAC differs mainly in cooler design, size, and price." },
+    ],
+  },
+  {
+    slug: "sapphire",
+    name: "Sapphire",
+    group: "parts",
+    apiBrand: "Sapphire",
+    aliases: ["sapphire", "sapphire technology"],
+    searches: [{ keywords: "Sapphire Radeon graphics card", searchIndex: "Computers" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "AMD Radeon graphics cards",
+    intro: "Sapphire is an AMD-exclusive graphics card maker, known for its PULSE, PURE, and NITRO+ Radeon cards.",
+    overview: [
+      "Sapphire builds only AMD Radeon cards and has a long reputation among Radeon buyers for quiet, well-built coolers. PULSE cards are the value line, PURE cards come in white, and NITRO+ cards are the premium models.",
+      "Sapphire Radeon cards go on sale regularly, especially previous-generation models after a new Radeon launch.",
+    ],
+    lines: [
+      { name: "PULSE", summary: "Value-focused Radeon cards with solid, quiet coolers." },
+      { name: "PURE", summary: "White-themed Radeon cards for white builds." },
+      { name: "NITRO+", summary: "Premium Radeon cards with larger coolers and higher clocks." },
+    ],
+    buyingTips: [
+      "PULSE models usually give the best value; NITRO+ is worth it mainly for lower noise.",
+      "Check the card's length and slot thickness against your case.",
+      "Compare against other Radeon brands like XFX, ASRock, and PowerColor for the same chip.",
+    ],
+    faqs: [
+      { q: "Does Sapphire make NVIDIA cards?", a: "No. Sapphire only makes AMD Radeon graphics cards." },
+      { q: "Which Sapphire line should I buy?", a: "PULSE for the best value, PURE for a white build, and NITRO+ for the quietest and fastest Sapphire card at each tier." },
+    ],
+  },
+  {
+    slug: "xfx",
+    name: "XFX",
+    group: "parts",
+    apiBrand: "XFX",
+    searches: [{ keywords: "XFX Radeon graphics card", searchIndex: "Computers" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "AMD Radeon graphics cards",
+    intro: "XFX makes AMD Radeon graphics cards, from the compact SWFT series to the large MERC and QICK models.",
+    overview: [
+      "XFX builds AMD Radeon cards across several cooler sizes, from the value SWFT models to the high-end MERC 310 and QICK cards. Its cards are frequently some of the best-priced options for each Radeon chip.",
+    ],
+    lines: [
+      { name: "Speedster SWFT", summary: "Value Radeon cards with compact dual- or triple-fan coolers." },
+      { name: "Speedster QICK", summary: "Mid-tier Radeon cards balancing size, noise, and price." },
+      { name: "Speedster MERC", summary: "Flagship XFX Radeon cards with the largest coolers." },
+    ],
+    buyingTips: [
+      "SWFT models are usually the lowest-priced XFX cards for each chip.",
+      "MERC cards are long and thick; measure your case before buying.",
+      "Compare with Sapphire, ASRock, and PowerColor for the same Radeon chip.",
+    ],
+    faqs: [
+      { q: "Does XFX make NVIDIA cards?", a: "Its current graphics cards are AMD Radeon models." },
+      { q: "Is XFX a good graphics card brand?", a: "Yes. XFX is a long-standing Radeon partner whose cards use the same AMD chips as other brands, with differences in cooler size and price." },
+    ],
+  },
+  {
+    slug: "gskill",
+    name: "G.SKILL",
+    group: "parts",
+    apiBrand: "G.SKILL",
+    aliases: ["g.skill", "gskill", "g skill"],
+    searches: [{ keywords: "G.SKILL DDR5 memory", searchIndex: "Computers" }, { keywords: "G.SKILL DDR4 memory", searchIndex: "Computers" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "DDR5 and DDR4 memory kits",
+    intro: "G.SKILL is a memory specialist known for its Trident Z5 and Ripjaws DDR5 and DDR4 kits.",
+    overview: [
+      "G.SKILL focuses almost entirely on memory and is a favorite among enthusiasts for fast, well-binned kits. Trident Z5 kits are its premium RGB line, Ripjaws kits are the value line, and Flare X5 kits are tuned for AMD EXPO.",
+    ],
+    lines: [
+      { name: "Trident Z5", summary: "Premium DDR5 kits with optional RGB and high speeds." },
+      { name: "Ripjaws", summary: "Value DDR5 and DDR4 kits with low-profile heat spreaders." },
+      { name: "Flare X5", summary: "DDR5 kits with AMD EXPO profiles for Ryzen systems." },
+    ],
+    buyingTips: [
+      "For AMD Ryzen 7000 and 9000, look for DDR5-6000 CL30 kits with EXPO.",
+      "Buy one matched kit with the total capacity you want.",
+      "Check cooler clearance for tall Trident Z5 RGB heat spreaders.",
+    ],
+    faqs: [
+      { q: "Is G.SKILL RAM good?", a: "Yes. G.SKILL is a memory specialist and one of the most popular brands among PC builders." },
+      { q: "Which G.SKILL kit is best for AMD?", a: "Flare X5 or Trident Z5 Neo kits with EXPO profiles, ideally DDR5-6000 with CL30 timings." },
+    ],
+  },
+  {
+    slug: "kingston-fury",
+    name: "Kingston FURY",
+    group: "parts",
+    apiBrand: "Kingston",
+    aliases: ["kingston", "kingston fury", "kingston technology"],
+    searches: [{ keywords: "Kingston FURY DDR5 memory", searchIndex: "Computers" }, { keywords: "Kingston FURY DDR4 memory", searchIndex: "Computers" }],
+    // Kingston also sells flash drives and SSDs; only list its FURY memory.
+    require: /\b(fury|ddr[45])\b/i,
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "FURY DDR5 and DDR4 gaming memory",
+    intro: "Kingston FURY is Kingston's gaming memory line, with FURY Beast and FURY Renegade kits for DDR5 and DDR4.",
+    overview: [
+      "Kingston is one of the largest memory makers in the world, and FURY is its line for gamers and enthusiasts. FURY Beast kits are the mainstream choice, and FURY Renegade kits target higher speeds.",
+    ],
+    lines: [
+      { name: "FURY Beast", summary: "Mainstream DDR5 and DDR4 kits with XMP and EXPO profiles." },
+      { name: "FURY Renegade", summary: "High-speed kits for enthusiasts." },
+      { name: "FURY Impact", summary: "SO-DIMM memory for gaming laptops and mini PCs." },
+    ],
+    buyingTips: [
+      "Pick FURY Beast for most builds; Renegade is for chasing higher speeds.",
+      "Make sure the kit has an EXPO profile for AMD or XMP for Intel.",
+      "Use FURY Impact SO-DIMM kits for laptops.",
+    ],
+    faqs: [
+      { q: "Is Kingston FURY good for gaming?", a: "Yes. FURY is Kingston's gaming memory line, and FURY Beast kits are a common value pick in gaming builds." },
+      { q: "What is the difference between FURY Beast and Renegade?", a: "Beast is the mainstream line; Renegade targets higher speeds and tighter timings for enthusiasts." },
+    ],
+  },
+  {
+    slug: "teamgroup",
+    name: "TEAMGROUP",
+    group: "parts",
+    apiBrand: "TEAMGROUP",
+    aliases: ["teamgroup", "team group", "t-force", "t-create"],
+    searches: [{ keywords: "TEAMGROUP T-FORCE DDR5 memory", searchIndex: "Computers" }, { keywords: "TEAMGROUP DDR4 memory", searchIndex: "Computers" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "T-FORCE gaming memory and SSDs",
+    intro: "TEAMGROUP makes memory and SSDs, with T-FORCE as its gaming line and T-CREATE for creators.",
+    overview: [
+      "TEAMGROUP's T-FORCE Delta and Vulcan kits are popular value picks for gaming builds, often priced below the bigger memory brands for the same speed and capacity.",
+    ],
+    lines: [
+      { name: "T-FORCE Delta", summary: "RGB DDR5 and DDR4 kits." },
+      { name: "T-FORCE Vulcan", summary: "Low-profile value kits without RGB." },
+      { name: "T-CREATE", summary: "Memory for content creation with understated styling." },
+    ],
+    buyingTips: [
+      "Vulcan kits avoid clearance issues with large air coolers.",
+      "Compare price per gigabyte at the same speed and latency across brands.",
+      "Check the kit has XMP or EXPO for your platform.",
+    ],
+    faqs: [
+      { q: "Is TEAMGROUP memory reliable?", a: "Yes. TEAMGROUP is an established memory maker, and its T-FORCE kits are widely used in gaming builds." },
+    ],
+  },
+  // ------------------------------------------------------ Audio & webcams
+  {
+    slug: "creative",
+    name: "Creative",
+    group: "displays",
+    apiBrand: "Creative",
+    aliases: ["creative", "creative labs"],
+    searches: [{ keywords: "Creative speakers", searchIndex: "Electronics" }, { keywords: "Creative Sound Blaster", searchIndex: "Computers" }],
+    require: /\b(speakers?|sound ?blaster|soundbar|pebble|webcam|subwoofer)\b/i,
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "PC speakers, soundbars, and Sound Blaster audio",
+    intro: "Creative makes PC speakers, soundbars, and the Sound Blaster line of sound cards and gaming audio.",
+    overview: [
+      "Creative has made PC audio since the original Sound Blaster. Today its Pebble speakers are a go-to budget desktop pick, and its Sound Blaster and Katana products target gamers who want better audio from a PC.",
+    ],
+    lines: [
+      { name: "Pebble", summary: "Compact, low-cost USB desktop speakers." },
+      { name: "Sound BlasterX Katana", summary: "Gaming soundbars with virtual surround." },
+      { name: "Sound Blaster", summary: "USB and internal sound cards and DACs." },
+    ],
+    buyingTips: [
+      "Pebble speakers draw power over USB, so they set up with a single cable from your PC.",
+      "Soundbars save desk space under a monitor.",
+      "Compare RMS power, not peak power.",
+    ],
+    faqs: [
+      { q: "Are Creative Pebble speakers good?", a: "They are a popular budget choice for desktop audio, with a big improvement over monitor speakers for little money." },
+    ],
+  },
+  {
+    slug: "edifier",
+    name: "Edifier",
+    group: "displays",
+    apiBrand: "Edifier",
+    searches: [{ keywords: "Edifier computer speakers", searchIndex: "Electronics" }, { keywords: "Edifier gaming speakers", searchIndex: "Electronics" }],
+    require: /\b(speakers?|soundbar|subwoofer|monitor speakers?)\b/i,
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "bookshelf, desktop, and gaming speakers",
+    intro: "Edifier makes bookshelf and desktop speakers, from the popular R1280T to RGB gaming speakers.",
+    overview: [
+      "Edifier is a speaker specialist whose powered bookshelf speakers are a long-standing recommendation for desks. Its gaming line adds RGB lighting and USB or Bluetooth connections.",
+    ],
+    lines: [
+      { name: "Bookshelf speakers", summary: "Powered 2.0 pairs like the R1280 series for desks and small rooms." },
+      { name: "Gaming speakers", summary: "Compact RGB speakers with USB, Bluetooth, and 3.5mm inputs." },
+      { name: "Studio monitors", summary: "Flatter-sounding speakers for music and editing." },
+    ],
+    buyingTips: [
+      "Check inputs: some models add Bluetooth or optical, others are analog only.",
+      "Bookshelf models need more desk space; measure first.",
+      "Put speakers on stands at ear height for the best sound.",
+    ],
+    faqs: [
+      { q: "Are Edifier speakers good for a PC?", a: "Yes. Edifier's powered bookshelf speakers are a popular upgrade for desktop audio." },
+    ],
+  },
+  {
+    slug: "obsbot",
+    name: "OBSBOT",
+    group: "displays",
+    apiBrand: "OBSBOT",
+    searches: [{ keywords: "OBSBOT webcam", searchIndex: "Electronics" }],
+    include: NO_DESKTOPS,
+    exclude: PERIPHERALS,
+    sells: "AI-tracking 4K webcams and PTZ cameras",
+    intro: "OBSBOT makes AI-powered webcams that track and frame you automatically, including the Tiny and Meet series.",
+    overview: [
+      "OBSBOT webcams use a motorized gimbal or AI framing to keep you centered as you move, which is popular with streamers, teachers, and anyone presenting on camera. Most models record in 4K.",
+    ],
+    lines: [
+      { name: "Tiny", summary: "PTZ webcams with a gimbal that follows you." },
+      { name: "Meet", summary: "Compact 4K webcams with AI framing and no moving parts." },
+      { name: "Tail", summary: "PTZ cameras for streaming and production." },
+    ],
+    buyingTips: [
+      "Choose a gimbal Tiny model if you move around; Meet models suit seated use.",
+      "Use the OBSBOT Center app to set framing and exposure.",
+      "Good lighting still matters most for image quality.",
+    ],
+    faqs: [
+      { q: "Do OBSBOT webcams work with OBS and Zoom?", a: "Yes. They work as standard USB webcams in OBS, Zoom, Teams, and Discord." },
     ],
   },
 ];

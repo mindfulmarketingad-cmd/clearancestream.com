@@ -2,6 +2,7 @@ import { areProControllersWorthIt } from "./posts/are-pro-controllers-worth-it";
 import { bestTimeToBuyAGamingPc } from "./posts/best-time-to-buy-a-gaming-pc";
 import { gamingLaptopVsGamingPc } from "./posts/gaming-laptop-vs-gaming-pc";
 import { howMuchRamForGaming } from "./posts/how-much-ram-for-gaming";
+import { howToFindPcBuildDeals } from "./posts/how-to-find-pc-build-deals";
 import { howMuchShouldISpendOnAGamingPc } from "./posts/how-much-should-i-spend-on-a-gaming-pc";
 import { mechanicalKeyboardSwitchesExplained } from "./posts/mechanical-keyboard-switches-explained";
 import { oledVsIpsGamingMonitor } from "./posts/oled-vs-ips-gaming-monitor";
@@ -21,6 +22,7 @@ export const PILLAR_POSTS: Post[] = [gamingPcDealsGuide, prebuiltBuyingGuide];
 
 export const POSTS: Post[] = [
   ...PILLAR_POSTS,
+  howToFindPcBuildDeals,
   bestTimeToBuyAGamingPc,
   howMuchShouldISpendOnAGamingPc,
   gamingLaptopVsGamingPc,

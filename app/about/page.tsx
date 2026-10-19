@@ -50,8 +50,9 @@ export default function AboutPage() {
 
             <h2>What we cover</h2>
             <p>
-              We track {BRANDS.length} of the biggest gaming brands across gaming PCs and laptops, mice, keyboards and
-              headsets, and controllers and racing gear. See them all on our <Link href="/brands">brands page</Link>. Alongside live deals, we publish{" "}
+              We track {BRANDS.length} of the biggest gaming and PC hardware brands across gaming PCs and laptops, graphics
+              cards, memory, and motherboards, mice, keyboards and headsets, monitors, webcams and speakers, and controllers
+              and racing gear. See them all on our <Link href="/brands">brands page</Link>. Alongside live deals, we publish{" "}
               <Link href="/blog">buying guides</Link> that explain how to judge a gaming PC discount on the value of
               the components inside, not just the percentage on the tag.
             </p>

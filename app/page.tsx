@@ -18,6 +18,7 @@ import { FEATURED_SIZE, blogImagePath } from "@/lib/featured-image";
 import { ScanCta } from "@/components/ScanCta";
 import { BRAND_GROUPS, BRANDS, brandsInGroup, getBrand } from "@/lib/brands";
 import { BrandDirectory } from "@/components/BrandDirectory";
+import { BrandCarousel } from "@/components/BrandCarousel";
 import { gamingPcsFirst, getAllDeals } from "@/lib/deals";
 import { pickPool } from "@/lib/picks";
 import { DealPicks } from "@/components/DealPicks";
@@ -52,7 +53,7 @@ const HOME_FAQ = [
   },
   {
     q: "Which gaming PC brands do you track?",
-    a: `We track ${BRANDS.length} of the biggest gaming brands, including ${FEATURED.slice(0, 6).map((s) => getBrand(s)!.name).join(", ")}, and SCUF Gaming, across gaming PCs, laptops, mice, keyboards, headsets, and controllers.`,
+    a: `We track ${BRANDS.length} of the biggest gaming brands, including ${FEATURED.slice(0, 6).map((s) => getBrand(s)!.name).join(", ")}, and SCUF Gaming, across gaming PCs, laptops, graphics cards, memory, motherboards, monitors, mice, keyboards, headsets, webcams, speakers, and controllers.`,
   },
 ];
 
@@ -164,6 +165,18 @@ export default async function HomePage() {
             </div>
           )}
         </div>
+      </section>
+
+      <section className="section-tight brand-band" aria-labelledby="brands-title">
+        <div className="container">
+          <div className="section-head">
+            <h2 id="brands-title">Track Discounts From Your Favorite Tech Brands</h2>
+            <Link href="/brands" className="text-link">
+              All brands <ArrowRight />
+            </Link>
+          </div>
+        </div>
+        <BrandCarousel />
       </section>
 
       <div className="brand-strip">

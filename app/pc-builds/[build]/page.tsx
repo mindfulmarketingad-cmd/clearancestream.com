@@ -573,6 +573,11 @@ export default async function BuildPage({ params }: Props) {
             </h2>
             <ul className="chip-list">
               <li>
+                <Link href="/blog/how-to-find-pc-build-deals" className="chip">
+                  How to find PC build deals
+                </Link>
+              </li>
+              <li>
                 <Link
                   href="/blog/what-graphics-card-do-i-need"
                   className="chip"
