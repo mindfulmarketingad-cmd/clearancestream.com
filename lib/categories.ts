@@ -44,7 +44,9 @@ export const CATEGORIES: Category[] = [
     plural: "Gaming Laptops",
     hubTitle: "Gaming Laptop Deals",
     blurb: "Gaming laptops from Alienware, ASUS ROG, Lenovo Legion, MSI, HP OMEN, Acer Predator, and Razer.",
-    match: /^(?!.*\b(?:so-?dimm|laptop memory|memory kit|cooling pad|laptop stand|laptop bag|backpack|sleeve)\b).*\b(laptop|notebook)\b/i,
+    // The product itself must be the laptop: "Speakers for PC/Laptop" or "Desktop or Laptop Webcam" are not.
+    match:
+      /^(?!.*\b(?:so-?dimm|laptop memory|memory kit|cooling pad|laptop stand|laptop bag|backpack|sleeve|speakers?|soundbar|webcam|sound blaster|sound card|microphone|charger|docking station|mouse ?pad|desk mat)\b).*(?<!(?:\bfor|\bwith|\band|\bor|\bpc|\bdesktop|\bmac|[/,&+|])\s*)\b(laptops?|notebooks?)\b/i,
     tips: [
       "Check the GPU's power limit (TGP), not just its name. The same laptop GPU can perform very differently depending on how much power it is allowed.",
       "Match the display to the GPU: a high-refresh 1440p panel needs a stronger GPU than a 1080p one.",

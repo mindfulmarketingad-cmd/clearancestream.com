@@ -35,6 +35,8 @@ export type Brand = {
 const PERIPHERALS =
   /\b(keyboard|mouse|mice|headset|headphones?|monitor|webcam|microphone|mouse ?pad|controller|chair|desk|cable|fans?|fan kit|case|chassis|power supply|psu|ram kit|memory kit|cooler|stream deck|capture card|replacement|sticker|skin)\b/i;
 const DESKTOP = /\b(gaming (pc|desktop|computer)|desktop|tower)\b/i;
+/** For brands that do not sell prebuilt PCs: nothing they list is classed as one. */
+const NEVER = /(?!)/;
 const NO_DESKTOPS = /\b(gaming (pc|desktop|computer)|desktop)\b/i;
 
 export const BRANDS: Brand[] = [
@@ -1045,7 +1047,7 @@ export const BRANDS: Brand[] = [
       { keywords: "GIGABYTE AORUS motherboard", searchIndex: "Computers" },
       { keywords: "GIGABYTE AORUS gaming", searchIndex: "Computers" },
     ],
-    include: NO_DESKTOPS,
+    include: NEVER,
     exclude: PERIPHERALS,
     sells: "graphics cards, motherboards, gaming monitors, and AORUS gaming gear",
     intro:
@@ -1078,7 +1080,7 @@ export const BRANDS: Brand[] = [
       { keywords: "ASRock motherboard", searchIndex: "Computers" },
       { keywords: "ASRock Radeon graphics card", searchIndex: "Computers" },
     ],
-    include: NO_DESKTOPS,
+    include: NEVER,
     exclude: PERIPHERALS,
     sells: "motherboards, Radeon graphics cards, and power supplies",
     intro:
@@ -1108,7 +1110,7 @@ export const BRANDS: Brand[] = [
     group: "parts",
     apiBrand: "ZOTAC",
     searches: [{ keywords: "ZOTAC GAMING GeForce graphics card", searchIndex: "Computers" }],
-    include: NO_DESKTOPS,
+    include: NEVER,
     exclude: PERIPHERALS,
     sells: "GeForce RTX graphics cards and mini PCs",
     intro: "ZOTAC builds NVIDIA GeForce graphics cards, from compact Twin Edge models to AMP Extreme flagships, plus ZBOX mini PCs.",
@@ -1138,7 +1140,7 @@ export const BRANDS: Brand[] = [
     apiBrand: "Sapphire",
     aliases: ["sapphire", "sapphire technology"],
     searches: [{ keywords: "Sapphire Radeon graphics card", searchIndex: "Computers" }],
-    include: NO_DESKTOPS,
+    include: NEVER,
     exclude: PERIPHERALS,
     sells: "AMD Radeon graphics cards",
     intro: "Sapphire is an AMD-exclusive graphics card maker, known for its PULSE, PURE, and NITRO+ Radeon cards.",
@@ -1167,7 +1169,7 @@ export const BRANDS: Brand[] = [
     group: "parts",
     apiBrand: "XFX",
     searches: [{ keywords: "XFX Radeon graphics card", searchIndex: "Computers" }],
-    include: NO_DESKTOPS,
+    include: NEVER,
     exclude: PERIPHERALS,
     sells: "AMD Radeon graphics cards",
     intro: "XFX makes AMD Radeon graphics cards, from the compact SWFT series to the large MERC and QICK models.",
@@ -1196,7 +1198,7 @@ export const BRANDS: Brand[] = [
     apiBrand: "G.SKILL",
     aliases: ["g.skill", "gskill", "g skill"],
     searches: [{ keywords: "G.SKILL DDR5 memory", searchIndex: "Computers" }, { keywords: "G.SKILL DDR4 memory", searchIndex: "Computers" }],
-    include: NO_DESKTOPS,
+    include: NEVER,
     exclude: PERIPHERALS,
     sells: "DDR5 and DDR4 memory kits",
     intro: "G.SKILL is a memory specialist known for its Trident Z5 and Ripjaws DDR5 and DDR4 kits.",
@@ -1227,7 +1229,7 @@ export const BRANDS: Brand[] = [
     searches: [{ keywords: "Kingston FURY DDR5 memory", searchIndex: "Computers" }, { keywords: "Kingston FURY DDR4 memory", searchIndex: "Computers" }],
     // Kingston also sells flash drives and SSDs; only list its FURY memory.
     require: /\b(fury|ddr[45])\b/i,
-    include: NO_DESKTOPS,
+    include: NEVER,
     exclude: PERIPHERALS,
     sells: "FURY DDR5 and DDR4 gaming memory",
     intro: "Kingston FURY is Kingston's gaming memory line, with FURY Beast and FURY Renegade kits for DDR5 and DDR4.",
@@ -1256,7 +1258,7 @@ export const BRANDS: Brand[] = [
     apiBrand: "TEAMGROUP",
     aliases: ["teamgroup", "team group", "t-force", "t-create"],
     searches: [{ keywords: "TEAMGROUP T-FORCE DDR5 memory", searchIndex: "Computers" }, { keywords: "TEAMGROUP DDR4 memory", searchIndex: "Computers" }],
-    include: NO_DESKTOPS,
+    include: NEVER,
     exclude: PERIPHERALS,
     sells: "T-FORCE gaming memory and SSDs",
     intro: "TEAMGROUP makes memory and SSDs, with T-FORCE as its gaming line and T-CREATE for creators.",
@@ -1287,7 +1289,7 @@ export const BRANDS: Brand[] = [
     searches: [{ keywords: "Creative speakers", searchIndex: "Electronics" }, { keywords: "Creative Sound Blaster", searchIndex: "Computers" }],
     // Current speakers and gaming audio only; skips old and used sound cards.
     require: /\b(speakers?|soundbar|sound bar|pebble|katana|subwoofer|sound blaster (?:gs\d|g\d|x\d|ae-?\d))\b/i,
-    include: NO_DESKTOPS,
+    include: NEVER,
     exclude: PERIPHERALS,
     sells: "PC speakers, soundbars, and Sound Blaster audio",
     intro: "Creative makes PC speakers, soundbars, and the Sound Blaster line of sound cards and gaming audio.",
@@ -1315,7 +1317,7 @@ export const BRANDS: Brand[] = [
     apiBrand: "Edifier",
     searches: [{ keywords: "Edifier computer speakers", searchIndex: "Electronics" }, { keywords: "Edifier gaming speakers", searchIndex: "Electronics" }],
     require: /\b(speakers?|soundbar|subwoofer|monitor speakers?)\b/i,
-    include: NO_DESKTOPS,
+    include: NEVER,
     exclude: PERIPHERALS,
     sells: "bookshelf, desktop, and gaming speakers",
     intro: "Edifier makes bookshelf and desktop speakers, from the popular R1280T to RGB gaming speakers.",
@@ -1342,7 +1344,7 @@ export const BRANDS: Brand[] = [
     group: "displays",
     apiBrand: "OBSBOT",
     searches: [{ keywords: "OBSBOT webcam", searchIndex: "Electronics" }],
-    include: NO_DESKTOPS,
+    include: NEVER,
     exclude: PERIPHERALS,
     sells: "AI-tracking 4K webcams and PTZ cameras",
     intro: "OBSBOT makes AI-powered webcams that track and frame you automatically, including the Tiny and Meet series.",

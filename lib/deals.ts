@@ -58,8 +58,14 @@ const CASE = /\b(case|chassis)\b/i;
 
 const LAPTOP = /\b(laptop|notebook|handheld)\b/i;
 
-function isGamingPcTitle(title: string, brand: Brand) {
+// Components and audio gear are never prebuilt PCs ("Gaming Computer Speakers",
+// "DDR5 Desktop Memory"), unless the title reads like a full system spec.
+const NOT_PC = /\b(speakers?|soundbar|sound bar|webcam|desktop memory|memory kit|ram kit|dimm|so-?dimm|motherboard|graphics card|video card|sound card|ssd only)\b/i;
+const SYSTEM_SPEC = /\bgaming (pc|desktop)\b.*\b(\d+\s?gb\s+(ram|ddr\d|memory)|\d+\s?(tb|gb)\s+(ssd|nvme)|windows 1[01])\b/i;
+
+export function isGamingPcTitle(title: string, brand: Brand) {
   if (CASE.test(title) || LAPTOP.test(title)) return false;
+  if (NOT_PC.test(title) && !SYSTEM_SPEC.test(title)) return false;
   return EXPLICIT_PC.test(title) || (brand.include.test(title) && !brand.exclude.test(title));
 }
 
