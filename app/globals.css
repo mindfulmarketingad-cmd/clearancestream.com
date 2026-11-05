@@ -4273,7 +4273,9 @@ a.card:hover {
   margin-bottom: 16px;
 }
 .brand-carousel {
-  overflow: hidden;
+  max-width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
@@ -4283,17 +4285,7 @@ a.card:hover {
   width: max-content;
   list-style: none;
   margin: 0;
-  padding: 8px 0 12px;
-  animation: brand-scroll linear infinite;
-}
-.brand-carousel:hover .brand-track,
-.brand-carousel:focus-within .brand-track {
-  animation-play-state: paused;
-}
-@keyframes brand-scroll {
-  to {
-    transform: translateX(calc(-50% - 7px));
-  }
+  padding: 8px var(--gutter) 12px;
 }
 .brand-tile {
   display: flex;
@@ -4310,6 +4302,7 @@ a.card:hover {
   font-weight: 600;
   text-align: center;
   transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  scroll-snap-align: start;
 }
 .brand-tile:hover,
 .brand-tile:focus-visible {
@@ -4320,19 +4313,6 @@ a.card:hover {
 .brand-tile .brand-logo img {
   object-fit: contain;
   padding: 6px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .brand-carousel {
-    overflow-x: auto;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-  .brand-track {
-    animation: none;
-  }
-  .brand-track li[aria-hidden="true"] {
-    display: none;
-  }
 }
 .pcbd-photos {
   display: grid;

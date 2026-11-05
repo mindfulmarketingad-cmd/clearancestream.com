@@ -8,15 +8,16 @@ import { BRAND_GROUPS } from "@/lib/brands";
 import { couponSummaries } from "@/lib/coupons";
 import { getAllDeals } from "@/lib/deals";
 import { itemListLd, pageMetadata } from "@/lib/seo";
+import { authConfigured } from "@/lib/supabase/env";
 
 
 export function generateMetadata(): Metadata {
   return pageMetadata({
     title: `Tech Coupon Discount Codes ${new Date().getFullYear()}`,
-    absoluteTitle: true,
     description:
       "Coupons and verified deals from the biggest gaming and tech brands: gaming PCs, laptops, mice, keyboards, headsets, monitors, and controllers. No codes to copy; the discount is already applied.",
     path: "/coupons",
+    noindex: authConfigured(),
   });
 }
 

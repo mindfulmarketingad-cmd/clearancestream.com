@@ -59,6 +59,12 @@ export function Header() {
                 </li>
               ),
             )}
+            <li>
+              <Link href="/login">Log in</Link>
+            </li>
+            <li>
+              <Link href="/signup">Sign up</Link>
+            </li>
           </ul>
         </nav>
         <details className="mobile-menu">
@@ -80,6 +86,12 @@ export function Header() {
                     ) : null}
                   </li>
                 ))}
+                <li>
+                  <Link href="/login">Log in</Link>
+                </li>
+                <li>
+                  <Link href="/signup">Sign up</Link>
+                </li>
               </ul>
             </nav>
             <LiveSearch id="mobile-q" />

@@ -1,6 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { isMemberPath, safeNext } from "./lib/auth";
 import { popularSearch } from "./lib/popular-searches";
 import { searchSlug } from "./lib/slug";
+import { authConfigured } from "./lib/supabase/env";
+import { carrySession, refreshSession } from "./lib/supabase/proxy";
 
 /**
  * URL canonicalisation, applied before any page renders:
@@ -11,7 +14,7 @@ import { searchSlug } from "./lib/slug";
  *    search; any other query stays on /search?q=... and is answered client-side
  *  - /search/<anything else> -> /search?q=... (only popular searches are prebuilt)
  */
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const url = request.nextUrl;
 
   if (url.pathname === "/search" && url.searchParams.has("q")) {
@@ -53,7 +56,18 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(target, 301);
   }
 
-  return NextResponse.next();
+  const hasAuthCookie = request.cookies.getAll().some((cookie) => cookie.name.startsWith("sb-"));
+  const member = isMemberPath(url.pathname);
+  if (!authConfigured() || (!member && !hasAuthCookie)) return NextResponse.next();
+
+  const { response, claims } = await refreshSession(request);
+  if (member && !claims?.sub) {
+    const login = url.clone();
+    login.pathname = "/login";
+    login.search = `?next=${encodeURIComponent(safeNext(url.pathname + url.search))}`;
+    return carrySession(response, NextResponse.redirect(login));
+  }
+  return response;
 }
 
 export const config = {

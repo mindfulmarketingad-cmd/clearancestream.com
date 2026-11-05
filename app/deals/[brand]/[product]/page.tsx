@@ -74,7 +74,7 @@ function productLd(deal: Deal) {
     name: deal.title,
     sku: deal.asin,
     brand: { "@type": "Brand", name: deal.brandName },
-    image: deal.gallery.map((g) => g.url),
+    ...(deal.gallery.length > 0 ? { image: deal.gallery.map((g) => g.url) } : {}),
     description: deal.features[0] ?? deal.title,
     url: absoluteUrl(deal.path),
     offers: {

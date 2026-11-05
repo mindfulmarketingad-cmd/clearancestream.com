@@ -14,6 +14,7 @@ import { brandCouponDeals, toCoupon } from "@/lib/coupons";
 import { getAllDeals } from "@/lib/deals";
 import { formatChecked } from "@/lib/format";
 import { itemListLd, pageMetadata } from "@/lib/seo";
+import { authConfigured } from "@/lib/supabase/env";
 import { brandGuideSlug } from "@/lib/blog";
 
 export const dynamicParams = false;
@@ -36,12 +37,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const best = coupons[0]?.savingsPercent;
   return pageMetadata({
     title: `${brand.name} Coupons & Deals ${new Date().getFullYear()}`,
-    absoluteTitle: true,
     description: coupons.length
       ? `${coupons.length} verified ${brand.name} deals, up to ${best}% off ${brand.sells}. No code needed: the discount is already applied at the retailer. Updated weekly.`
       : `Verified ${brand.name} coupons and deals on ${brand.sells}, checked weekly by ClearanceStream.`,
     path: `/coupons/${brand.slug}`,
-    noindex: coupons.length === 0,
+    noindex: coupons.length === 0 || authConfigured(),
   });
 }
 

@@ -14,11 +14,12 @@ export function DealCard({ deal, priority = false, hidden = false }: Props) {
           // Product images must be served from the retailer's own image URLs.
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={deal.image.url}
+            src={deal.image.url.replace(/\._[A-Z]{2}\d+_\./, "._SL320_.")}
             alt=""
             width={deal.image.width}
             height={deal.image.height}
             loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
             decoding="async"
             referrerPolicy="no-referrer"
           />

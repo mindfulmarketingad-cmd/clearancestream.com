@@ -16,7 +16,6 @@ import { absoluteUrl } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: BUILD.title,
-  absoluteTitle: true,
   description: BUILD.description,
   path: `/pc-builds/${BUILD.slug}`,
   image: { url: BUILD.photos[1].jpg, width: BUILD.photos[1].width, height: BUILD.photos[1].height, alt: BUILD.photos[1].alt },

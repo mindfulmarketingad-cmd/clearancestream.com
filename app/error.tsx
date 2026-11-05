@@ -8,7 +8,7 @@ export default function Error({ reset }: { error: Error; reset: () => void }) {
       <div className="container" style={{ maxWidth: 720 }}>
         <h1 style={{ fontSize: 36 }}>Something went wrong</h1>
         <p className="muted" style={{ marginTop: 12 }}>
-          We could not load this page. Please try again in a moment.
+          We could not load this page. If you had this tab open across a site update, refresh it and try again.
         </p>
         <div className="hero-actions">
           <button type="button" className="btn btn-primary" onClick={reset}>Try again</button>

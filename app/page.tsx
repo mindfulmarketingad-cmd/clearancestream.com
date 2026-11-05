@@ -15,6 +15,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { ValueBar } from "@/components/ValueBar";
 import { POSTS } from "@/lib/blog";
 import { FEATURED_SIZE, blogImagePath } from "@/lib/featured-image";
+import { HeroVideo } from "@/components/HeroVideo";
 import { ScanCta } from "@/components/ScanCta";
 import { BRAND_GROUPS, BRANDS, brandsInGroup, getBrand } from "@/lib/brands";
 import { BrandDirectory } from "@/components/BrandDirectory";
@@ -49,7 +50,7 @@ const HOME_FAQ = [
   },
   {
     q: "Does it cost anything to use ClearanceStream?",
-    a: "No. The site is free to use and you never need an account. We may earn a commission when you buy through our links, at no extra cost to you.",
+    a: "No. ClearanceStream is free. A free account is required to browse the full deals list, today’s promotions, and coupon pages. Guides, brand pages, and individual product pages stay open. We may earn a commission when you buy through our links, at no extra cost to you.",
   },
   {
     q: "Which gaming PC brands do you track?",
@@ -69,9 +70,7 @@ export default async function HomePage() {
   return (
     <>
       <section className="hero">
-        <video className="hero-bg" autoPlay muted loop playsInline preload="auto" aria-hidden="true" tabIndex={-1}>
-          <source src="/hero-bg.mp4" type="video/mp4" />
-        </video>
+        <HeroVideo />
         <div className="hero-tint" aria-hidden="true" />
         <div className="container hero-grid">
           <div>
@@ -100,7 +99,7 @@ export default async function HomePage() {
                 <CheckIcon /> Free to use
               </li>
               <li>
-                <CheckIcon /> No account required
+                <CheckIcon /> Free account to see every deal
               </li>
               <li>
                 <CheckIcon /> Verified live prices
@@ -178,20 +177,6 @@ export default async function HomePage() {
         </div>
         <BrandCarousel />
       </section>
-
-      <div className="brand-strip">
-        <div className="container">
-          <span>Discounts and promos from</span>
-          {FEATURED.map((slug) => getBrand(slug)!).map((b) => (
-            <Link key={b.slug} href={`/brands/${b.slug}`}>
-              {b.name}
-            </Link>
-          ))}
-          <Link href="/brands" className="text-link" style={{ fontSize: 14, fontWeight: 500 }}>
-            All brands <ArrowRight />
-          </Link>
-        </div>
-      </div>
 
       {pool.length > 0 ? (
         <section className="section-tight spotlight-section" aria-labelledby="picks-title">

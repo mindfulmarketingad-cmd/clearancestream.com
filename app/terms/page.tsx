@@ -20,7 +20,8 @@ export default function TermsPage() {
       <p>
         {SITE.name} publishes information about gaming PC and gaming gear prices and deals, along with buying guides.
         We do not sell products. All purchases are made on third-party retailer sites and are governed by those
-        retailers&apos; terms.
+        retailers&apos; terms. A free account is required to browse the full deals list, today’s promotions, and coupon
+        pages. You are responsible for keeping your login credentials private.
       </p>
 
       <h2>2. Pricing information</h2>
