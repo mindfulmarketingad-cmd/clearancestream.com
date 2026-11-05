@@ -8,6 +8,7 @@ import { couponSummaries } from "@/lib/coupons";
 import { getAllDeals } from "@/lib/deals";
 import { POPULAR_SEARCHES, runSearch } from "@/lib/search";
 import { absoluteUrl } from "@/lib/site";
+import { authConfigured } from "@/lib/supabase/env";
 import { BUILD_DEFS } from "@/lib/pc-builds";
 import { SHOWCASE_BUILDS } from "@/lib/showcase-builds";
 
@@ -26,22 +27,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     entry("/", dealsUpdated, "weekly", 1),
-    entry("/deals", dealsUpdated, "weekly", 0.9),
+    ...(authConfigured() ? [] : [entry("/deals", dealsUpdated, "weekly", 0.9)]),
     entry("/brands", dealsUpdated, "weekly", 0.8),
     entry("/categories", dealsUpdated, "weekly", 0.8),
     ...CATEGORIES.filter((c) => deals.some((d) => d.categorySlug === c.slug)).map((c) =>
       entry(`/categories/${c.slug}`, dealsUpdated, "weekly", 0.8),
     ),
     entry("/lists", dealsUpdated, "weekly", 0.8),
-    entry("/coupons", dealsUpdated, "weekly", 0.8),
-    entry("/deals/today", dealsUpdated, "daily", 0.9),
+    ...(authConfigured() ? [] : [entry("/coupons", dealsUpdated, "weekly", 0.8), entry("/deals/today", dealsUpdated, "daily", 0.9)]),
     entry("/pc-builder", dealsUpdated, "weekly", 0.9),
     entry("/pc-builds", dealsUpdated, "weekly", 0.9),
     ...BUILD_DEFS.map((d) => entry(`/pc-builds/${d.slug}`, dealsUpdated, "weekly", 0.8)),
     ...SHOWCASE_BUILDS.map((b) => entry(`/pc-builds/${b.slug}`, dealsUpdated, "weekly", 0.8)),
-    ...couponSummaries(deals)
-      .filter((c) => c.count > 0)
-      .map((c) => entry(`/coupons/${c.brand.slug}`, dealsUpdated, "weekly", 0.8)),
+    ...(authConfigured()
+      ? []
+      : couponSummaries(deals)
+          .filter((c) => c.count > 0)
+          .map((c) => entry(`/coupons/${c.brand.slug}`, dealsUpdated, "weekly", 0.8))),
     // Only "top 10" lists that actually have 10 products are indexable.
     ...liveLists(deals)
       .filter((l) => l.indexable)

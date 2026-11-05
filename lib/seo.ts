@@ -21,7 +21,9 @@ export function pageMetadata(input: MetaInput): Metadata {
     // Skip the "| ClearanceStream.com" suffix when it would push the title past
     // what search results display (~60 characters).
     title:
-      input.absoluteTitle || input.title.length + SITE.domain.length + 3 > 62 ? { absolute: input.title } : input.title,
+      input.absoluteTitle || input.title.includes(SITE.domain) || input.title.length + SITE.domain.length + 3 > 62
+        ? { absolute: input.title }
+        : input.title,
     description: input.description,
     alternates: { canonical: url },
     robots: input.noindex

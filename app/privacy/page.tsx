@@ -19,7 +19,7 @@ export default function PrivacyPage() {
     >
       <h2 className="mt-0">Summary</h2>
       <ul>
-        <li>You can use {SITE.name} without creating an account.</li>
+        <li>Guides, brand pages, and individual product pages are open to everyone. A free account is required for the full deals list, today’s promotions, and coupon pages.</li>
         <li>We do not sell or rent your personal information.</li>
         <li>We use Google Analytics to understand how the site is used. We do not set advertising cookies.</li>
         <li>If you contact us, we use your details only to reply.</li>
@@ -43,6 +43,14 @@ export default function PrivacyPage() {
       <p>
         Searches on {SITE.name} are processed to show you results. Search terms appear in the page URL and may be
         recorded in server logs as described above. Please do not enter personal information into the search box.
+      </p>
+
+      <h3>Accounts</h3>
+      <p>
+        If you create an account, we store your email address and a password hash through our authentication provider
+        so you can log in and open the deals and promotions pages. We use that email only to run your account and, if
+        you ask for it, to send a confirmation or password message. You can ask us to delete the account through the{" "}
+        <Link href="/contact">contact form</Link>.
       </p>
 
       <h3>Deal alert emails</h3>

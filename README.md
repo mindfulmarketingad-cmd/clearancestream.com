@@ -20,6 +20,8 @@ npm run dev
 | `AMAZON_MARKETPLACE` | `www.amazon.com` |
 | `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` | Contact form delivery via Resend |
 | `RESEND_AUDIENCE_ID` | Resend Audience that stores deal-alert email subscribers |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL. When set with the publishable key, `/deals`, `/deals/today`, and `/coupons` require a free account |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key (`sb_publishable_...`). Never put the secret key in the browser or in a `NEXT_PUBLIC_` variable |
 
 On Vercel, add these under Project Settings, Environment Variables.
 

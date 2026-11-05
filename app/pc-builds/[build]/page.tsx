@@ -44,7 +44,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { g } = find(slug);
   return pageMetadata({
     title: g?.title ?? def.title.replace(" [{price}]", ""),
-    absoluteTitle: true,
     description: `${def.summary} Full part list with prices, compatibility check, estimated wattage, and one-click buying.`,
     path: `/pc-builds/${slug}`,
     noindex: !g,

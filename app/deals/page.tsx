@@ -11,6 +11,7 @@ import { defaultRank } from "@/lib/lists";
 import { formatChecked } from "@/lib/format";
 import { POPULAR_SEARCHES } from "@/lib/search";
 import { itemListLd, pageMetadata } from "@/lib/seo";
+import { authConfigured } from "@/lib/supabase/env";
 
 
 export const metadata = pageMetadata({
@@ -18,6 +19,7 @@ export const metadata = pageMetadata({
   description:
     "Every gaming PC and gaming gear deal we track: gaming PCs, laptops, mice, keyboards, headsets, and controllers from the biggest gaming brands, with live prices refreshed weekly.",
   path: "/deals",
+  noindex: authConfigured(),
 });
 
 export default async function DealsPage() {
@@ -35,6 +37,9 @@ export default async function DealsPage() {
         <div className="page-meta">
           <Link href="/deals/today" className="text-link">
             Today’s tech deals <ArrowRight />
+          </Link>
+          <Link href="/account" className="text-link">
+            Account
           </Link>
           {fetchedAt ? (
             <span>

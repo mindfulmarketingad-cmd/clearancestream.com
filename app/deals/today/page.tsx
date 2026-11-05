@@ -16,13 +16,14 @@ import { listInsights } from "@/lib/list-insights";
 import { defaultRank } from "@/lib/lists";
 import { pickPool } from "@/lib/picks";
 import { itemListLd, pageMetadata } from "@/lib/seo";
+import { authConfigured } from "@/lib/supabase/env";
 
 export const metadata = pageMetadata({
   title: "Today’s Tech Deals",
-  absoluteTitle: true,
   description:
     "Today’s tech deals in one list: every real discount we track on gaming PCs, laptops, monitors, keyboards, mice, headsets, controllers, and PC parts. Filter by category, brand, price, and discount.",
   path: "/deals/today",
+  noindex: authConfigured(),
 });
 
 export default async function TodaysDealsPage() {
